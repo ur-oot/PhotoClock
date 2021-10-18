@@ -6,6 +6,7 @@ Unsplashで取得した画像と時計を表示するだけのアプリ。
 ![Demo image 02](./docs/img/Demo_img_02.png)
 
 ## App URL
+https://photoclock.netlify.app
 
 ## Features
 - 一定時間ごとに背景画像をランダムに更新
