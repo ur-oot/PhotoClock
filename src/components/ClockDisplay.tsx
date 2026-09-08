@@ -40,10 +40,12 @@ export const ClockDisplay: React.FC<ClockDisplayProps> = ({ clock }) => {
           <span className="text-[7vw] font-mono tracking-tighter w-[8vw] text-center">
             {clock.seconds}
           </span>
-          {/* AM / PM */}
-          <span className="text-[2vw] font-sans font-medium uppercase ml-3 text-stone-600">
-            {clock.meridian}
-          </span>
+          {/* AM / PM (12h表示時のみ) */}
+          {clock.meridian && (
+            <span className="text-[2vw] font-sans font-medium uppercase ml-3 text-stone-600">
+              {clock.meridian}
+            </span>
+          )}
         </div>
       </div>
     </div>

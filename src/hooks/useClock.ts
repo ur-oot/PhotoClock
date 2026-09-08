@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { TimeFormat } from './usePhotoSettings';
 
 export interface ClockState {
   year: string;
@@ -23,41 +24,48 @@ function getOrdinalDay(day: number): string {
   return `${day}th`;
 }
 
-function getNowClockState(): ClockState {
+function getNowClockState(timeFormat: TimeFormat = '12h'): ClockState {
   const now = new Date();
   const day = now.getDate();
+  const rawHours = now.getHours();
 
-  let rawHours = now.getHours();
-  const meridian = rawHours >= 12 ? 'pm' : 'am';
-  rawHours = rawHours % 12 || 12;
+  let displayHours: number;
+  let meridian = '';
+
+  if (timeFormat === '12h') {
+    meridian = rawHours >= 12 ? 'pm' : 'am';
+    displayHours = rawHours % 12 || 12;
+  } else {
+    displayHours = rawHours;
+  }
 
   return {
     year: String(now.getFullYear()),
     month: monthFormatter.format(now),
     day: getOrdinalDay(day),
     dayOfWeek: weekdayFormatter.format(now),
-    hours: String(rawHours).padStart(2, '0'),
+    hours: String(displayHours).padStart(2, '0'),
     minutes: String(now.getMinutes()).padStart(2, '0'),
     seconds: String(now.getSeconds()).padStart(2, '0'),
     meridian,
   };
 }
 
-export function useClock(): ClockState {
-  const [clock, setClock] = useState<ClockState>(getNowClockState);
+export function useClock(timeFormat: TimeFormat = '12h'): ClockState {
+  const [clock, setClock] = useState<ClockState>(() => getNowClockState(timeFormat));
 
   useEffect(() => {
     // 最初の状態をセット
-    setClock(getNowClockState());
+    setClock(getNowClockState(timeFormat));
 
     const timer = setInterval(() => {
-      setClock(getNowClockState());
+      setClock(getNowClockState(timeFormat));
     }, 1000);
 
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [timeFormat]);
 
   return clock;
 }

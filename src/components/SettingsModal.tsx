@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ExternalLink, Check, Shuffle, RefreshCw } from 'lucide-react';
 import type { UnsplashCollection } from '../types/unsplash';
-import { INTERVAL_OPTIONS } from '../hooks/usePhotoSettings';
+import { INTERVAL_OPTIONS, type TimeFormat } from '../hooks/usePhotoSettings';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -13,6 +13,8 @@ interface SettingsModalProps {
   onRefreshPhoto: () => void;
   isCinematicMotionEnabled: boolean;
   setIsCinematicMotionEnabled: (enabled: boolean) => void;
+  timeFormat: TimeFormat;
+  setTimeFormat: (format: TimeFormat) => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -25,6 +27,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onRefreshPhoto,
   isCinematicMotionEnabled,
   setIsCinematicMotionEnabled,
+  timeFormat,
+  setTimeFormat,
 }) => {
   const [collections, setCollections] = useState<UnsplashCollection[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -97,7 +101,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       {/* メインコンテンツ */}
       <div className="max-w-5xl mx-auto w-full px-6 py-8 space-y-8 flex-1">
         {/* ディスプレイ & アニメーション設定 */}
-        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
               Update Interval
@@ -106,7 +110,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <select
                 value={updateIntervalTime}
                 onChange={(e) => setUpdateIntervalTime(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-lg text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-sm"
+                className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-lg text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-sm cursor-pointer"
               >
                 {INTERVAL_OPTIONS.map((opt) => (
                   <option key={opt.code} value={opt.code}>
@@ -116,13 +120,46 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </select>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Time between automatic background wallpaper updates.
+              Time between background updates.
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Cinematic Motion (Ken Burns)
+              Time Format
+            </h3>
+            <div className="flex items-center max-w-xs bg-stone-200/70 p-1 rounded-lg border border-stone-300">
+              <button
+                type="button"
+                onClick={() => setTimeFormat('12h')}
+                className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-md transition-all ${
+                  timeFormat === '12h'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                12-hour (AM/PM)
+              </button>
+              <button
+                type="button"
+                onClick={() => setTimeFormat('24h')}
+                className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-md transition-all ${
+                  timeFormat === '24h'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                24-hour
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              Choose 12-hour or 24-hour clock.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Cinematic Motion
             </h3>
             <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
               <span className="text-sm text-stone-800 font-medium">
@@ -146,7 +183,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Slowly zooms and pans images like Apple TV screensavers.
+              Smooth zoom and pan Ken Burns effect.
             </p>
           </div>
         </section>
