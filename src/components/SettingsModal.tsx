@@ -11,6 +11,8 @@ interface SettingsModalProps {
   selectedCollection: UnsplashCollection | null;
   setSelectedCollection: (collection: UnsplashCollection | null) => void;
   onRefreshPhoto: () => void;
+  isCinematicMotionEnabled: boolean;
+  setIsCinematicMotionEnabled: (enabled: boolean) => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -21,6 +23,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   selectedCollection,
   setSelectedCollection,
   onRefreshPhoto,
+  isCinematicMotionEnabled,
+  setIsCinematicMotionEnabled,
 }) => {
   const [collections, setCollections] = useState<UnsplashCollection[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -92,23 +96,58 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
       {/* メインコンテンツ */}
       <div className="max-w-5xl mx-auto w-full px-6 py-8 space-y-8 flex-1">
-        {/* 更新間隔の設定 */}
-        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-            Update Interval
-          </h3>
-          <div className="max-w-xs">
-            <select
-              value={updateIntervalTime}
-              onChange={(e) => setUpdateIntervalTime(Number(e.target.value))}
-              className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-lg text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-sm"
-            >
-              {INTERVAL_OPTIONS.map((opt) => (
-                <option key={opt.code} value={opt.code}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+        {/* ディスプレイ & アニメーション設定 */}
+        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Update Interval
+            </h3>
+            <div className="max-w-xs">
+              <select
+                value={updateIntervalTime}
+                onChange={(e) => setUpdateIntervalTime(Number(e.target.value))}
+                className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-lg text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-sm"
+              >
+                {INTERVAL_OPTIONS.map((opt) => (
+                  <option key={opt.code} value={opt.code}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              Time between automatic background wallpaper updates.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Cinematic Motion (Ken Burns)
+            </h3>
+            <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
+              <span className="text-sm text-stone-800 font-medium">
+                {isCinematicMotionEnabled ? 'Enabled' : 'Disabled'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsCinematicMotionEnabled(!isCinematicMotionEnabled)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isCinematicMotionEnabled ? 'bg-blue-600' : 'bg-stone-300'
+                }`}
+                role="switch"
+                aria-checked={isCinematicMotionEnabled}
+                aria-label="Toggle cinematic motion"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isCinematicMotionEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              Slowly zooms and pans images like Apple TV screensavers.
+            </p>
           </div>
         </section>
 
