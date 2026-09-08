@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, ExternalLink, Check, Shuffle, RefreshCw } from 'lucide-react';
-import type { UnsplashCollection } from '../types/unsplash';
+import { X, ExternalLink, Check, Shuffle, RefreshCw, Heart, History, Trash2, ArrowUpRight } from 'lucide-react';
+import type { UnsplashCollection, StoredPhoto } from '../types/unsplash';
 import { PHOTO_TOPICS } from '../types/unsplash';
 import { INTERVAL_OPTIONS, type TimeFormat } from '../hooks/usePhotoSettings';
 
@@ -18,6 +18,11 @@ interface SettingsModalProps {
   setTimeFormat: (format: TimeFormat) => void;
   selectedTopic: string;
   setSelectedTopic: (topic: string) => void;
+  favorites: StoredPhoto[];
+  history: StoredPhoto[];
+  onSelectStoredPhoto: (photo: StoredPhoto) => void;
+  onRemoveFavorite: (photoId: string) => void;
+  onClearHistory: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -34,7 +39,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setTimeFormat,
   selectedTopic,
   setSelectedTopic,
+  favorites,
+  history,
+  onSelectStoredPhoto,
+  onRemoveFavorite,
+  onClearHistory,
 }) => {
+  const [activeTab, setActiveTab] = useState<'general' | 'favorites' | 'history'>('general');
   const [collections, setCollections] = useState<UnsplashCollection[]>([]);
   const [page, setPage] = useState<number>(1);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
@@ -75,9 +86,58 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-md flex flex-col transition-all">
       {/* モーダルヘッダー */}
-      <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-lg border-b border-stone-200/80">
-        <div className="flex items-center space-x-3">
-          <h2 className="text-xl font-bold tracking-tight text-stone-900">PhotoClock Settings</h2>
+      <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-3.5 bg-white/85 backdrop-blur-lg border-b border-stone-200/80">
+        <div className="flex items-center space-x-6">
+          <h2 className="text-lg font-bold tracking-tight text-stone-900 hidden sm:block">PhotoClock</h2>
+
+          {/* ナビゲーションタブ */}
+          <nav className="flex items-center space-x-1 bg-stone-100/90 p-1 rounded-xl border border-stone-200/60">
+            <button
+              type="button"
+              onClick={() => setActiveTab('general')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                activeTab === 'general'
+                  ? 'bg-white text-stone-900 shadow-sm'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              Settings & Collections
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('favorites')}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                activeTab === 'favorites'
+                  ? 'bg-white text-stone-900 shadow-sm'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              <Heart className={`w-3.5 h-3.5 ${favorites.length > 0 ? 'fill-rose-500 text-rose-500' : ''}`} />
+              <span>Favorites</span>
+              {favorites.length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-rose-100 text-rose-700 rounded-full font-bold">
+                  {favorites.length}
+                </span>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('history')}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                activeTab === 'history'
+                  ? 'bg-white text-stone-900 shadow-sm'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              <History className="w-3.5 h-3.5" />
+              <span>History</span>
+              {history.length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-stone-200 text-stone-700 rounded-full font-bold">
+                  {history.length}
+                </span>
+              )}
+            </button>
+          </nav>
         </div>
 
         <div className="flex items-center space-x-4">
@@ -105,7 +165,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
       {/* メインコンテンツ */}
       <div className="max-w-5xl mx-auto w-full px-6 py-8 space-y-8 flex-1">
-        {/* ディスプレイ & アニメーション設定 */}
+        {activeTab === 'general' && (
+          <>
+            {/* ディスプレイ & アニメーション設定 */}
         <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
@@ -370,6 +432,177 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </button>
           </div>
         </section>
+      </>
+    )}
+
+        {/* お気に入りタブ */}
+        {activeTab === 'favorites' && (
+          <section className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-stone-900 flex items-center space-x-2">
+                  <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
+                  <span>Favorite Photos</span>
+                </h3>
+                <p className="text-xs text-stone-500 mt-1">
+                  Photos you have saved. Click &ldquo;Apply as Background&rdquo; to instantly display any photo.
+                </p>
+              </div>
+            </div>
+
+            {favorites.length === 0 ? (
+              <div className="text-center py-16 px-4 bg-white/60 backdrop-blur-md rounded-2xl border border-stone-200/80">
+                <Heart className="w-12 h-12 text-stone-300 mx-auto mb-3" />
+                <h4 className="text-sm font-semibold text-stone-700">No favorite photos yet</h4>
+                <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
+                  Click the heart icon on the photo attribution bar in the top-right corner to save photos you love.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {favorites.map((item) => (
+                  <div
+                    key={item.id}
+                    className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-stone-200/80 flex flex-col"
+                  >
+                    <div className="relative aspect-video w-full overflow-hidden bg-stone-100">
+                      <img
+                        src={item.thumbUrl}
+                        alt={item.description || `Photo by ${item.user.name}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    </div>
+
+                    <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-stone-700 font-medium truncate max-w-[180px]">
+                          By {item.user.name}
+                        </span>
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-stone-400 hover:text-stone-700 flex items-center space-x-0.5"
+                          title="View high-res photo"
+                        >
+                          <ArrowUpRight className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+
+                      <div className="flex items-center space-x-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectStoredPhoto(item);
+                            onClose();
+                          }}
+                          className="flex-1 py-1.5 px-3 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-semibold transition-colors"
+                        >
+                          Apply as Background
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onRemoveFavorite(item.id)}
+                          title="Remove from favorites"
+                          className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* 履歴タブ */}
+        {activeTab === 'history' && (
+          <section className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-stone-900 flex items-center space-x-2">
+                  <History className="w-4 h-4 text-stone-700" />
+                  <span>Recent History</span>
+                </h3>
+                <p className="text-xs text-stone-500 mt-1">
+                  Recently displayed background photos. Click &ldquo;Apply as Background&rdquo; to re-show past photos.
+                </p>
+              </div>
+
+              {history.length > 0 && (
+                <button
+                  type="button"
+                  onClick={onClearHistory}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-stone-600 hover:text-rose-600 bg-white hover:bg-rose-50 rounded-lg border border-stone-200 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Clear History</span>
+                </button>
+              )}
+            </div>
+
+            {history.length === 0 ? (
+              <div className="text-center py-16 px-4 bg-white/60 backdrop-blur-md rounded-2xl border border-stone-200/80">
+                <History className="w-12 h-12 text-stone-300 mx-auto mb-3" />
+                <h4 className="text-sm font-semibold text-stone-700">No history recorded yet</h4>
+                <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
+                  Photos displayed on PhotoClock are automatically saved here for quick re-display.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {history.map((item) => (
+                  <div
+                    key={`${item.id}-${item.savedAt}`}
+                    className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-stone-200/80 flex flex-col"
+                  >
+                    <div className="relative aspect-video w-full overflow-hidden bg-stone-100">
+                      <img
+                        src={item.thumbUrl}
+                        alt={item.description || `Photo by ${item.user.name}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    </div>
+
+                    <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-stone-700 font-medium truncate max-w-[180px]">
+                          By {item.user.name}
+                        </span>
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-stone-400 hover:text-stone-700 flex items-center space-x-0.5"
+                          title="View high-res photo"
+                        >
+                          <ArrowUpRight className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectStoredPhoto(item);
+                            onClose();
+                          }}
+                          className="w-full py-1.5 px-3 bg-stone-100 hover:bg-stone-200 text-stone-900 rounded-lg text-xs font-semibold transition-colors"
+                        >
+                          Apply as Background
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
       </div>
 
       {/* フッター */}
