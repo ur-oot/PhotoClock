@@ -1,0 +1,5 @@
+# Functions API Proxy
+/api/*    /.netlify/functions/:splat    200
+
+# SPA Fallback
+/*        /index.html                   200

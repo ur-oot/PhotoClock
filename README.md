@@ -1,5 +1,6 @@
 # PhotoClock
-Unsplashで取得した画像と時計を表示するだけのアプリ。
+
+Unsplashで取得した高解像度壁紙と時計を表示するミニマルなデジタル時計アプリ。
 
 ## Demo
 ![Demo image 01](./docs/img/Demo_img_01.png)
@@ -9,24 +10,55 @@ Unsplashで取得した画像と時計を表示するだけのアプリ。
 https://photoclock.netlify.app
 
 ## Features
-- 一定時間ごとに背景画像をランダムに更新
-- Unsplashの[Collections](https://unsplash.com/collections)にアップロードされた画像からランダムで表示(メニューから選択)
-- 自動変更の間隔を変更(メニューから選択)
-- PWA:Progressive web appsに対応
+- **リアルタイム時計表示**: 年・月・日・曜日・12時間制時刻の表示
+- **定期的な背景画像更新**: 一定時間ごとに背景画像をランダムに自動更新
+- **コレクション指定**: Unsplashの [Collections](https://unsplash.com/collections) から好きなコレクションを選択して表示
+- **更新間隔のカスタマイズ**: 3分 / 5分 / 15分 / 30分 / 45分 / 1時間から選択可能（`localStorage` で永続化）
+- **APIキー秘匿化**: Netlify Functions (BFF) によるサーバーサイドプロキシ
+- **PWA (Progressive Web Apps)**: オフラインキャッシュおよびスタンドアロンインストール対応
 
-## Usage
+## Tech Stack
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS
+- **BFF / Proxy**: Netlify Functions
+- **Icons**: Lucide React
+- **PWA**: vite-plugin-pwa
+
+## Setup & Local Development
+
+### 1. リポジトリのクローンと依存関係のインストール
 ```sh
-$ git clone https://github.com/ur-oot/PhotoClock.git
-```
-[Unsplash.com](https://unsplash.com/developers)でユーザー登録し、アプリケーションを作成してAPIキーを作成しておく。  
-.envファイルのVUE_APP_ACCESS_KEYに以下のようにAPIキーを指定する。
-```
-VUE_APP_ACCESS_KEY = [APIキー]
+git clone https://github.com/ur-oot/PhotoClock.git
+cd PhotoClock
+npm install
 ```
 
-## Author
-Twiiter:[@kausaus_](https://twitter.com/kausaus_)  
-Github:[ur-oot](https://github.com/ur-oot)
+### 2. 環境変数の設定
+[Unsplash Developer](https://unsplash.com/developers) でアプリケーションを登録し、Access Keyを取得します。  
+`.env` ファイルを作成し、以下のように設定します。
+
+```env
+UNSPLASH_ACCESS_KEY=your_unsplash_access_key
+```
+
+### 3. ローカル開発サーバーの起動
+```sh
+npm run dev
+```
+
+起動後、ブラウザで `http://localhost:5173` を開きます。  
+Vite の開発サーバー内で Netlify Functions も自動実行されるため、フロントエンドと API 通信の両方が動作します。
+
+### 4. ビルド
+```sh
+npm run build
+```
+
+## Production Deployment (Netlify)
+Netlify の管理画面（Site configuration > Environment variables）にて、以下の環境変数を設定してください。
+
+| キー名 | 説明 | スコープ |
+| :--- | :--- | :--- |
+| `UNSPLASH_ACCESS_KEY` | Unsplash API Access Key | Functions / All |
 
 ## License
-"PhotoClock" is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+[MIT License](https://en.wikipedia.org/wiki/MIT_License)
