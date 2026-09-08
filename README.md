@@ -41,13 +41,12 @@ UNSPLASH_ACCESS_KEY=your_unsplash_access_key
 ```
 
 ### 3. ローカル開発サーバーの起動
-Netlify Functions と Vite 開発サーバーを同時に立ち上げて本番同等の環境で動作させる場合：
-
 ```sh
-npx netlify dev
+npm run dev
 ```
 
-※ フロントエンドのみを起動する場合は `npm run dev` で起動可能です（Unsplash APIの取得には Netlify Functions の動作が必要です）。
+起動後、ブラウザで `http://localhost:5173` を開きます。  
+Vite の開発サーバー内で Netlify Functions も自動実行されるため、フロントエンドと API 通信の両方が動作します。
 
 ### 4. ビルド
 ```sh
