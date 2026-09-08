@@ -40,6 +40,11 @@ export function usePhotoManager(
         throw new Error(`HTTP error: ${res.status}`);
       }
 
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error(`Expected JSON response, got: ${contentType}`);
+      }
+
       const data: UnsplashPhoto = await res.json();
       setPhoto(data);
       setPhotoUrl(data.urls.full);
