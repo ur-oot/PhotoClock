@@ -18,13 +18,16 @@ export default function App() {
     setIsCinematicMotionEnabled,
     timeFormat,
     setTimeFormat,
+    selectedTopic,
+    setSelectedTopic,
   } = usePhotoSettings();
 
   const clock = useClock(timeFormat);
 
   const { photo, photoUrl, refreshPhoto } = usePhotoManager(
     updateIntervalTime,
-    selectedCollection
+    selectedCollection,
+    selectedTopic
   );
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -97,6 +100,8 @@ export default function App() {
         setIsCinematicMotionEnabled={setIsCinematicMotionEnabled}
         timeFormat={timeFormat}
         setTimeFormat={setTimeFormat}
+        selectedTopic={selectedTopic}
+        setSelectedTopic={setSelectedTopic}
       />
     </div>
   );
