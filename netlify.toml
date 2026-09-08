@@ -16,9 +16,3 @@
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
-
-# SPA fallback
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
