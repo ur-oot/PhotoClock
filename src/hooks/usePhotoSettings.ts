@@ -7,6 +7,7 @@ const STORAGE_KEY_INTERVAL = 'photoclock_update_interval';
 const STORAGE_KEY_COLLECTION = 'photoclock_selected_collection';
 const STORAGE_KEY_CINEMATIC = 'photoclock_cinematic_motion';
 const STORAGE_KEY_TIME_FORMAT = 'photoclock_time_format';
+const STORAGE_KEY_TOPIC = 'photoclock_selected_topic';
 
 export interface IntervalOption {
   label: string;
@@ -72,6 +73,18 @@ export function usePhotoSettings() {
     return '12h';
   });
 
+  const [selectedTopic, setSelectedTopicState] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_TOPIC);
+      if (saved) {
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+    return 'wallpapers';
+  });
+
   const setUpdateIntervalTime = (seconds: number) => {
     setUpdateIntervalTimeState(seconds);
     try {
@@ -112,6 +125,19 @@ export function usePhotoSettings() {
     }
   };
 
+  const setSelectedTopic = (topic: string) => {
+    setSelectedTopicState(topic);
+    try {
+      localStorage.setItem(STORAGE_KEY_TOPIC, topic);
+    } catch {
+      // ignore
+    }
+    // トピックが選ばれたらコレクション指定を解除してトピックを優先
+    if (selectedCollection) {
+      setSelectedCollection(null);
+    }
+  };
+
   return {
     updateIntervalTime,
     setUpdateIntervalTime,
@@ -121,5 +147,7 @@ export function usePhotoSettings() {
     setIsCinematicMotionEnabled,
     timeFormat,
     setTimeFormat,
+    selectedTopic,
+    setSelectedTopic,
   };
 }
