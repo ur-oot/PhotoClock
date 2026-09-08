@@ -56,3 +56,23 @@ export interface PhotoSettings {
   updateIntervalTime: number; // in seconds
   selectedCollection: UnsplashCollection | null;
 }
+
+export interface PhotoTopic {
+  id: string;
+  name: string;
+  emoji: string;
+}
+
+export const PHOTO_TOPICS: PhotoTopic[] = [
+  { id: 'all', name: 'Random All', emoji: '✨' },
+  { id: 'wallpapers', name: 'Wallpapers', emoji: '🖼️' },
+  { id: 'nature', name: 'Nature', emoji: '🌿' },
+  { id: 'travel', name: 'Travel', emoji: '✈️' },
+  { id: 'architecture-interior', name: 'Architecture', emoji: '🏛️' },
+  { id: 'street-photography', name: 'Street', emoji: '📸' },
+  { id: 'textures-patterns', name: 'Textures', emoji: '🎨' },
+  { id: 'film', name: 'Film & Vintage', emoji: '🎞️' },
+  { id: 'animals', name: 'Animals', emoji: '🐾' },
+  { id: 'spirituality', name: 'Zen & Calm', emoji: '🧘' },
+  { id: 'monochrome', name: 'Monochrome', emoji: '🖤' },
+];
