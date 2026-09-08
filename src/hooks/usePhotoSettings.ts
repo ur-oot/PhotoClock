@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import type { UnsplashCollection } from '../types/unsplash';
 
+export type TimeFormat = '12h' | '24h';
+
 const STORAGE_KEY_INTERVAL = 'photoclock_update_interval';
 const STORAGE_KEY_COLLECTION = 'photoclock_selected_collection';
 const STORAGE_KEY_CINEMATIC = 'photoclock_cinematic_motion';
+const STORAGE_KEY_TIME_FORMAT = 'photoclock_time_format';
 
 export interface IntervalOption {
   label: string;
@@ -57,6 +60,18 @@ export function usePhotoSettings() {
     return true; // デフォルトは有効
   });
 
+  const [timeFormat, setTimeFormatState] = useState<TimeFormat>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_TIME_FORMAT);
+      if (saved === '12h' || saved === '24h') {
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+    return '12h';
+  });
+
   const setUpdateIntervalTime = (seconds: number) => {
     setUpdateIntervalTimeState(seconds);
     try {
@@ -88,6 +103,15 @@ export function usePhotoSettings() {
     }
   };
 
+  const setTimeFormat = (format: TimeFormat) => {
+    setTimeFormatState(format);
+    try {
+      localStorage.setItem(STORAGE_KEY_TIME_FORMAT, format);
+    } catch {
+      // ignore
+    }
+  };
+
   return {
     updateIntervalTime,
     setUpdateIntervalTime,
@@ -95,5 +119,7 @@ export function usePhotoSettings() {
     setSelectedCollection,
     isCinematicMotionEnabled,
     setIsCinematicMotionEnabled,
+    timeFormat,
+    setTimeFormat,
   };
 }

@@ -9,7 +9,6 @@ import { SettingsModal } from './components/SettingsModal';
 import { CinematicBackground } from './components/CinematicBackground';
 
 export default function App() {
-  const clock = useClock();
   const {
     updateIntervalTime,
     setUpdateIntervalTime,
@@ -17,7 +16,11 @@ export default function App() {
     setSelectedCollection,
     isCinematicMotionEnabled,
     setIsCinematicMotionEnabled,
+    timeFormat,
+    setTimeFormat,
   } = usePhotoSettings();
+
+  const clock = useClock(timeFormat);
 
   const { photo, photoUrl, refreshPhoto } = usePhotoManager(
     updateIntervalTime,
@@ -92,6 +95,8 @@ export default function App() {
         onRefreshPhoto={refreshPhoto}
         isCinematicMotionEnabled={isCinematicMotionEnabled}
         setIsCinematicMotionEnabled={setIsCinematicMotionEnabled}
+        timeFormat={timeFormat}
+        setTimeFormat={setTimeFormat}
       />
     </div>
   );
