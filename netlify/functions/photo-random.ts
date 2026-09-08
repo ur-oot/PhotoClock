@@ -1,5 +1,5 @@
 
-export default async () => {
+export default async (req: Request) => {
   const accessKey = process.env.UNSPLASH_ACCESS_KEY;
 
   if (!accessKey) {
@@ -12,8 +12,22 @@ export default async () => {
     );
   }
 
+  const reqUrl = new URL(req.url);
+  const topics = reqUrl.searchParams.get("topics");
+  const collections = reqUrl.searchParams.get("collections");
+
   const url = new URL("https://api.unsplash.com/photos/random");
-  url.searchParams.set("topics", "wallpapers");
+  if (topics && topics !== "all") {
+    url.searchParams.set("topics", topics);
+  } else if (!collections) {
+    // トピックやコレクションの指定がない場合のデフォルト
+    url.searchParams.set("topics", "wallpapers");
+  }
+
+  if (collections) {
+    url.searchParams.set("collections", collections);
+  }
+
   url.searchParams.set("orientation", "landscape");
 
   try {

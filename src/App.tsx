@@ -19,6 +19,8 @@ export default function App() {
     setIsCinematicMotionEnabled,
     timeFormat,
     setTimeFormat,
+    selectedTopic,
+    setSelectedTopic,
   } = usePhotoSettings();
 
   const {
@@ -36,6 +38,7 @@ export default function App() {
   const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
     selectedCollection,
+    selectedTopic,
     addToHistory
   );
 
@@ -114,6 +117,8 @@ export default function App() {
         setIsCinematicMotionEnabled={setIsCinematicMotionEnabled}
         timeFormat={timeFormat}
         setTimeFormat={setTimeFormat}
+        selectedTopic={selectedTopic}
+        setSelectedTopic={setSelectedTopic}
         favorites={favorites}
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}

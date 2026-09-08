@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ExternalLink, Check, Shuffle, RefreshCw, Heart, History, Trash2, ArrowUpRight } from 'lucide-react';
 import type { UnsplashCollection, StoredPhoto } from '../types/unsplash';
+import { PHOTO_TOPICS } from '../types/unsplash';
 import { INTERVAL_OPTIONS, type TimeFormat } from '../hooks/usePhotoSettings';
 
 interface SettingsModalProps {
@@ -15,6 +16,8 @@ interface SettingsModalProps {
   setIsCinematicMotionEnabled: (enabled: boolean) => void;
   timeFormat: TimeFormat;
   setTimeFormat: (format: TimeFormat) => void;
+  selectedTopic: string;
+  setSelectedTopic: (topic: string) => void;
   favorites: StoredPhoto[];
   history: StoredPhoto[];
   onSelectStoredPhoto: (photo: StoredPhoto) => void;
@@ -34,6 +37,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setIsCinematicMotionEnabled,
   timeFormat,
   setTimeFormat,
+  selectedTopic,
+  setSelectedTopic,
   favorites,
   history,
   onSelectStoredPhoto,
@@ -250,6 +255,50 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
         </section>
 
+        {/* 写真のムード & トピック選択 */}
+        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500">
+                Photo Mood & Topics
+              </h3>
+              <p className="text-xs text-stone-500 mt-1">
+                Select a topic to curate your background atmosphere.
+              </p>
+            </div>
+            {selectedCollection && (
+              <span className="text-xs font-medium px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-md inline-block self-start sm:self-auto">
+                Custom collection active
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-2.5">
+            {PHOTO_TOPICS.map((topic) => {
+              const isSelected = !selectedCollection && selectedTopic === topic.id;
+              return (
+                <button
+                  key={topic.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedTopic(topic.id);
+                    onRefreshPhoto();
+                  }}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-semibold transition-all shadow-sm ${
+                    isSelected
+                      ? 'bg-stone-900 text-white shadow-md ring-2 ring-stone-900/20 scale-105'
+                      : 'bg-white/90 hover:bg-white text-stone-700 hover:text-stone-900 border border-stone-200/80 hover:border-stone-300'
+                  }`}
+                >
+                  <span className="text-sm">{topic.emoji}</span>
+                  <span>{topic.name}</span>
+                  {isSelected && <Check className="w-3.5 h-3.5 ml-1 text-emerald-400" />}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
         {/* コレクション選択 */}
         <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40">
           <div className="flex items-center justify-between mb-6">
@@ -264,11 +313,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
             {selectedCollection && (
               <button
-                onClick={() => setSelectedCollection(null)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
+                onClick={() => {
+                  setSelectedCollection(null);
+                  onRefreshPhoto();
+                }}
+                className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 shadow-sm"
               >
                 <Shuffle className="w-3.5 h-3.5" />
-                <span>Reset to Random Wallpapers</span>
+                <span>Clear Collection (Use Selected Topic)</span>
               </button>
             )}
           </div>

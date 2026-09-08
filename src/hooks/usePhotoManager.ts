@@ -4,6 +4,7 @@ import type { UnsplashPhoto, UnsplashCollection, StoredPhoto } from '../types/un
 export function usePhotoManager(
   updateIntervalTime: number,
   selectedCollection: UnsplashCollection | null,
+  selectedTopic?: string,
   onPhotoLoaded?: (photo: UnsplashPhoto) => void
 ) {
   const [photo, setPhoto] = useState<UnsplashPhoto | null>(null);
@@ -34,6 +35,8 @@ export function usePhotoManager(
       let endpoint = '/api/photo-random';
       if (selectedCollection) {
         endpoint = `/api/photo-collection?collectionId=${selectedCollection.id}&totalPhotos=${selectedCollection.total_photos || 10}`;
+      } else if (selectedTopic && selectedTopic !== 'all') {
+        endpoint = `/api/photo-random?topics=${encodeURIComponent(selectedTopic)}`;
       }
 
       const res = await fetch(endpoint);
@@ -63,7 +66,7 @@ export function usePhotoManager(
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCollection, onPhotoLoaded, trackDownload]);
+  }, [selectedCollection, selectedTopic, onPhotoLoaded, trackDownload]);
 
   // タイマー更新のスケジュール
   useEffect(() => {
