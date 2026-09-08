@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { UnsplashPhoto, UnsplashCollection } from '../types/unsplash';
+import type { UnsplashPhoto, UnsplashCollection, StoredPhoto } from '../types/unsplash';
 
 export function usePhotoManager(
   updateIntervalTime: number,
-  selectedCollection: UnsplashCollection | null
+  selectedCollection: UnsplashCollection | null,
+  onPhotoLoaded?: (photo: UnsplashPhoto) => void
 ) {
   const [photo, setPhoto] = useState<UnsplashPhoto | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>('');
@@ -49,6 +50,7 @@ export function usePhotoManager(
       setPhoto(data);
       setPhotoUrl(data.urls.full);
       setIsErrored(false);
+      onPhotoLoaded?.(data);
 
       if (data.links?.download_location) {
         trackDownload(data.links.download_location);
@@ -61,7 +63,7 @@ export function usePhotoManager(
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCollection, trackDownload]);
+  }, [selectedCollection, onPhotoLoaded, trackDownload]);
 
   // タイマー更新のスケジュール
   useEffect(() => {
@@ -90,11 +92,48 @@ export function usePhotoManager(
     };
   }, [fetchPhoto, updateIntervalTime]);
 
+  const applyStoredPhoto = useCallback(
+    (stored: StoredPhoto) => {
+      const pseudoPhoto: UnsplashPhoto = {
+        id: stored.id,
+        width: 1920,
+        height: 1080,
+        description: stored.description,
+        urls: {
+          raw: stored.url,
+          full: stored.url,
+          regular: stored.url,
+          small: stored.thumbUrl,
+          thumb: stored.thumbUrl,
+        },
+        links: {
+          html: stored.user.html,
+          download_location: stored.downloadLocation || '',
+        },
+        user: {
+          id: stored.user.username,
+          name: stored.user.name,
+          username: stored.user.username,
+          profile_image: { small: '' },
+          links: { html: stored.user.html },
+        },
+      };
+      setPhoto(pseudoPhoto);
+      setPhotoUrl(stored.url);
+      setIsErrored(false);
+      if (stored.downloadLocation) {
+        trackDownload(stored.downloadLocation);
+      }
+    },
+    [trackDownload]
+  );
+
   return {
     photo,
     photoUrl,
     isLoading,
     isErrored,
     refreshPhoto: fetchPhoto,
+    applyStoredPhoto,
   };
 }

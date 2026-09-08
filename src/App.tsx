@@ -3,6 +3,7 @@ import { Menu } from 'lucide-react';
 import { useClock } from './hooks/useClock';
 import { usePhotoSettings } from './hooks/usePhotoSettings';
 import { usePhotoManager } from './hooks/usePhotoManager';
+import { usePhotoFavorites } from './hooks/usePhotoFavorites';
 import { ClockDisplay } from './components/ClockDisplay';
 import { PhotoCredit } from './components/PhotoCredit';
 import { SettingsModal } from './components/SettingsModal';
@@ -20,11 +21,22 @@ export default function App() {
     setTimeFormat,
   } = usePhotoSettings();
 
+  const {
+    favorites,
+    history,
+    isFavorite,
+    toggleFavorite,
+    removeFavorite,
+    addToHistory,
+    clearHistory,
+  } = usePhotoFavorites();
+
   const clock = useClock(timeFormat);
 
-  const { photo, photoUrl, refreshPhoto } = usePhotoManager(
+  const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
-    selectedCollection
+    selectedCollection,
+    addToHistory
   );
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -76,8 +88,13 @@ export default function App() {
         <Menu className="w-5 h-5" />
       </button>
 
-      {/* 右上: 撮影者クレジット */}
-      <PhotoCredit photo={photo} isVisible={isControlsVisible && !isModalOpen} />
+      {/* 右上: 撮影者クレジット & お気に入りボタン */}
+      <PhotoCredit
+        photo={photo}
+        isVisible={isControlsVisible && !isModalOpen}
+        isFavorite={photo ? isFavorite(photo.id) : false}
+        onToggleFavorite={photo ? () => toggleFavorite(photo) : undefined}
+      />
 
       {/* 中央: 時計表示 */}
       <main className="relative z-20">
@@ -97,6 +114,11 @@ export default function App() {
         setIsCinematicMotionEnabled={setIsCinematicMotionEnabled}
         timeFormat={timeFormat}
         setTimeFormat={setTimeFormat}
+        favorites={favorites}
+        history={history}
+        onSelectStoredPhoto={applyStoredPhoto}
+        onRemoveFavorite={removeFavorite}
+        onClearHistory={clearHistory}
       />
     </div>
   );

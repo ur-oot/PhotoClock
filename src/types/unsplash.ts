@@ -56,3 +56,17 @@ export interface PhotoSettings {
   updateIntervalTime: number; // in seconds
   selectedCollection: UnsplashCollection | null;
 }
+
+export interface StoredPhoto {
+  id: string;
+  url: string; // full resolution image url
+  thumbUrl: string; // small image url
+  description?: string | null;
+  downloadLocation?: string;
+  user: {
+    name: string;
+    username: string;
+    html: string;
+  };
+  savedAt: number; // timestamp
+}
