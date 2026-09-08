@@ -6,6 +6,7 @@ import { usePhotoManager } from './hooks/usePhotoManager';
 import { ClockDisplay } from './components/ClockDisplay';
 import { PhotoCredit } from './components/PhotoCredit';
 import { SettingsModal } from './components/SettingsModal';
+import { CinematicBackground } from './components/CinematicBackground';
 
 export default function App() {
   const clock = useClock();
@@ -14,6 +15,8 @@ export default function App() {
     setUpdateIntervalTime,
     selectedCollection,
     setSelectedCollection,
+    isCinematicMotionEnabled,
+    setIsCinematicMotionEnabled,
   } = usePhotoSettings();
 
   const { photo, photoUrl, refreshPhoto } = usePhotoManager(
@@ -25,7 +28,7 @@ export default function App() {
   const [isControlsVisible, setIsControlsVisible] = useState<boolean>(true);
   const hideControlsTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // マウス動作時にコントローラーを表示し、3秒無操作でフェードアウト
+  // マウス動作時にコントローラーを表示し、3.5秒無操作でフェードアウト
   const handleMouseMove = () => {
     setIsControlsVisible(true);
     if (hideControlsTimerRef.current) {
@@ -49,24 +52,19 @@ export default function App() {
   return (
     <div
       onMouseMove={handleMouseMove}
-      className="relative w-screen h-screen overflow-hidden flex items-center justify-center bg-stone-900 select-none"
+      className="relative w-screen h-screen overflow-hidden flex items-center justify-center bg-stone-950 select-none"
     >
-      {/* 背景画像レイヤー */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 transform scale-100"
-        style={{
-          backgroundImage: photoUrl ? `url(${photoUrl})` : 'none',
-        }}
-      >
-        {/* コントラストを高めるための微小なオーバーレイ */}
-        <div className="absolute inset-0 bg-black/15" />
-      </div>
+      {/* シネマティック背景レイヤー (Ken Burns & ダブルバッファクロスフェード) */}
+      <CinematicBackground
+        photoUrl={photoUrl}
+        isCinematicMotionEnabled={isCinematicMotionEnabled}
+      />
 
       {/* 左上: 設定メニューボタン */}
       <button
         onClick={() => setIsModalOpen(true)}
         aria-label="Open settings"
-        className={`fixed top-4 left-4 z-20 w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-300 ${
+        className={`fixed top-4 left-4 z-30 w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-300 ${
           isControlsVisible || isModalOpen
             ? 'opacity-100 translate-y-0'
             : 'opacity-0 -translate-y-2 pointer-events-none'
@@ -79,7 +77,7 @@ export default function App() {
       <PhotoCredit photo={photo} isVisible={isControlsVisible && !isModalOpen} />
 
       {/* 中央: 時計表示 */}
-      <main className="relative z-10">
+      <main className="relative z-20">
         <ClockDisplay clock={clock} />
       </main>
 
@@ -92,6 +90,8 @@ export default function App() {
         selectedCollection={selectedCollection}
         setSelectedCollection={setSelectedCollection}
         onRefreshPhoto={refreshPhoto}
+        isCinematicMotionEnabled={isCinematicMotionEnabled}
+        setIsCinematicMotionEnabled={setIsCinematicMotionEnabled}
       />
     </div>
   );

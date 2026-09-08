@@ -3,6 +3,7 @@ import type { UnsplashCollection } from '../types/unsplash';
 
 const STORAGE_KEY_INTERVAL = 'photoclock_update_interval';
 const STORAGE_KEY_COLLECTION = 'photoclock_selected_collection';
+const STORAGE_KEY_CINEMATIC = 'photoclock_cinematic_motion';
 
 export interface IntervalOption {
   label: string;
@@ -44,6 +45,18 @@ export function usePhotoSettings() {
     return null;
   });
 
+  const [isCinematicMotionEnabled, setIsCinematicMotionEnabledState] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_CINEMATIC);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch {
+      // ignore
+    }
+    return true; // デフォルトは有効
+  });
+
   const setUpdateIntervalTime = (seconds: number) => {
     setUpdateIntervalTimeState(seconds);
     try {
@@ -66,10 +79,21 @@ export function usePhotoSettings() {
     }
   };
 
+  const setIsCinematicMotionEnabled = (enabled: boolean) => {
+    setIsCinematicMotionEnabledState(enabled);
+    try {
+      localStorage.setItem(STORAGE_KEY_CINEMATIC, String(enabled));
+    } catch {
+      // ignore
+    }
+  };
+
   return {
     updateIntervalTime,
     setUpdateIntervalTime,
     selectedCollection,
     setSelectedCollection,
+    isCinematicMotionEnabled,
+    setIsCinematicMotionEnabled,
   };
 }

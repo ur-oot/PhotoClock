@@ -16,3 +16,60 @@ body {
   overflow: hidden;
   background-color: #000;
 }
+
+/* Ken Burns Cinematic Animations */
+@keyframes kenburns-zoom-in {
+  0% {
+    transform: scale(1.0) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.08) translate(-0.8%, -0.8%);
+  }
+}
+
+@keyframes kenburns-zoom-out {
+  0% {
+    transform: scale(1.08) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.01) translate(0.8%, 0.8%);
+  }
+}
+
+@keyframes kenburns-pan-right {
+  0% {
+    transform: scale(1.05) translate(-1.2%, 0);
+  }
+  100% {
+    transform: scale(1.08) translate(1.2%, 0);
+  }
+}
+
+@keyframes kenburns-pan-left {
+  0% {
+    transform: scale(1.08) translate(1.2%, 0);
+  }
+  100% {
+    transform: scale(1.04) translate(-1.2%, 0);
+  }
+}
+
+.animate-kenburns-zoom-in {
+  animation: kenburns-zoom-in 30s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate;
+  will-change: transform;
+}
+
+.animate-kenburns-zoom-out {
+  animation: kenburns-zoom-out 30s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate;
+  will-change: transform;
+}
+
+.animate-kenburns-pan-right {
+  animation: kenburns-pan-right 30s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate;
+  will-change: transform;
+}
+
+.animate-kenburns-pan-left {
+  animation: kenburns-pan-left 30s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate;
+  will-change: transform;
+}
