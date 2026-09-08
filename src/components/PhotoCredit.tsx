@@ -1,12 +1,20 @@
 import React from 'react';
+import { Heart, Download } from 'lucide-react';
 import type { UnsplashPhoto } from '../types/unsplash';
 
 interface PhotoCreditProps {
   photo: UnsplashPhoto | null;
   isVisible: boolean;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
-export const PhotoCredit: React.FC<PhotoCreditProps> = ({ photo, isVisible }) => {
+export const PhotoCredit: React.FC<PhotoCreditProps> = ({
+  photo,
+  isVisible,
+  isFavorite = false,
+  onToggleFavorite,
+}) => {
   if (!photo) return null;
 
   const user = photo.user;
@@ -17,7 +25,7 @@ export const PhotoCredit: React.FC<PhotoCreditProps> = ({ photo, isVisible }) =>
   return (
     <aside
       aria-label="Photo attribution"
-      className={`fixed top-4 right-4 z-20 backdrop-blur-md bg-white/60 hover:bg-white/80 transition-all duration-300 rounded-full px-3.5 py-1.5 shadow-[0_4px_16px_rgba(0,0,0,0.15)] flex items-center space-x-2 text-xs text-stone-700 ${
+      className={`fixed top-4 right-4 z-20 backdrop-blur-md bg-white/70 hover:bg-white/90 transition-all duration-300 rounded-full pl-3.5 pr-2 py-1.5 shadow-[0_4px_16px_rgba(0,0,0,0.15)] flex items-center space-x-2.5 text-xs text-stone-700 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
       }`}
     >
@@ -50,6 +58,43 @@ export const PhotoCredit: React.FC<PhotoCreditProps> = ({ photo, isVisible }) =>
           className="hover:underline text-stone-900 font-semibold"
         >
           Unsplash
+        </a>
+      </div>
+
+      <div className="flex items-center space-x-1 pl-1 border-l border-stone-300/80">
+        {/* お気に入り（Like）ボタン */}
+        {onToggleFavorite && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite();
+            }}
+            title={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
+            aria-label={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
+            className="p-1 rounded-full hover:bg-stone-200/70 transition-colors"
+          >
+            <Heart
+              className={`w-3.5 h-3.5 transition-colors ${
+                isFavorite
+                  ? 'fill-rose-500 text-rose-500 scale-110'
+                  : 'text-stone-500 hover:text-rose-500'
+              }`}
+            />
+          </button>
+        )}
+
+        {/* 元画像ダウンロード/表示リンク */}
+        <a
+          href={photo.urls.full}
+          target="_blank"
+          rel="noopener noreferrer"
+          download
+          title="Open original high-res photo"
+          aria-label="Open original high-res photo"
+          className="p-1 text-stone-500 hover:text-stone-900 rounded-full hover:bg-stone-200/70 transition-colors"
+        >
+          <Download className="w-3.5 h-3.5" />
         </a>
       </div>
     </aside>
