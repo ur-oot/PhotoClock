@@ -135,51 +135,31 @@ export default function App() {
       onMouseMove={handleMouseMove}
       className={`relative w-screen h-screen overflow-hidden flex items-center justify-center select-none transition-all duration-700 ${
         isGalleryMatteEnabled
-          ? 'p-2 sm:p-4 md:p-6 lg:p-8'
+          ? 'p-5 sm:p-8 md:p-12 lg:p-16'
           : 'p-0'
       }`}
       style={{
-        backgroundColor: isGalleryMatteEnabled ? '#141210' : '#0c0a09',
-        backgroundImage: isGalleryMatteEnabled
-          ? 'radial-gradient(ellipse 90% 70% at 50% 15%, rgba(55, 48, 42, 0.45) 0%, rgba(20, 18, 16, 0.95) 75%, #0d0b0a 100%)'
-          : 'none',
+        backgroundColor: isGalleryMatteEnabled
+          ? (activeMatteColor === 'white' ? '#ede9e2' : '#1a1918')
+          : '#0c0a09',
       }}
     >
-      {/* 台紙（Matte Board / パスパルトゥー） */}
+      {/* 写真・画像エリア（台紙の中央開口部。白い境界線なし、台紙の厚みによる陰影のみ） */}
       <div
-        className={`relative w-full h-full flex items-center justify-center transition-all duration-700 ${
-          isGalleryMatteEnabled
-            ? 'p-3 sm:p-6 md:p-10 lg:p-14 rounded-sm sm:rounded-md'
-            : 'p-0'
+        className={`relative w-full h-full flex items-center justify-center overflow-hidden transition-all duration-700 ${
+          isGalleryMatteEnabled ? 'rounded-[2px]' : ''
         }`}
         style={
           isGalleryMatteEnabled
             ? {
-                backgroundColor: activeMatteColor === 'white' ? '#ede9e2' : '#1a1918',
                 boxShadow:
                   activeMatteColor === 'white'
-                    ? '0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 10px 25px -5px rgba(0, 0, 0, 0.5), inset 0 1px 3px rgba(0, 0, 0, 0.15)'
-                    : '0 25px 60px -15px rgba(0, 0, 0, 0.95), 0 10px 25px -5px rgba(0, 0, 0, 0.7), inset 0 1px 3px rgba(0, 0, 0, 0.4)',
+                    ? 'inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.15)'
+                    : 'inset 0 2px 6px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35)',
               }
             : undefined
         }
       >
-        {/* 写真・画像エリア（台紙の窓に収まる。白い境界線なし、台紙の厚みによる陰影のみ） */}
-        <div
-          className={`relative w-full h-full flex items-center justify-center overflow-hidden transition-all duration-700 ${
-            isGalleryMatteEnabled ? 'rounded-[2px]' : ''
-          }`}
-          style={
-            isGalleryMatteEnabled
-              ? {
-                  boxShadow:
-                    activeMatteColor === 'white'
-                      ? 'inset 0 3px 8px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.15)'
-                      : 'inset 0 3px 8px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.3)',
-                }
-              : undefined
-          }
-        >
           {/* シネマティック背景レイヤー (Ken Burns & ダブルバッファクロスフェード) */}
           <CinematicBackground
             photoUrl={photoUrl}
@@ -232,7 +212,6 @@ export default function App() {
             />
           </main>
         </div>
-      </div>
 
       {/* 設定モーダル */}
       <SettingsModal
