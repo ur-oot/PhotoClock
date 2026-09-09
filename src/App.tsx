@@ -47,6 +47,9 @@ export default function App() {
     language,
     setLanguage,
     resolvedLanguage,
+    clockLanguage,
+    setClockLanguage,
+    resolvedClockLanguage,
   } = usePhotoSettings();
 
   const { t } = useTranslation(language);
@@ -61,7 +64,7 @@ export default function App() {
     clearHistory,
   } = usePhotoFavorites();
 
-  const clock = useClock(timeFormat, resolvedLanguage);
+  const clock = useClock(timeFormat, resolvedClockLanguage);
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
   const zenTimer = useZenTimer();
   const wakeLock = useWakeLock();
@@ -369,7 +372,7 @@ export default function App() {
             transform: `translate3d(${pixelShift.offset.x}px, ${pixelShift.offset.y}px, 0)`,
           }}
         >
-          <ClockDisplay clock={clock} typographyStyle={typographyStyle} language={resolvedLanguage} />
+          <ClockDisplay clock={clock} typographyStyle={typographyStyle} language={resolvedClockLanguage} />
           <ZenTimerBar
             zenTimer={zenTimer}
             isControlsVisible={isControlsVisible && !isModalOpen && !isHelpOpen}
@@ -397,6 +400,9 @@ export default function App() {
         language={language}
         setLanguage={setLanguage}
         resolvedLanguage={resolvedLanguage}
+        clockLanguage={clockLanguage}
+        setClockLanguage={setClockLanguage}
+        resolvedClockLanguage={resolvedClockLanguage}
         updateIntervalTime={updateIntervalTime}
         setUpdateIntervalTime={setUpdateIntervalTime}
         selectedCollection={selectedCollection}

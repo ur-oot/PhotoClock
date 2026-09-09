@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import type { UnsplashCollection } from '../types/unsplash';
-import type { LanguageMode } from '../locales';
+import type { LanguageMode, ClockLanguageMode } from '../locales';
 import { resolveLanguage } from '../locales';
 
 export type TimeFormat = '12h' | '24h';
 export type TypographyStyle = 'sans' | 'serif' | 'mono';
 export type MatteColor = 'auto' | 'white' | 'black';
-export type { LanguageMode };
+export type { LanguageMode, ClockLanguageMode };
 
 const STORAGE_KEY_INTERVAL = 'photoclock_update_interval';
 const STORAGE_KEY_COLLECTION = 'photoclock_selected_collection';
@@ -19,6 +19,7 @@ const STORAGE_KEY_MATTE_COLOR = 'photoclock_gallery_matte_color';
 const STORAGE_KEY_SUN_MOOD = 'photoclock_sun_mood_enabled';
 const STORAGE_KEY_NIGHT_DIMMING = 'photoclock_night_dimming_enabled';
 const STORAGE_KEY_LANGUAGE = 'photoclock_language';
+const STORAGE_KEY_CLOCK_LANGUAGE = 'photoclock_clock_language';
 
 export interface TypographyOption {
   id: TypographyStyle;
@@ -207,6 +208,18 @@ export function usePhotoSettings() {
     return 'auto';
   });
 
+  const [clockLanguage, setClockLanguageState] = useState<ClockLanguageMode>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_CLOCK_LANGUAGE);
+      if (saved === 'sync' || saved === 'en' || saved === 'ja') {
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+    return 'sync';
+  });
+
   const setUpdateIntervalTime = (seconds: number) => {
     setUpdateIntervalTimeState(seconds);
     try {
@@ -314,7 +327,17 @@ export function usePhotoSettings() {
     }
   };
 
+  const setClockLanguage = (mode: ClockLanguageMode) => {
+    setClockLanguageState(mode);
+    try {
+      localStorage.setItem(STORAGE_KEY_CLOCK_LANGUAGE, mode);
+    } catch {
+      // ignore
+    }
+  };
+
   const resolvedLanguage = resolveLanguage(language);
+  const resolvedClockLanguage = clockLanguage === 'sync' ? resolvedLanguage : clockLanguage;
 
   return {
     updateIntervalTime,
@@ -340,5 +363,8 @@ export function usePhotoSettings() {
     language,
     setLanguage,
     resolvedLanguage,
+    clockLanguage,
+    setClockLanguage,
+    resolvedClockLanguage,
   };
 }

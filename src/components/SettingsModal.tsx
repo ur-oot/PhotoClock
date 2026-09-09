@@ -9,6 +9,7 @@ import {
   type TypographyStyle,
   type MatteColor,
   type LanguageMode,
+  type ClockLanguageMode,
 } from '../hooks/usePhotoSettings';
 import { getSolarMoodInfo } from '../utils/sunCalc';
 import { useTranslation } from '../hooks/useTranslation';
@@ -34,6 +35,9 @@ interface SettingsModalProps {
   language: LanguageMode;
   setLanguage: (lang: LanguageMode) => void;
   resolvedLanguage: ResolvedLanguage;
+  clockLanguage: ClockLanguageMode;
+  setClockLanguage: (lang: ClockLanguageMode) => void;
+  resolvedClockLanguage: ResolvedLanguage;
   updateIntervalTime: number;
   setUpdateIntervalTime: (seconds: number) => void;
   selectedCollection: UnsplashCollection | null;
@@ -74,6 +78,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   language,
   setLanguage,
   resolvedLanguage: _resolvedLanguage,
+  clockLanguage,
+  setClockLanguage,
+  resolvedClockLanguage: _resolvedClockLanguage,
   updateIntervalTime,
   setUpdateIntervalTime,
   selectedCollection,
@@ -275,6 +282,50 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
               {t('settings.general.languageDesc')}
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              {t('settings.general.clockLanguageTitle')}
+            </h3>
+            <div className="flex items-center max-w-xs bg-stone-200/70 p-1 rounded-lg border border-stone-300">
+              <button
+                type="button"
+                onClick={() => setClockLanguage('sync')}
+                className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all ${
+                  clockLanguage === 'sync'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                {t('settings.general.clockLanguageSync')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setClockLanguage('en')}
+                className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all ${
+                  clockLanguage === 'en'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                {t('settings.general.clockLanguageEn')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setClockLanguage('ja')}
+                className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all ${
+                  clockLanguage === 'ja'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                {t('settings.general.clockLanguageJa')}
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              {t('settings.general.clockLanguageDesc')}
             </p>
           </div>
 

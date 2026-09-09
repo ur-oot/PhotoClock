@@ -1,4 +1,5 @@
 export type LanguageMode = 'auto' | 'en' | 'ja';
+export type ClockLanguageMode = 'sync' | 'en' | 'ja';
 export type ResolvedLanguage = 'en' | 'ja';
 
 export interface TranslationDictionary {
@@ -28,6 +29,11 @@ export interface TranslationDictionary {
       languageAuto: string;
       languageEn: string;
       languageJa: string;
+      clockLanguageTitle: string;
+      clockLanguageDesc: string;
+      clockLanguageSync: string;
+      clockLanguageEn: string;
+      clockLanguageJa: string;
       updateIntervalTitle: string;
       updateIntervalDesc: string;
       timeFormatTitle: string;
