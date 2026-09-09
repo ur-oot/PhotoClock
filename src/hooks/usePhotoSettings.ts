@@ -3,7 +3,7 @@ import type { UnsplashCollection } from '../types/unsplash';
 
 export type TimeFormat = '12h' | '24h';
 export type TypographyStyle = 'sans' | 'serif' | 'mono';
-export type MatteColor = 'white' | 'black';
+export type MatteColor = 'auto' | 'white' | 'black';
 
 const STORAGE_KEY_INTERVAL = 'photoclock_update_interval';
 const STORAGE_KEY_COLLECTION = 'photoclock_selected_collection';
@@ -149,13 +149,13 @@ export function usePhotoSettings() {
   const [matteColor, setMatteColorState] = useState<MatteColor>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_MATTE_COLOR);
-      if (saved === 'white' || saved === 'black') {
+      if (saved === 'auto' || saved === 'white' || saved === 'black') {
         return saved;
       }
     } catch {
       // ignore
     }
-    return 'white';
+    return 'auto';
   });
 
   const setUpdateIntervalTime = (seconds: number) => {

@@ -366,26 +366,39 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="mt-2.5 flex items-center max-w-xs bg-stone-200/70 p-1 rounded-lg border border-stone-300">
                 <button
                   type="button"
+                  onClick={() => setMatteColor('auto')}
+                  className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1 ${
+                    matteColor === 'auto'
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                  title="Automatically choose matte color based on photo brightness"
+                >
+                  <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#ede9e2] to-[#1c1a19] border border-stone-400/60 inline-block" />
+                  <span>Auto</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => setMatteColor('white')}
-                  className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1.5 ${
+                  className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1 ${
                     matteColor === 'white'
                       ? 'bg-white text-stone-900 shadow-sm'
                       : 'text-stone-600 hover:text-stone-900'
                   }`}
                 >
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ede9e2] border border-stone-400/60 inline-block" />
+                  <span className="w-2 h-2 rounded-full bg-[#ede9e2] border border-stone-400/60 inline-block" />
                   <span>White</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setMatteColor('black')}
-                  className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1.5 ${
+                  className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1 ${
                     matteColor === 'black'
                       ? 'bg-white text-stone-900 shadow-sm'
                       : 'text-stone-600 hover:text-stone-900'
                   }`}
                 >
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#1c1a19] border border-stone-600 inline-block" />
+                  <span className="w-2 h-2 rounded-full bg-[#1c1a19] border border-stone-600 inline-block" />
                   <span>Black</span>
                 </button>
               </div>
