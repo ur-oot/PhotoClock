@@ -1,36 +1,36 @@
 import React from 'react';
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react';
-import type { useZenTimer } from '../hooks/useZenTimer';
+import type { usePomodoroTimer } from '../hooks/usePomodoroTimer';
 import { useTranslation } from '../hooks/useTranslation';
 import type { LanguageMode } from '../locales';
 
-interface ZenTimerBarProps {
-  zenTimer: ReturnType<typeof useZenTimer>;
+interface PomodoroTimerBarProps {
+  pomodoroTimer: ReturnType<typeof usePomodoroTimer>;
   isControlsVisible: boolean;
   language?: LanguageMode;
 }
 
-export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
-  zenTimer,
+export const PomodoroTimerBar: React.FC<PomodoroTimerBarProps> = ({
+  pomodoroTimer,
   isControlsVisible,
   language = 'auto',
 }) => {
   const { t } = useTranslation(language);
 
-  if (!zenTimer.isEnabled) return null;
+  if (!pomodoroTimer.isEnabled) return null;
 
-  const isWork = zenTimer.phase === 'work';
-  const progressPercent = Math.round(zenTimer.progress * 100);
-  const phaseLabel = isWork ? t('zenTimer.focus') : t('zenTimer.break');
+  const isWork = pomodoroTimer.phase === 'work';
+  const progressPercent = Math.round(pomodoroTimer.progress * 100);
+  const phaseLabel = isWork ? t('pomodoroTimer.focus') : t('pomodoroTimer.break');
 
   return (
     <div className="mt-4 flex flex-col items-center select-none transition-all duration-300">
       {/* 極細プログレスインジケーター */}
       <div
         className={`w-48 sm:w-64 h-1 rounded-full bg-white/20 backdrop-blur-md overflow-hidden relative shadow-[0_1px_4px_rgba(0,0,0,0.2)] transition-all ${
-          zenTimer.isCompletedPulse ? 'ring-2 ring-white animate-pulse' : ''
+          pomodoroTimer.isCompletedPulse ? 'ring-2 ring-white animate-pulse' : ''
         }`}
-        title={t('zenTimer.tooltip', {
+        title={t('pomodoroTimer.tooltip', {
           phase: phaseLabel,
           percent: progressPercent,
         })}
@@ -41,7 +41,7 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
               ? 'bg-gradient-to-r from-amber-400 to-orange-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]'
               : 'bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]'
           }`}
-          style={{ width: `${zenTimer.progress * 100}%` }}
+          style={{ width: `${pomodoroTimer.progress * 100}%` }}
         />
       </div>
 
@@ -63,19 +63,19 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
         </span>
 
         <span className="font-mono font-medium text-[11px] text-stone-700">
-          {zenTimer.formattedRemaining}
+          {pomodoroTimer.formattedRemaining}
         </span>
 
         <div className="w-px h-3 bg-stone-400/50 my-auto" />
 
         {/* 再生 / 一時停止ボタン */}
         <button
-          onClick={zenTimer.togglePlay}
-          aria-label={zenTimer.isRunning ? t('zenTimer.pause') : t('zenTimer.start')}
-          title={zenTimer.isRunning ? t('zenTimer.pause') : t('zenTimer.start')}
-          className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-800"
+          onClick={pomodoroTimer.togglePlay}
+          aria-label={pomodoroTimer.isRunning ? t('pomodoroTimer.pause') : t('pomodoroTimer.start')}
+          title={pomodoroTimer.isRunning ? t('pomodoroTimer.pause') : t('pomodoroTimer.start')}
+          className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-800 cursor-pointer"
         >
-          {zenTimer.isRunning ? (
+          {pomodoroTimer.isRunning ? (
             <Pause className="w-3.5 h-3.5" />
           ) : (
             <Play className="w-3.5 h-3.5 fill-current" />
@@ -84,20 +84,20 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
 
         {/* フェーズスキップボタン */}
         <button
-          onClick={() => zenTimer.switchPhase(isWork ? 'break' : 'work')}
-          aria-label={t('zenTimer.skip')}
-          title={t('zenTimer.skip')}
-          className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-600 hover:text-stone-900"
+          onClick={() => pomodoroTimer.switchPhase(isWork ? 'break' : 'work')}
+          aria-label={t('pomodoroTimer.skip')}
+          title={t('pomodoroTimer.skip')}
+          className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-600 hover:text-stone-900 cursor-pointer"
         >
           <SkipForward className="w-3.5 h-3.5" />
         </button>
 
         {/* リセットボタン */}
         <button
-          onClick={zenTimer.reset}
-          aria-label={t('zenTimer.reset')}
-          title={t('zenTimer.reset')}
-          className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-600 hover:text-stone-900"
+          onClick={pomodoroTimer.reset}
+          aria-label={t('pomodoroTimer.reset')}
+          title={t('pomodoroTimer.reset')}
+          className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-600 hover:text-stone-900 cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
@@ -105,3 +105,5 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
     </div>
   );
 };
+
+export { PomodoroTimerBar as ZenTimerBar };

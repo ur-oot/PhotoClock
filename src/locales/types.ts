@@ -58,8 +58,8 @@ export interface TranslationDictionary {
       typographySerifDesc: string;
       typographyMono: string;
       typographyMonoDesc: string;
-      zenTimerTitle: string;
-      zenTimerDesc: string;
+      pomodoroTimerTitle: string;
+      pomodoroTimerDesc: string;
       cinematicMotionTitle: string;
       cinematicMotionDesc: string;
       screenAwakeTitle: string;
@@ -145,7 +145,7 @@ export interface TranslationDictionary {
     fullscreenExit: string;
     shortcutsHelp: string;
   };
-  zenTimer: {
+  pomodoroTimer: {
     focus: string;
     break: string;
     tooltip: string;
@@ -159,9 +159,9 @@ export interface TranslationDictionary {
     changingPhoto: string;
     addedToFavorites: string;
     removedFromFavorites: string;
-    zenTimerStarted: string;
-    zenTimerPaused: string;
-    zenTimerResumed: string;
+    pomodoroTimerStarted: string;
+    pomodoroTimerPaused: string;
+    pomodoroTimerResumed: string;
     historyCleared: string;
   };
 }

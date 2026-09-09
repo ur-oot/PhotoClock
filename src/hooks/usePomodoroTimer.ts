@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-export type ZenTimerPhase = 'work' | 'break';
+export type PomodoroPhase = 'work' | 'break';
+export type ZenTimerPhase = PomodoroPhase;
 
-export interface ZenTimerState {
+export interface PomodoroTimerState {
   isEnabled: boolean;
-  phase: ZenTimerPhase;
+  phase: PomodoroPhase;
   isRunning: boolean;
   remainingSeconds: number;
   totalSeconds: number;
@@ -12,18 +13,24 @@ export interface ZenTimerState {
   isCompletedPulse: boolean;
   formattedRemaining: string;
 }
+export type ZenTimerState = PomodoroTimerState;
 
-const STORAGE_KEY_ZEN_ENABLED = 'photoclock_zen_timer_enabled';
+const STORAGE_KEY_POMODORO_ENABLED = 'photoclock_pomodoro_timer_enabled';
+const LEGACY_STORAGE_KEY_ZEN_ENABLED = 'photoclock_zen_timer_enabled';
 
 const WORK_DURATION = 25 * 60; // 25分 (1500秒)
 const BREAK_DURATION = 5 * 60;  // 5分 (300秒)
 
-export function useZenTimer() {
+export function usePomodoroTimer() {
   const [isEnabled, setIsEnabledState] = useState<boolean>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY_ZEN_ENABLED);
+      const saved = localStorage.getItem(STORAGE_KEY_POMODORO_ENABLED);
       if (saved !== null) {
         return saved === 'true';
+      }
+      const legacySaved = localStorage.getItem(LEGACY_STORAGE_KEY_ZEN_ENABLED);
+      if (legacySaved !== null) {
+        return legacySaved === 'true';
       }
     } catch {
       // ignore
@@ -31,7 +38,7 @@ export function useZenTimer() {
     return false; // デフォルトはOFF（アンビエント時計としての初期状態を尊重）
   });
 
-  const [phase, setPhase] = useState<ZenTimerPhase>('work');
+  const [phase, setPhase] = useState<PomodoroPhase>('work');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [remainingSeconds, setRemainingSeconds] = useState<number>(WORK_DURATION);
   const [isCompletedPulse, setIsCompletedPulse] = useState<boolean>(false);
@@ -50,7 +57,7 @@ export function useZenTimer() {
   const setIsEnabled = (enabled: boolean) => {
     setIsEnabledState(enabled);
     try {
-      localStorage.setItem(STORAGE_KEY_ZEN_ENABLED, String(enabled));
+      localStorage.setItem(STORAGE_KEY_POMODORO_ENABLED, String(enabled));
     } catch {
       // ignore
     }
@@ -89,7 +96,7 @@ export function useZenTimer() {
     setIsCompletedPulse(false);
   }, [phase]);
 
-  const switchPhase = useCallback((nextPhase: ZenTimerPhase) => {
+  const switchPhase = useCallback((nextPhase: PomodoroPhase) => {
     setPhase(nextPhase);
     const newDuration = nextPhase === 'work' ? WORK_DURATION : BREAK_DURATION;
     setRemainingSeconds(newDuration);

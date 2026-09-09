@@ -5,11 +5,11 @@ import { usePhotoSettings } from './hooks/usePhotoSettings';
 import { usePhotoManager } from './hooks/usePhotoManager';
 import { usePhotoFavorites } from './hooks/usePhotoFavorites';
 import { useFullscreen } from './hooks/useFullscreen';
-import { useZenTimer } from './hooks/useZenTimer';
+import { usePomodoroTimer } from './hooks/usePomodoroTimer';
 import { useWakeLock } from './hooks/useWakeLock';
 import { usePixelShift } from './hooks/usePixelShift';
 import { ClockDisplay } from './components/ClockDisplay';
-import { ZenTimerBar } from './components/ZenTimerBar';
+import { PomodoroTimerBar } from './components/PomodoroTimerBar';
 import { PhotoCredit } from './components/PhotoCredit';
 import { SettingsModal } from './components/SettingsModal';
 import { CinematicBackground } from './components/CinematicBackground';
@@ -66,7 +66,7 @@ export default function App() {
 
   const clock = useClock(timeFormat, resolvedClockLanguage);
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
-  const zenTimer = useZenTimer();
+  const pomodoroTimer = usePomodoroTimer();
   const wakeLock = useWakeLock();
   const pixelShift = usePixelShift();
 
@@ -201,17 +201,17 @@ export default function App() {
         return;
       }
 
-      // Tキー: 禅ポモドーロタイマーの開始/一時停止
+      // Tキー: ポモドーロタイマーの開始/一時停止
       if (e.key === 't' || e.key === 'T') {
         e.preventDefault();
-        if (!zenTimer.isEnabled) {
-          zenTimer.setIsEnabled(true);
-          zenTimer.start();
-          showToast(t('toast.zenTimerStarted'));
+        if (!pomodoroTimer.isEnabled) {
+          pomodoroTimer.setIsEnabled(true);
+          pomodoroTimer.start();
+          showToast(t('toast.pomodoroTimerStarted'));
         } else {
-          const nextRunning = !zenTimer.isRunning;
-          zenTimer.togglePlay();
-          showToast(nextRunning ? t('toast.zenTimerResumed') : t('toast.zenTimerPaused'));
+          const nextRunning = !pomodoroTimer.isRunning;
+          pomodoroTimer.togglePlay();
+          showToast(nextRunning ? t('toast.pomodoroTimerResumed') : t('toast.pomodoroTimerPaused'));
         }
         return;
       }
@@ -230,7 +230,7 @@ export default function App() {
     photo,
     isFavorite,
     toggleFavorite,
-    zenTimer,
+    pomodoroTimer,
     t,
   ]);
 
@@ -378,8 +378,8 @@ export default function App() {
             }}
           >
             <ClockDisplay clock={clock} typographyStyle={typographyStyle} language={resolvedClockLanguage} />
-            <ZenTimerBar
-              zenTimer={zenTimer}
+            <PomodoroTimerBar
+              pomodoroTimer={pomodoroTimer}
               isControlsVisible={isControlsVisible && !isModalOpen && !isHelpOpen}
               language={language}
             />
@@ -430,8 +430,8 @@ export default function App() {
         setIsSunMoodEnabled={setIsSunMoodEnabled}
         isNightDimmingEnabled={isNightDimmingEnabled}
         setIsNightDimmingEnabled={setIsNightDimmingEnabled}
-        isZenTimerEnabled={zenTimer.isEnabled}
-        setIsZenTimerEnabled={zenTimer.setIsEnabled}
+        isPomodoroTimerEnabled={pomodoroTimer.isEnabled}
+        setIsPomodoroTimerEnabled={pomodoroTimer.setIsEnabled}
         isWakeLockEnabled={wakeLock.isEnabled}
         setIsWakeLockEnabled={wakeLock.setIsEnabled}
         isPixelShiftEnabled={pixelShift.isEnabled}
