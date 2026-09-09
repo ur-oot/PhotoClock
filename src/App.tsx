@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, Maximize, Minimize } from 'lucide-react';
 import { useClock } from './hooks/useClock';
 import { usePhotoSettings } from './hooks/usePhotoSettings';
 import { usePhotoManager } from './hooks/usePhotoManager';
 import { usePhotoFavorites } from './hooks/usePhotoFavorites';
+import { useFullscreen } from './hooks/useFullscreen';
 import { ClockDisplay } from './components/ClockDisplay';
 import { PhotoCredit } from './components/PhotoCredit';
 import { SettingsModal } from './components/SettingsModal';
@@ -34,6 +35,7 @@ export default function App() {
   } = usePhotoFavorites();
 
   const clock = useClock(timeFormat);
+  const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
 
   const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
@@ -45,6 +47,29 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isControlsVisible, setIsControlsVisible] = useState<boolean>(true);
   const hideControlsTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Fキーによる全画面切り替えショートカット
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        isModalOpen ||
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      ) {
+        return;
+      }
+      if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isModalOpen, toggleFullscreen]);
 
   // マウス動作時にコントローラーを表示し、3.5秒無操作でフェードアウト
   const handleMouseMove = () => {
@@ -78,18 +103,34 @@ export default function App() {
         isCinematicMotionEnabled={isCinematicMotionEnabled}
       />
 
-      {/* 左上: 設定メニューボタン */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        aria-label="Open settings"
-        className={`fixed top-4 left-4 z-30 w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-300 ${
+      {/* 左上: 操作コントロール群（設定メニュー & フルスクリーン） */}
+      <div
+        className={`fixed top-4 left-4 z-30 flex items-center space-x-2 transition-all duration-300 ${
           isControlsVisible || isModalOpen
             ? 'opacity-100 translate-y-0'
             : 'opacity-0 -translate-y-2 pointer-events-none'
         }`}
       >
-        <Menu className="w-5 h-5" />
-      </button>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          aria-label="Open settings"
+          title="設定メニュー"
+          className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        {isFullscreenSupported && (
+          <button
+            onClick={toggleFullscreen}
+            aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+            title={isFullscreen ? '全画面表示を終了 (F)' : '全画面表示 (F)'}
+            className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
+          >
+            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+          </button>
+        )}
+      </div>
 
       {/* 右上: 撮影者クレジット & お気に入りボタン */}
       <PhotoCredit
