@@ -1,12 +1,13 @@
 import React from 'react';
-import type { ClockState } from '../hooks/useClock';
-import type { TypographyStyle } from '../hooks/usePhotoSettings';
+import { useClock, type ClockState } from '../hooks/useClock';
+import type { TypographyStyle, TimeFormat } from '../hooks/usePhotoSettings';
 import type { ResolvedLanguage } from '../locales';
 import type { WeatherData, TemperatureUnit } from '../hooks/useWeather';
 import { WeatherIcon } from './WeatherIcon';
 
 interface ClockDisplayProps {
-  clock: ClockState;
+  timeFormat?: TimeFormat;
+  clock?: ClockState;
   typographyStyle?: TypographyStyle;
   language?: ResolvedLanguage;
   weather?: WeatherData | null;
@@ -15,6 +16,7 @@ interface ClockDisplayProps {
 }
 
 export const ClockDisplay: React.FC<ClockDisplayProps> = ({
+  timeFormat = '12h',
   clock,
   typographyStyle = 'sans',
   language = 'en',
@@ -22,6 +24,8 @@ export const ClockDisplay: React.FC<ClockDisplayProps> = ({
   isWeatherEnabled = true,
   temperatureUnit = 'celsius',
 }) => {
+  const internalClock = useClock(timeFormat, language);
+  const activeClock = clock ?? internalClock;
   // フォントスタイル別のクラス設定
   const fontConfig = {
     sans: {
@@ -51,16 +55,16 @@ export const ClockDisplay: React.FC<ClockDisplayProps> = ({
           {language === 'ja' ? (
             <>
               <span>
-                {clock.month}
-                {clock.day}
+                {activeClock.month}
+                {activeClock.day}
               </span>
-              <span>{clock.dayOfWeek}</span>
+              <span>{activeClock.dayOfWeek}</span>
             </>
           ) : (
             <>
-              <span>{clock.dayOfWeek}</span>
-              <span>{clock.day}</span>
-              <span>{clock.month}</span>
+              <span>{activeClock.dayOfWeek}</span>
+              <span>{activeClock.day}</span>
+              <span>{activeClock.month}</span>
             </>
           )}
 
@@ -84,7 +88,7 @@ export const ClockDisplay: React.FC<ClockDisplayProps> = ({
         <div className="flex items-baseline font-semibold text-stone-900 leading-none tabular-nums">
           {/* 時 */}
           <span className={`text-[7vw] ${fontConfig.clock} w-[8.2vw] text-center`}>
-            {clock.hours}
+            {activeClock.hours}
           </span>
           {/* コロン */}
           <span className={`text-[6vw] ${fontConfig.colon} mx-1 pb-2 text-stone-700 animate-pulse`}>
@@ -92,7 +96,7 @@ export const ClockDisplay: React.FC<ClockDisplayProps> = ({
           </span>
           {/* 分 */}
           <span className={`text-[7vw] ${fontConfig.clock} w-[8.2vw] text-center`}>
-            {clock.minutes}
+            {activeClock.minutes}
           </span>
           {/* コロン */}
           <span className={`text-[6vw] ${fontConfig.colon} mx-1 pb-2 text-stone-700 animate-pulse`}>
@@ -100,12 +104,12 @@ export const ClockDisplay: React.FC<ClockDisplayProps> = ({
           </span>
           {/* 秒 */}
           <span className={`text-[7vw] ${fontConfig.clock} w-[8.2vw] text-center`}>
-            {clock.seconds}
+            {activeClock.seconds}
           </span>
           {/* AM / PM (12h表示時のみ) */}
-          {clock.meridian && (
+          {activeClock.meridian && (
             <span className="text-[2vw] font-sans font-medium uppercase ml-3 text-stone-600">
-              {clock.meridian}
+              {activeClock.meridian}
             </span>
           )}
         </div>

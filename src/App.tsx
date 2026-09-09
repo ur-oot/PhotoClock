@@ -1,14 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Menu, Maximize, Minimize, Keyboard } from 'lucide-react';
-import { useClock } from './hooks/useClock';
-import { usePhotoSettings } from './hooks/usePhotoSettings';
+import { useSettings } from './contexts/SettingsContext';
 import { usePhotoManager } from './hooks/usePhotoManager';
 import { usePhotoFavorites } from './hooks/usePhotoFavorites';
 import { useFullscreen } from './hooks/useFullscreen';
-import { usePomodoroTimer } from './hooks/usePomodoroTimer';
-import { useWakeLock } from './hooks/useWakeLock';
-import { usePixelShift } from './hooks/usePixelShift';
-import { useWeather } from './hooks/useWeather';
 import { ClockDisplay } from './components/ClockDisplay';
 import { PomodoroTimerBar } from './components/PomodoroTimerBar';
 import { PhotoCredit } from './components/PhotoCredit';
@@ -16,6 +11,7 @@ import { SettingsModal } from './components/SettingsModal';
 import { CinematicBackground } from './components/CinematicBackground';
 import { ShortcutHelpModal } from './components/ShortcutHelpModal';
 import { useTranslation } from './hooks/useTranslation';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import {
   detectImageLuminance,
   getAutoMatteColor,
@@ -26,32 +22,21 @@ import { getSolarMoodInfo } from './utils/sunCalc';
 export default function App() {
   const {
     updateIntervalTime,
-    setUpdateIntervalTime,
     selectedCollection,
-    setSelectedCollection,
     isCinematicMotionEnabled,
-    setIsCinematicMotionEnabled,
     timeFormat,
-    setTimeFormat,
     selectedTopic,
-    setSelectedTopic,
     typographyStyle,
-    setTypographyStyle,
     isGalleryMatteEnabled,
-    setIsGalleryMatteEnabled,
     matteColor,
-    setMatteColor,
     isSunMoodEnabled,
-    setIsSunMoodEnabled,
     isNightDimmingEnabled,
-    setIsNightDimmingEnabled,
     language,
-    setLanguage,
-    resolvedLanguage,
-    clockLanguage,
-    setClockLanguage,
     resolvedClockLanguage,
-  } = usePhotoSettings();
+    weather,
+    pixelShift,
+    pomodoroTimer,
+  } = useSettings();
 
   const { t } = useTranslation(language);
 
@@ -65,12 +50,7 @@ export default function App() {
     clearHistory,
   } = usePhotoFavorites();
 
-  const clock = useClock(timeFormat, resolvedClockLanguage);
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
-  const pomodoroTimer = usePomodoroTimer();
-  const wakeLock = useWakeLock();
-  const pixelShift = usePixelShift();
-  const weather = useWeather();
 
   const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
@@ -126,115 +106,22 @@ export default function App() {
   const activeMatteColor = matteColor === 'auto' ? detectedMatteColor : matteColor;
 
   // キーボードショートカット体系
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // フォーム入力中はスキップ
-      if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLSelectElement
-      ) {
-        return;
-      }
-
-      // Escapeキー
-      if (e.key === 'Escape') {
-        if (isHelpOpen) {
-          setIsHelpOpen(false);
-          return;
-        }
-        if (isModalOpen) {
-          setIsModalOpen(false);
-          return;
-        }
-        if (isZenHide) {
-          setIsZenHide(false);
-          return;
-        }
-      }
-
-      // ? または / キーでショートカットガイドを表示/非表示
-      if (e.key === '?' || (e.key === '/' && !isModalOpen)) {
-        e.preventDefault();
-        setIsHelpOpen((prev) => !prev);
-        return;
-      }
-
-      // ダイアログ表示中は他のショートカットを無効化
-      if (isModalOpen || isHelpOpen) {
-        return;
-      }
-
-      // Hキー: Zen Hide Mode (純粋アート鑑賞モード)
-      if (e.key === 'h' || e.key === 'H') {
-        e.preventDefault();
-        setIsZenHide((prev) => !prev);
-        return;
-      }
-
-      // Zen Hide 中は他の操作を抑制（クリック/Esc/Hで復帰）
-      if (isZenHide) {
-        return;
-      }
-
-      // Fキー: フルスクリーン切り替え
-      if (e.key === 'f' || e.key === 'F') {
-        e.preventDefault();
-        toggleFullscreen();
-        return;
-      }
-
-      // Spaceキー: 背景写真を即時更新
-      if (e.code === 'Space') {
-        e.preventDefault();
-        refreshPhoto();
-        showToast(t('toast.changingPhoto'));
-        return;
-      }
-
-      // Lキー: お気に入りトグル
-      if (e.key === 'l' || e.key === 'L') {
-        e.preventDefault();
-        if (photo) {
-          const willBeFavorite = !isFavorite(photo.id);
-          toggleFavorite(photo);
-          showToast(willBeFavorite ? t('toast.addedToFavorites') : t('toast.removedFromFavorites'));
-        }
-        return;
-      }
-
-      // Tキー: ポモドーロタイマーの開始/一時停止
-      if (e.key === 't' || e.key === 'T') {
-        e.preventDefault();
-        if (!pomodoroTimer.isEnabled) {
-          pomodoroTimer.setIsEnabled(true);
-          pomodoroTimer.start();
-          showToast(t('toast.pomodoroTimerStarted'));
-        } else {
-          const nextRunning = !pomodoroTimer.isRunning;
-          pomodoroTimer.togglePlay();
-          showToast(nextRunning ? t('toast.pomodoroTimerResumed') : t('toast.pomodoroTimerPaused'));
-        }
-        return;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [
+  useKeyboardShortcuts({
     isModalOpen,
+    setIsModalOpen,
     isHelpOpen,
+    setIsHelpOpen,
     isZenHide,
+    setIsZenHide,
     toggleFullscreen,
     refreshPhoto,
     photo,
     isFavorite,
     toggleFavorite,
     pomodoroTimer,
+    showToast,
     t,
-  ]);
+  });
 
   // マウス動作時にコントローラーを表示し、3.5秒無操作でフェードアウト
   const handleMouseMove = () => {
@@ -380,7 +267,7 @@ export default function App() {
             }}
           >
             <ClockDisplay
-              clock={clock}
+              timeFormat={timeFormat}
               typographyStyle={typographyStyle}
               language={resolvedClockLanguage}
               weather={weather.weather}
@@ -412,43 +299,7 @@ export default function App() {
       <SettingsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        language={language}
-        setLanguage={setLanguage}
-        resolvedLanguage={resolvedLanguage}
-        clockLanguage={clockLanguage}
-        setClockLanguage={setClockLanguage}
-        resolvedClockLanguage={resolvedClockLanguage}
-        updateIntervalTime={updateIntervalTime}
-        setUpdateIntervalTime={setUpdateIntervalTime}
-        selectedCollection={selectedCollection}
-        setSelectedCollection={setSelectedCollection}
         onRefreshPhoto={refreshPhoto}
-        isCinematicMotionEnabled={isCinematicMotionEnabled}
-        setIsCinematicMotionEnabled={setIsCinematicMotionEnabled}
-        timeFormat={timeFormat}
-        setTimeFormat={setTimeFormat}
-        selectedTopic={selectedTopic}
-        setSelectedTopic={setSelectedTopic}
-        typographyStyle={typographyStyle}
-        setTypographyStyle={setTypographyStyle}
-        isGalleryMatteEnabled={isGalleryMatteEnabled}
-        setIsGalleryMatteEnabled={setIsGalleryMatteEnabled}
-        matteColor={matteColor}
-        setMatteColor={setMatteColor}
-        isSunMoodEnabled={isSunMoodEnabled}
-        setIsSunMoodEnabled={setIsSunMoodEnabled}
-        isNightDimmingEnabled={isNightDimmingEnabled}
-        setIsNightDimmingEnabled={setIsNightDimmingEnabled}
-        isWeatherEnabled={weather.isEnabled}
-        setIsWeatherEnabled={weather.setIsEnabled}
-        temperatureUnit={weather.unit}
-        setTemperatureUnit={weather.setUnit}
-        isPomodoroTimerEnabled={pomodoroTimer.isEnabled}
-        setIsPomodoroTimerEnabled={pomodoroTimer.setIsEnabled}
-        isWakeLockEnabled={wakeLock.isEnabled}
-        setIsWakeLockEnabled={wakeLock.setIsEnabled}
-        isPixelShiftEnabled={pixelShift.isEnabled}
-        setIsPixelShiftEnabled={pixelShift.setIsEnabled}
         favorites={favorites}
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}

@@ -5,6 +5,8 @@ import './index.css';
 import { registerSW } from 'virtual:pwa-register';
 import { initGA } from './utils/analytics';
 
+import { SettingsProvider } from './contexts/SettingsContext';
+
 // Google Analytics (GA4) の初期化
 initGA();
 
@@ -13,6 +15,8 @@ registerSW({ immediate: true });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <SettingsProvider>
+      <App />
+    </SettingsProvider>
   </React.StrictMode>
 );
