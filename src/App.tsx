@@ -6,6 +6,8 @@ import { usePhotoManager } from './hooks/usePhotoManager';
 import { usePhotoFavorites } from './hooks/usePhotoFavorites';
 import { useFullscreen } from './hooks/useFullscreen';
 import { useZenTimer } from './hooks/useZenTimer';
+import { useWakeLock } from './hooks/useWakeLock';
+import { usePixelShift } from './hooks/usePixelShift';
 import { ClockDisplay } from './components/ClockDisplay';
 import { ZenTimerBar } from './components/ZenTimerBar';
 import { PhotoCredit } from './components/PhotoCredit';
@@ -51,6 +53,8 @@ export default function App() {
   const clock = useClock(timeFormat);
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
   const zenTimer = useZenTimer();
+  const wakeLock = useWakeLock();
+  const pixelShift = usePixelShift();
 
   const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
@@ -332,11 +336,14 @@ export default function App() {
           }
         />
 
-        {/* 中央: 時計表示 & 禅タイマー（Zen Hide時はフェードアウト） */}
+        {/* 中央: 時計表示 & 禅タイマー（Zen Hide時はフェードアウト、Pixel Shiftによる微小シフト適用） */}
         <main
-          className={`relative z-20 flex flex-col items-center transition-opacity duration-700 ${
+          className={`relative z-20 flex flex-col items-center transition-all duration-700 ${
             isZenHide ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
+          style={{
+            transform: `translate3d(${pixelShift.offset.x}px, ${pixelShift.offset.y}px, 0)`,
+          }}
         >
           <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
           <ZenTimerBar
@@ -381,6 +388,10 @@ export default function App() {
         setMatteColor={setMatteColor}
         isZenTimerEnabled={zenTimer.isEnabled}
         setIsZenTimerEnabled={zenTimer.setIsEnabled}
+        isWakeLockEnabled={wakeLock.isEnabled}
+        setIsWakeLockEnabled={wakeLock.setIsEnabled}
+        isPixelShiftEnabled={pixelShift.isEnabled}
+        setIsPixelShiftEnabled={pixelShift.setIsEnabled}
         favorites={favorites}
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}
