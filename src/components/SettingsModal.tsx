@@ -7,6 +7,7 @@ import {
   TYPOGRAPHY_OPTIONS,
   type TimeFormat,
   type TypographyStyle,
+  type MatteColor,
 } from '../hooks/usePhotoSettings';
 
 interface SettingsModalProps {
@@ -27,6 +28,8 @@ interface SettingsModalProps {
   setTypographyStyle: (style: TypographyStyle) => void;
   isGalleryMatteEnabled: boolean;
   setIsGalleryMatteEnabled: (enabled: boolean) => void;
+  matteColor: MatteColor;
+  setMatteColor: (color: MatteColor) => void;
   isZenTimerEnabled: boolean;
   setIsZenTimerEnabled: (enabled: boolean) => void;
   favorites: StoredPhoto[];
@@ -54,6 +57,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setTypographyStyle,
   isGalleryMatteEnabled,
   setIsGalleryMatteEnabled,
+  matteColor,
+  setMatteColor,
   isZenTimerEnabled,
   setIsZenTimerEnabled,
   favorites,
@@ -357,8 +362,36 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 />
               </button>
             </div>
+            {isGalleryMatteEnabled && (
+              <div className="mt-2.5 flex items-center max-w-xs bg-stone-200/70 p-1 rounded-lg border border-stone-300">
+                <button
+                  type="button"
+                  onClick={() => setMatteColor('white')}
+                  className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1.5 ${
+                    matteColor === 'white'
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#ede9e2] border border-stone-400/60 inline-block" />
+                  <span>White</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMatteColor('black')}
+                  className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1.5 ${
+                    matteColor === 'black'
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#1c1a19] border border-stone-600 inline-block" />
+                  <span>Black</span>
+                </button>
+              </div>
+            )}
             <p className="text-xs text-stone-500 mt-1.5">
-              Framed passe-partout border display.
+              Framed passe-partout display.
             </p>
           </div>
         </section>
