@@ -73,6 +73,11 @@ export const ja: TranslationDictionary = {
       sunMoodDesc: '朝・昼・夕方・夜の時間帯に合わせて、写真の雰囲気を自動切り替え。',
       nightDimmingTitle: '夜間の画面減光',
       nightDimmingDesc: '日没後の暗い部屋に合わせて、画面のまぶしさを自動で抑える。',
+      weatherTitle: '現在の天気と気温',
+      weatherDesc: '時計の日付パネルに外気温と天候アイコンを控えめに表示。',
+      temperatureUnit: '温度の単位',
+      temperatureUnitCelsius: '°C',
+      temperatureUnitFahrenheit: '°F',
     },
     topics: {
       title: '写真のテーマ',
