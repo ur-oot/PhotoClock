@@ -95,8 +95,8 @@ interface SettingsModalProps {
   setIsSunMoodEnabled: (enabled: boolean) => void;
   isNightDimmingEnabled: boolean;
   setIsNightDimmingEnabled: (enabled: boolean) => void;
-  isZenTimerEnabled: boolean;
-  setIsZenTimerEnabled: (enabled: boolean) => void;
+  isPomodoroTimerEnabled: boolean;
+  setIsPomodoroTimerEnabled: (enabled: boolean) => void;
   isWakeLockEnabled: boolean;
   setIsWakeLockEnabled: (enabled: boolean) => void;
   isPixelShiftEnabled: boolean;
@@ -138,8 +138,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setIsSunMoodEnabled,
   isNightDimmingEnabled,
   setIsNightDimmingEnabled,
-  isZenTimerEnabled,
-  setIsZenTimerEnabled,
+  isPomodoroTimerEnabled,
+  setIsPomodoroTimerEnabled,
   isWakeLockEnabled,
   setIsWakeLockEnabled,
   isPixelShiftEnabled,
@@ -859,20 +859,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     {language === 'ja' ? 'デバイス維持 & 集中' : 'Device & Focus'}
                   </span>
                   <div className="bg-white rounded-2xl border border-stone-200/80 shadow-xs divide-y divide-stone-100 overflow-hidden">
-                    {/* 禅タイマー */}
+                    {/* ポモドーロタイマー */}
                     <div className="p-4 flex items-center justify-between">
                       <div>
                         <div className="text-xs font-semibold text-stone-900">
-                          {t('settings.general.zenTimerTitle')}
+                          {t('settings.general.pomodoroTimerTitle')}
                         </div>
                         <div className="text-[11px] text-stone-500">
-                          {t('settings.general.zenTimerDesc')}
+                          {t('settings.general.pomodoroTimerDesc')}
                         </div>
                       </div>
                       <ToggleSwitch
-                        checked={isZenTimerEnabled}
-                        onChange={setIsZenTimerEnabled}
-                        ariaLabel="Toggle Zen timer"
+                        checked={isPomodoroTimerEnabled}
+                        onChange={setIsPomodoroTimerEnabled}
+                        ariaLabel="Toggle Pomodoro timer"
                       />
                     </div>
 
