@@ -230,7 +230,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
       {/* ライブサイドインスペクターパネル本体 */}
       <div
-        className="fixed z-50 pointer-events-auto bg-stone-100/95 backdrop-blur-2xl flex flex-col overflow-hidden border border-white/60 shadow-[0_20px_60px_rgba(0,0,0,0.35),0_0_0_1px_rgba(255,255,255,0.4)] transition-all duration-300 ease-out bottom-0 left-0 right-0 max-h-[68vh] rounded-t-3xl border-b-0 md:bottom-3 md:top-3 md:right-3 md:left-auto md:w-[440px] md:max-w-[calc(100vw-24px)] md:max-h-none md:rounded-3xl md:border-b"
+        className="fixed z-50 pointer-events-auto bg-stone-100/95 backdrop-blur-2xl flex flex-col overflow-hidden border border-white/60 shadow-[0_20px_60px_rgba(0,0,0,0.35),0_0_0_1px_rgba(255,255,255,0.4)] transition-all duration-300 ease-out bottom-0 left-0 right-0 max-h-[68vh] rounded-t-3xl border-b-0 md:bottom-3 md:top-3 md:left-3 md:right-auto md:w-[440px] md:max-w-[calc(100vw-24px)] md:max-h-none md:rounded-3xl md:border-b"
         onClick={(e) => e.stopPropagation()}
       >
         {/* モバイル用ドラッグハンドル */}

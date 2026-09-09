@@ -365,10 +365,10 @@ export default function App() {
           language={language}
         />
 
-        {/* 中央: 時計表示 & 禅タイマー（設定オープン時は左側中央へスムーズにリバランス） */}
+        {/* 中央: 時計表示 & 禅タイマー（設定オープン時は右側中央へスムーズにリバランス） */}
         <div
           className={`relative z-20 flex flex-col items-center transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            isModalOpen ? 'md:-translate-x-[220px] -translate-y-[14vh] md:translate-y-0' : 'translate-x-0 translate-y-0'
+            isModalOpen ? 'md:translate-x-[220px] -translate-y-[14vh] md:translate-y-0' : 'translate-x-0 translate-y-0'
           } ${isZenHide ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         >
           <main
