@@ -6,6 +6,8 @@ import { usePhotoManager } from './hooks/usePhotoManager';
 import { usePhotoFavorites } from './hooks/usePhotoFavorites';
 import { useFullscreen } from './hooks/useFullscreen';
 import { useZenTimer } from './hooks/useZenTimer';
+import { useWakeLock } from './hooks/useWakeLock';
+import { usePixelShift } from './hooks/usePixelShift';
 import { ClockDisplay } from './components/ClockDisplay';
 import { ZenTimerBar } from './components/ZenTimerBar';
 import { PhotoCredit } from './components/PhotoCredit';
@@ -41,6 +43,8 @@ export default function App() {
   const clock = useClock(timeFormat);
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
   const zenTimer = useZenTimer();
+  const wakeLock = useWakeLock();
+  const pixelShift = usePixelShift();
 
   const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
@@ -145,8 +149,13 @@ export default function App() {
         onToggleFavorite={photo ? () => toggleFavorite(photo) : undefined}
       />
 
-      {/* 中央: 時計表示 & 禅タイマー */}
-      <main className="relative z-20 flex flex-col items-center">
+      {/* 中央: 時計表示 & 禅タイマー（Pixel Shiftによる微小シフト適用） */}
+      <main
+        className="relative z-20 flex flex-col items-center transition-transform duration-1000 ease-in-out"
+        style={{
+          transform: `translate3d(${pixelShift.offset.x}px, ${pixelShift.offset.y}px, 0)`,
+        }}
+      >
         <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
         <ZenTimerBar
           zenTimer={zenTimer}
@@ -173,6 +182,10 @@ export default function App() {
         setTypographyStyle={setTypographyStyle}
         isZenTimerEnabled={zenTimer.isEnabled}
         setIsZenTimerEnabled={zenTimer.setIsEnabled}
+        isWakeLockEnabled={wakeLock.isEnabled}
+        setIsWakeLockEnabled={wakeLock.setIsEnabled}
+        isPixelShiftEnabled={pixelShift.isEnabled}
+        setIsPixelShiftEnabled={pixelShift.setIsEnabled}
         favorites={favorites}
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}
