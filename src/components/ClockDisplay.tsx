@@ -1,15 +1,18 @@
 import React from 'react';
 import type { ClockState } from '../hooks/useClock';
 import type { TypographyStyle } from '../hooks/usePhotoSettings';
+import type { ResolvedLanguage } from '../locales';
 
 interface ClockDisplayProps {
   clock: ClockState;
   typographyStyle?: TypographyStyle;
+  language?: ResolvedLanguage;
 }
 
 export const ClockDisplay: React.FC<ClockDisplayProps> = ({
   clock,
   typographyStyle = 'sans',
+  language = 'en',
 }) => {
   // フォントスタイル別のクラス設定
   const fontConfig = {
@@ -37,9 +40,21 @@ export const ClockDisplay: React.FC<ClockDisplayProps> = ({
         <div
           className={`flex items-center justify-end uppercase text-[1.5vw] min-text-sm md:text-xl lg:text-2xl font-medium text-stone-800 space-x-3 ${fontConfig.date}`}
         >
-          <span>{clock.dayOfWeek}</span>
-          <span>{clock.day}</span>
-          <span>{clock.month}</span>
+          {language === 'ja' ? (
+            <>
+              <span>
+                {clock.month}
+                {clock.day}
+              </span>
+              <span>{clock.dayOfWeek}</span>
+            </>
+          ) : (
+            <>
+              <span>{clock.dayOfWeek}</span>
+              <span>{clock.day}</span>
+              <span>{clock.month}</span>
+            </>
+          )}
         </div>
       </div>
 

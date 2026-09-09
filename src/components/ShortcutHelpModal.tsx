@@ -1,9 +1,12 @@
 import React from 'react';
 import { X, Keyboard } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
+import type { LanguageMode } from '../locales';
 
 interface ShortcutHelpModalProps {
   isOpen: boolean;
   onClose: () => void;
+  language?: LanguageMode;
 }
 
 interface ShortcutItem {
@@ -11,18 +14,24 @@ interface ShortcutItem {
   description: string;
 }
 
-const SHORTCUTS: ShortcutItem[] = [
-  { key: 'Space', description: 'Change background photo' },
-  { key: 'H', description: 'Zen Hide (pure artwork mode)' },
-  { key: 'L', description: 'Add or remove favorite photo' },
-  { key: 'T', description: 'Start or pause Zen timer' },
-  { key: 'F', description: 'Toggle fullscreen' },
-  { key: '?', description: 'Show keyboard shortcuts' },
-  { key: 'Esc', description: 'Close dialog / exit Zen Hide' },
-];
+export const ShortcutHelpModal: React.FC<ShortcutHelpModalProps> = ({
+  isOpen,
+  onClose,
+  language = 'auto',
+}) => {
+  const { t, resolvedLanguage } = useTranslation(language);
 
-export const ShortcutHelpModal: React.FC<ShortcutHelpModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
+
+  const shortcuts: ShortcutItem[] = [
+    { key: 'Space', description: t('shortcuts.space') },
+    { key: 'H', description: t('shortcuts.h') },
+    { key: 'L', description: t('shortcuts.l') },
+    { key: 'T', description: t('shortcuts.t') },
+    { key: 'F', description: t('shortcuts.f') },
+    { key: '?', description: t('shortcuts.help') },
+    { key: 'Esc', description: t('shortcuts.esc') },
+  ];
 
   return (
     <div
@@ -39,20 +48,20 @@ export const ShortcutHelpModal: React.FC<ShortcutHelpModalProps> = ({ isOpen, on
               <Keyboard className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold tracking-tight text-stone-900">
-              Keyboard Shortcuts
+              {t('shortcuts.title')}
             </h2>
           </div>
           <button
             onClick={onClose}
             className="p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition-colors"
-            aria-label="Close shortcuts dialog"
+            aria-label={t('common.close')}
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         <div className="space-y-3">
-          {SHORTCUTS.map((sc) => (
+          {shortcuts.map((sc) => (
             <div
               key={sc.key}
               className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-stone-100/60 transition-colors"
@@ -67,7 +76,17 @@ export const ShortcutHelpModal: React.FC<ShortcutHelpModalProps> = ({ isOpen, on
 
         <div className="mt-6 pt-4 border-t border-stone-200/80 text-center">
           <p className="text-[11px] text-stone-400">
-            Press <kbd className="font-mono text-stone-600 font-medium">?</kbd> or <kbd className="font-mono text-stone-600 font-medium">Esc</kbd> anytime to toggle this guide.
+            {resolvedLanguage === 'ja' ? (
+              <>
+                <kbd className="font-mono text-stone-600 font-medium">?</kbd> または{' '}
+                <kbd className="font-mono text-stone-600 font-medium">Esc</kbd> でいつでもこの一覧を開閉できます。
+              </>
+            ) : (
+              <>
+                Press <kbd className="font-mono text-stone-600 font-medium">?</kbd> or{' '}
+                <kbd className="font-mono text-stone-600 font-medium">Esc</kbd> anytime to toggle this guide.
+              </>
+            )}
           </p>
         </div>
       </div>

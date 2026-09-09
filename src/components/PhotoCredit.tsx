@@ -1,12 +1,15 @@
 import React from 'react';
 import { Heart, Download } from 'lucide-react';
 import type { UnsplashPhoto } from '../types/unsplash';
+import { useTranslation } from '../hooks/useTranslation';
+import type { LanguageMode } from '../locales';
 
 interface PhotoCreditProps {
   photo: UnsplashPhoto | null;
   isVisible: boolean;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  language?: LanguageMode;
 }
 
 export const PhotoCredit: React.FC<PhotoCreditProps> = ({
@@ -14,7 +17,10 @@ export const PhotoCredit: React.FC<PhotoCreditProps> = ({
   isVisible,
   isFavorite = false,
   onToggleFavorite,
+  language = 'auto',
 }) => {
+  const { t, resolvedLanguage } = useTranslation(language);
+
   if (!photo) return null;
 
   const user = photo.user;
@@ -29,7 +35,7 @@ export const PhotoCredit: React.FC<PhotoCreditProps> = ({
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
       }`}
     >
-      <span className="text-stone-500">Photo by</span>
+      <span className="text-stone-500">{t('photoCredit.by')}</span>
 
       {user.profile_image?.small && (
         <a href={userProfileUrl} target="_blank" rel="noopener noreferrer" className="block">
@@ -50,7 +56,7 @@ export const PhotoCredit: React.FC<PhotoCreditProps> = ({
         >
           {user.name}
         </a>
-        <span className="text-stone-400">on</span>
+        <span className="text-stone-400">{t('photoCredit.on')}</span>
         <a
           href={unsplashHomeUrl}
           target="_blank"
@@ -70,8 +76,8 @@ export const PhotoCredit: React.FC<PhotoCreditProps> = ({
               e.stopPropagation();
               onToggleFavorite();
             }}
-            title={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
-            aria-label={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
+            title={isFavorite ? t('photoCredit.removeFavorite') : t('photoCredit.addFavorite')}
+            aria-label={isFavorite ? t('photoCredit.removeFavorite') : t('photoCredit.addFavorite')}
             className="p-1 rounded-full hover:bg-stone-200/70 transition-colors"
           >
             <Heart
@@ -90,8 +96,16 @@ export const PhotoCredit: React.FC<PhotoCreditProps> = ({
           target="_blank"
           rel="noopener noreferrer"
           download
-          title="Open original high-res photo"
-          aria-label="Open original high-res photo"
+          title={
+            resolvedLanguage === 'ja'
+              ? '高解像度オリジナル写真を開く'
+              : 'Open original high-res photo'
+          }
+          aria-label={
+            resolvedLanguage === 'ja'
+              ? '高解像度オリジナル写真を開く'
+              : 'Open original high-res photo'
+          }
           className="p-1 text-stone-500 hover:text-stone-900 rounded-full hover:bg-stone-200/70 transition-colors"
         >
           <Download className="w-3.5 h-3.5" />
