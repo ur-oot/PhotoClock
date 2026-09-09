@@ -23,6 +23,16 @@ export interface TranslationDictionary {
       favorites: string;
       history: string;
     };
+    sections: {
+      clock: string;
+      clockDesc: string;
+      photos: string;
+      photosDesc: string;
+      device: string;
+      deviceDesc: string;
+      library: string;
+      libraryDesc: string;
+    };
     general: {
       languageTitle: string;
       languageDesc: string;
