@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { UnsplashPhoto, UnsplashCollection, StoredPhoto } from '../types/unsplash';
+import { getSolarMoodInfo } from '../utils/sunCalc';
 
 export function usePhotoManager(
   updateIntervalTime: number,
   selectedCollection: UnsplashCollection | null,
   selectedTopic?: string,
-  onPhotoLoaded?: (photo: UnsplashPhoto) => void
+  onPhotoLoaded?: (photo: UnsplashPhoto) => void,
+  isSunMoodEnabled: boolean = true
 ) {
   const [photo, setPhoto] = useState<UnsplashPhoto | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>('');
@@ -37,6 +39,9 @@ export function usePhotoManager(
         endpoint = `/api/photo-collection?collectionId=${selectedCollection.id}&totalPhotos=${selectedCollection.total_photos || 10}`;
       } else if (selectedTopic && selectedTopic !== 'all') {
         endpoint = `/api/photo-random?topics=${encodeURIComponent(selectedTopic)}`;
+      } else if (isSunMoodEnabled) {
+        const mood = getSolarMoodInfo();
+        endpoint = `/api/photo-random?query=${encodeURIComponent(mood.query)}`;
       }
 
       const res = await fetch(endpoint);
@@ -61,12 +66,15 @@ export function usePhotoManager(
     } catch (err) {
       console.error('Failed to load photo:', err);
       setIsErrored(true);
-      // フォールバック用の高品質壁紙画像
-      setPhotoUrl('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2000&q=80');
+      // 太陽フェーズに応じた高品質フォールバック画像
+      const fallback = isSunMoodEnabled
+        ? getSolarMoodInfo().fallbackUrl
+        : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2000&q=80';
+      setPhotoUrl(fallback);
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCollection, selectedTopic, onPhotoLoaded, trackDownload]);
+  }, [selectedCollection, selectedTopic, onPhotoLoaded, trackDownload, isSunMoodEnabled]);
 
   // タイマー更新のスケジュール
   useEffect(() => {

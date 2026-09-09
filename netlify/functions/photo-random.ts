@@ -15,12 +15,15 @@ export default async (req: Request) => {
   const reqUrl = new URL(req.url);
   const topics = reqUrl.searchParams.get("topics");
   const collections = reqUrl.searchParams.get("collections");
+  const query = reqUrl.searchParams.get("query");
 
   const url = new URL("https://api.unsplash.com/photos/random");
-  if (topics && topics !== "all") {
+  if (query) {
+    url.searchParams.set("query", query);
+  } else if (topics && topics !== "all") {
     url.searchParams.set("topics", topics);
   } else if (!collections) {
-    // トピックやコレクションの指定がない場合のデフォルト
+    // トピックやコレクション、クエリの指定がない場合のデフォルト
     url.searchParams.set("topics", "wallpapers");
   }
 
