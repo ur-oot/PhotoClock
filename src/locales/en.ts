@@ -21,6 +21,16 @@ export const en: TranslationDictionary = {
       favorites: 'Favorites',
       history: 'History',
     },
+    sections: {
+      clock: 'Clock & Display',
+      clockDesc: 'Typography, time format, frame, and language.',
+      photos: 'Photos & Mood',
+      photosDesc: 'Update interval, sun-aware lighting, and themes.',
+      device: 'Focus & Device',
+      deviceDesc: 'Zen timer, sleep prevention, and burn-in protection.',
+      library: 'Library',
+      libraryDesc: 'Saved favorite photos and display history.',
+    },
     general: {
       languageTitle: 'Language',
       languageDesc: 'Choose interface language.',
