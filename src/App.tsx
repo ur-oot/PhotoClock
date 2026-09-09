@@ -49,14 +49,7 @@ export default function App() {
     addToHistory
   );
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(() => {
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('modal') === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isControlsVisible, setIsControlsVisible] = useState<boolean>(true);
   const hideControlsTimerRef = useRef<NodeJS.Timeout | null>(null);
 
