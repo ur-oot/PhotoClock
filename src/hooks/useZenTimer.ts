@@ -21,6 +21,10 @@ const BREAK_DURATION = 5 * 60;  // 5分 (300秒)
 export function useZenTimer() {
   const [isEnabled, setIsEnabledState] = useState<boolean>(() => {
     try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('zen') === 'true') {
+        return true;
+      }
       const saved = localStorage.getItem(STORAGE_KEY_ZEN_ENABLED);
       if (saved !== null) {
         return saved === 'true';
