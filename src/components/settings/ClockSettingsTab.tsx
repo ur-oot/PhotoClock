@@ -1,53 +1,31 @@
 import React from 'react';
-import type {
-  TimeFormat,
-  TypographyStyle,
-  MatteColor,
-  LanguageMode,
-  ClockLanguageMode,
-} from '../../hooks/usePhotoSettings';
 import { TYPOGRAPHY_OPTIONS } from '../../hooks/usePhotoSettings';
-import type { TemperatureUnit } from '../../hooks/useWeather';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../contexts/SettingsContext';
 import { ToggleSwitch } from './ToggleSwitch';
 
-interface ClockSettingsTabProps {
-  language: LanguageMode;
-  setLanguage: (lang: LanguageMode) => void;
-  clockLanguage: ClockLanguageMode;
-  setClockLanguage: (mode: ClockLanguageMode) => void;
-  typographyStyle: TypographyStyle;
-  setTypographyStyle: (style: TypographyStyle) => void;
-  timeFormat: TimeFormat;
-  setTimeFormat: (format: TimeFormat) => void;
-  isWeatherEnabled: boolean;
-  setIsWeatherEnabled: (enabled: boolean) => void;
-  temperatureUnit: TemperatureUnit;
-  setTemperatureUnit: (unit: TemperatureUnit) => void;
-  isGalleryMatteEnabled: boolean;
-  setIsGalleryMatteEnabled: (enabled: boolean) => void;
-  matteColor: MatteColor;
-  setMatteColor: (color: MatteColor) => void;
-}
+export const ClockSettingsTab: React.FC = () => {
+  const {
+    language,
+    setLanguage,
+    clockLanguage,
+    setClockLanguage,
+    typographyStyle,
+    setTypographyStyle,
+    timeFormat,
+    setTimeFormat,
+    weather,
+    isGalleryMatteEnabled,
+    setIsGalleryMatteEnabled,
+    matteColor,
+    setMatteColor,
+  } = useSettings();
 
-export const ClockSettingsTab: React.FC<ClockSettingsTabProps> = ({
-  language,
-  setLanguage,
-  clockLanguage,
-  setClockLanguage,
-  typographyStyle,
-  setTypographyStyle,
-  timeFormat,
-  setTimeFormat,
-  isWeatherEnabled,
-  setIsWeatherEnabled,
-  temperatureUnit,
-  setTemperatureUnit,
-  isGalleryMatteEnabled,
-  setIsGalleryMatteEnabled,
-  matteColor,
-  setMatteColor,
-}) => {
+  const isWeatherEnabled = weather.isEnabled;
+  const setIsWeatherEnabled = weather.setIsEnabled;
+  const temperatureUnit = weather.unit;
+  const setTemperatureUnit = weather.setUnit;
+
   const { t } = useTranslation(language);
 
   return (

@@ -7,17 +7,9 @@ import {
   Image,
   Zap,
 } from 'lucide-react';
-import type { UnsplashCollection, StoredPhoto } from '../types/unsplash';
-import type {
-  TimeFormat,
-  TypographyStyle,
-  MatteColor,
-  LanguageMode,
-  ClockLanguageMode,
-} from '../hooks/usePhotoSettings';
-import type { TemperatureUnit } from '../hooks/useWeather';
+import type { StoredPhoto } from '../types/unsplash';
 import { useTranslation } from '../hooks/useTranslation';
-import type { ResolvedLanguage } from '../locales';
+import { useSettings } from '../contexts/SettingsContext';
 import { ClockSettingsTab } from './settings/ClockSettingsTab';
 import { PhotoSettingsTab } from './settings/PhotoSettingsTab';
 import { DeviceSettingsTab } from './settings/DeviceSettingsTab';
@@ -26,43 +18,7 @@ import { LibrarySettingsTab } from './settings/LibrarySettingsTab';
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  language: LanguageMode;
-  setLanguage: (lang: LanguageMode) => void;
-  resolvedLanguage: ResolvedLanguage;
-  clockLanguage: ClockLanguageMode;
-  setClockLanguage: (lang: ClockLanguageMode) => void;
-  resolvedClockLanguage: ResolvedLanguage;
-  updateIntervalTime: number;
-  setUpdateIntervalTime: (seconds: number) => void;
-  selectedCollection: UnsplashCollection | null;
-  setSelectedCollection: (collection: UnsplashCollection | null) => void;
   onRefreshPhoto: () => void;
-  isCinematicMotionEnabled: boolean;
-  setIsCinematicMotionEnabled: (enabled: boolean) => void;
-  timeFormat: TimeFormat;
-  setTimeFormat: (format: TimeFormat) => void;
-  selectedTopic: string;
-  setSelectedTopic: (topic: string) => void;
-  typographyStyle: TypographyStyle;
-  setTypographyStyle: (style: TypographyStyle) => void;
-  isGalleryMatteEnabled: boolean;
-  setIsGalleryMatteEnabled: (enabled: boolean) => void;
-  matteColor: MatteColor;
-  setMatteColor: (color: MatteColor) => void;
-  isSunMoodEnabled: boolean;
-  setIsSunMoodEnabled: (enabled: boolean) => void;
-  isNightDimmingEnabled: boolean;
-  setIsNightDimmingEnabled: (enabled: boolean) => void;
-  isWeatherEnabled: boolean;
-  setIsWeatherEnabled: (enabled: boolean) => void;
-  temperatureUnit: TemperatureUnit;
-  setTemperatureUnit: (unit: TemperatureUnit) => void;
-  isPomodoroTimerEnabled: boolean;
-  setIsPomodoroTimerEnabled: (enabled: boolean) => void;
-  isWakeLockEnabled: boolean;
-  setIsWakeLockEnabled: (enabled: boolean) => void;
-  isPixelShiftEnabled: boolean;
-  setIsPixelShiftEnabled: (enabled: boolean) => void;
   favorites: StoredPhoto[];
   history: StoredPhoto[];
   onSelectStoredPhoto: (photo: StoredPhoto) => void;
@@ -73,49 +29,14 @@ interface SettingsModalProps {
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onClose,
-  language,
-  setLanguage,
-  resolvedLanguage: _resolvedLanguage,
-  clockLanguage,
-  setClockLanguage,
-  resolvedClockLanguage: _resolvedClockLanguage,
-  updateIntervalTime,
-  setUpdateIntervalTime,
-  selectedCollection,
-  setSelectedCollection,
   onRefreshPhoto,
-  isCinematicMotionEnabled,
-  setIsCinematicMotionEnabled,
-  timeFormat,
-  setTimeFormat,
-  selectedTopic,
-  setSelectedTopic,
-  typographyStyle,
-  setTypographyStyle,
-  isGalleryMatteEnabled,
-  setIsGalleryMatteEnabled,
-  matteColor,
-  setMatteColor,
-  isSunMoodEnabled,
-  setIsSunMoodEnabled,
-  isNightDimmingEnabled,
-  setIsNightDimmingEnabled,
-  isWeatherEnabled,
-  setIsWeatherEnabled,
-  temperatureUnit,
-  setTemperatureUnit,
-  isPomodoroTimerEnabled,
-  setIsPomodoroTimerEnabled,
-  isWakeLockEnabled,
-  setIsWakeLockEnabled,
-  isPixelShiftEnabled,
-  setIsPixelShiftEnabled,
   favorites,
   history,
   onSelectStoredPhoto,
   onRemoveFavorite,
   onClearHistory,
 }) => {
+  const { language } = useSettings();
   const { t } = useTranslation(language);
   type SettingsSection = 'clock' | 'photos' | 'device' | 'library';
   const [activeSection, setActiveSection] = useState<SettingsSection>('clock');
@@ -224,58 +145,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* スクロール可能な設定コンテナ */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 min-w-0">
-          {activeSection === 'clock' && (
-            <ClockSettingsTab
-              language={language}
-              setLanguage={setLanguage}
-              clockLanguage={clockLanguage}
-              setClockLanguage={setClockLanguage}
-              typographyStyle={typographyStyle}
-              setTypographyStyle={setTypographyStyle}
-              timeFormat={timeFormat}
-              setTimeFormat={setTimeFormat}
-              isWeatherEnabled={isWeatherEnabled}
-              setIsWeatherEnabled={setIsWeatherEnabled}
-              temperatureUnit={temperatureUnit}
-              setTemperatureUnit={setTemperatureUnit}
-              isGalleryMatteEnabled={isGalleryMatteEnabled}
-              setIsGalleryMatteEnabled={setIsGalleryMatteEnabled}
-              matteColor={matteColor}
-              setMatteColor={setMatteColor}
-            />
-          )}
+          {activeSection === 'clock' && <ClockSettingsTab />}
 
           {activeSection === 'photos' && (
-            <PhotoSettingsTab
-              language={language}
-              updateIntervalTime={updateIntervalTime}
-              setUpdateIntervalTime={setUpdateIntervalTime}
-              isSunMoodEnabled={isSunMoodEnabled}
-              setIsSunMoodEnabled={setIsSunMoodEnabled}
-              isNightDimmingEnabled={isNightDimmingEnabled}
-              setIsNightDimmingEnabled={setIsNightDimmingEnabled}
-              isCinematicMotionEnabled={isCinematicMotionEnabled}
-              setIsCinematicMotionEnabled={setIsCinematicMotionEnabled}
-              selectedTopic={selectedTopic}
-              setSelectedTopic={setSelectedTopic}
-              selectedCollection={selectedCollection}
-              setSelectedCollection={setSelectedCollection}
-              onRefreshPhoto={onRefreshPhoto}
-              onClose={onClose}
-            />
+            <PhotoSettingsTab onRefreshPhoto={onRefreshPhoto} onClose={onClose} />
           )}
 
-          {activeSection === 'device' && (
-            <DeviceSettingsTab
-              language={language}
-              isPomodoroTimerEnabled={isPomodoroTimerEnabled}
-              setIsPomodoroTimerEnabled={setIsPomodoroTimerEnabled}
-              isWakeLockEnabled={isWakeLockEnabled}
-              setIsWakeLockEnabled={setIsWakeLockEnabled}
-              isPixelShiftEnabled={isPixelShiftEnabled}
-              setIsPixelShiftEnabled={setIsPixelShiftEnabled}
-            />
-          )}
+          {activeSection === 'device' && <DeviceSettingsTab />}
 
           {activeSection === 'library' && (
             <LibrarySettingsTab

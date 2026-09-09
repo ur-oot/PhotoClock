@@ -1,13 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Menu, Maximize, Minimize, Keyboard } from 'lucide-react';
-import { usePhotoSettings } from './hooks/usePhotoSettings';
+import { useSettings } from './contexts/SettingsContext';
 import { usePhotoManager } from './hooks/usePhotoManager';
 import { usePhotoFavorites } from './hooks/usePhotoFavorites';
 import { useFullscreen } from './hooks/useFullscreen';
-import { usePomodoroTimer } from './hooks/usePomodoroTimer';
-import { useWakeLock } from './hooks/useWakeLock';
-import { usePixelShift } from './hooks/usePixelShift';
-import { useWeather } from './hooks/useWeather';
 import { ClockDisplay } from './components/ClockDisplay';
 import { PomodoroTimerBar } from './components/PomodoroTimerBar';
 import { PhotoCredit } from './components/PhotoCredit';
@@ -26,32 +22,21 @@ import { getSolarMoodInfo } from './utils/sunCalc';
 export default function App() {
   const {
     updateIntervalTime,
-    setUpdateIntervalTime,
     selectedCollection,
-    setSelectedCollection,
     isCinematicMotionEnabled,
-    setIsCinematicMotionEnabled,
     timeFormat,
-    setTimeFormat,
     selectedTopic,
-    setSelectedTopic,
     typographyStyle,
-    setTypographyStyle,
     isGalleryMatteEnabled,
-    setIsGalleryMatteEnabled,
     matteColor,
-    setMatteColor,
     isSunMoodEnabled,
-    setIsSunMoodEnabled,
     isNightDimmingEnabled,
-    setIsNightDimmingEnabled,
     language,
-    setLanguage,
-    resolvedLanguage,
-    clockLanguage,
-    setClockLanguage,
     resolvedClockLanguage,
-  } = usePhotoSettings();
+    weather,
+    pixelShift,
+    pomodoroTimer,
+  } = useSettings();
 
   const { t } = useTranslation(language);
 
@@ -66,10 +51,6 @@ export default function App() {
   } = usePhotoFavorites();
 
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
-  const pomodoroTimer = usePomodoroTimer();
-  const wakeLock = useWakeLock();
-  const pixelShift = usePixelShift();
-  const weather = useWeather();
 
   const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
@@ -318,43 +299,7 @@ export default function App() {
       <SettingsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        language={language}
-        setLanguage={setLanguage}
-        resolvedLanguage={resolvedLanguage}
-        clockLanguage={clockLanguage}
-        setClockLanguage={setClockLanguage}
-        resolvedClockLanguage={resolvedClockLanguage}
-        updateIntervalTime={updateIntervalTime}
-        setUpdateIntervalTime={setUpdateIntervalTime}
-        selectedCollection={selectedCollection}
-        setSelectedCollection={setSelectedCollection}
         onRefreshPhoto={refreshPhoto}
-        isCinematicMotionEnabled={isCinematicMotionEnabled}
-        setIsCinematicMotionEnabled={setIsCinematicMotionEnabled}
-        timeFormat={timeFormat}
-        setTimeFormat={setTimeFormat}
-        selectedTopic={selectedTopic}
-        setSelectedTopic={setSelectedTopic}
-        typographyStyle={typographyStyle}
-        setTypographyStyle={setTypographyStyle}
-        isGalleryMatteEnabled={isGalleryMatteEnabled}
-        setIsGalleryMatteEnabled={setIsGalleryMatteEnabled}
-        matteColor={matteColor}
-        setMatteColor={setMatteColor}
-        isSunMoodEnabled={isSunMoodEnabled}
-        setIsSunMoodEnabled={setIsSunMoodEnabled}
-        isNightDimmingEnabled={isNightDimmingEnabled}
-        setIsNightDimmingEnabled={setIsNightDimmingEnabled}
-        isWeatherEnabled={weather.isEnabled}
-        setIsWeatherEnabled={weather.setIsEnabled}
-        temperatureUnit={weather.unit}
-        setTemperatureUnit={weather.setUnit}
-        isPomodoroTimerEnabled={pomodoroTimer.isEnabled}
-        setIsPomodoroTimerEnabled={pomodoroTimer.setIsEnabled}
-        isWakeLockEnabled={wakeLock.isEnabled}
-        setIsWakeLockEnabled={wakeLock.setIsEnabled}
-        isPixelShiftEnabled={pixelShift.isEnabled}
-        setIsPixelShiftEnabled={pixelShift.setIsEnabled}
         favorites={favorites}
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { ExternalLink, Check, Shuffle } from 'lucide-react';
 import type { UnsplashCollection } from '../../types/unsplash';
 import { PHOTO_TOPICS } from '../../types/unsplash';
-import { INTERVAL_OPTIONS, type LanguageMode } from '../../hooks/usePhotoSettings';
+import { INTERVAL_OPTIONS } from '../../hooks/usePhotoSettings';
 import { getSolarMoodInfo } from '../../utils/sunCalc';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../contexts/SettingsContext';
 import { ToggleSwitch } from './ToggleSwitch';
 
 const TOPIC_TRANSLATION_KEYS: Record<string, string> = {
@@ -22,40 +23,30 @@ const TOPIC_TRANSLATION_KEYS: Record<string, string> = {
 };
 
 interface PhotoSettingsTabProps {
-  language: LanguageMode;
-  updateIntervalTime: number;
-  setUpdateIntervalTime: (seconds: number) => void;
-  isSunMoodEnabled: boolean;
-  setIsSunMoodEnabled: (enabled: boolean) => void;
-  isNightDimmingEnabled: boolean;
-  setIsNightDimmingEnabled: (enabled: boolean) => void;
-  isCinematicMotionEnabled: boolean;
-  setIsCinematicMotionEnabled: (enabled: boolean) => void;
-  selectedTopic: string;
-  setSelectedTopic: (topic: string) => void;
-  selectedCollection: UnsplashCollection | null;
-  setSelectedCollection: (collection: UnsplashCollection | null) => void;
   onRefreshPhoto: () => void;
   onClose: () => void;
 }
 
 export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
-  language,
-  updateIntervalTime,
-  setUpdateIntervalTime,
-  isSunMoodEnabled,
-  setIsSunMoodEnabled,
-  isNightDimmingEnabled,
-  setIsNightDimmingEnabled,
-  isCinematicMotionEnabled,
-  setIsCinematicMotionEnabled,
-  selectedTopic,
-  setSelectedTopic,
-  selectedCollection,
-  setSelectedCollection,
   onRefreshPhoto,
   onClose,
 }) => {
+  const {
+    language,
+    updateIntervalTime,
+    setUpdateIntervalTime,
+    isSunMoodEnabled,
+    setIsSunMoodEnabled,
+    isNightDimmingEnabled,
+    setIsNightDimmingEnabled,
+    isCinematicMotionEnabled,
+    setIsCinematicMotionEnabled,
+    selectedTopic,
+    setSelectedTopic,
+    selectedCollection,
+    setSelectedCollection,
+  } = useSettings();
+
   const { t } = useTranslation(language);
   const solarMood = getSolarMoodInfo();
 

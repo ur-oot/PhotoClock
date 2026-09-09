@@ -1,27 +1,23 @@
 import React from 'react';
-import type { LanguageMode } from '../../hooks/usePhotoSettings';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../contexts/SettingsContext';
 import { ToggleSwitch } from './ToggleSwitch';
 
-interface DeviceSettingsTabProps {
-  language: LanguageMode;
-  isPomodoroTimerEnabled: boolean;
-  setIsPomodoroTimerEnabled: (enabled: boolean) => void;
-  isWakeLockEnabled: boolean;
-  setIsWakeLockEnabled: (enabled: boolean) => void;
-  isPixelShiftEnabled: boolean;
-  setIsPixelShiftEnabled: (enabled: boolean) => void;
-}
+export const DeviceSettingsTab: React.FC = () => {
+  const {
+    language,
+    pomodoroTimer,
+    wakeLock,
+    pixelShift,
+  } = useSettings();
 
-export const DeviceSettingsTab: React.FC<DeviceSettingsTabProps> = ({
-  language,
-  isPomodoroTimerEnabled,
-  setIsPomodoroTimerEnabled,
-  isWakeLockEnabled,
-  setIsWakeLockEnabled,
-  isPixelShiftEnabled,
-  setIsPixelShiftEnabled,
-}) => {
+  const isPomodoroTimerEnabled = pomodoroTimer.isEnabled;
+  const setIsPomodoroTimerEnabled = pomodoroTimer.setIsEnabled;
+  const isWakeLockEnabled = wakeLock.isEnabled;
+  const setIsWakeLockEnabled = wakeLock.setIsEnabled;
+  const isPixelShiftEnabled = pixelShift.isEnabled;
+  const setIsPixelShiftEnabled = pixelShift.setIsEnabled;
+
   const { t } = useTranslation(language);
 
   return (
