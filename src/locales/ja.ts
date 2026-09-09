@@ -75,6 +75,7 @@ export const ja: TranslationDictionary = {
       nightDimmingDesc: '日没後の暗い部屋に合わせて、画面のまぶしさを自動で抑える。',
       spotlightTitle: '絵画スポットライト',
       spotlightDesc: '美術館の展示照明のように写真上部から柔らかな光を投影。',
+      spotlightIntensity: '照明の強さ',
     },
     topics: {
       title: '写真のテーマ',

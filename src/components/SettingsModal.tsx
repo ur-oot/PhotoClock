@@ -97,6 +97,8 @@ interface SettingsModalProps {
   setIsNightDimmingEnabled: (enabled: boolean) => void;
   isSpotlightEnabled: boolean;
   setIsSpotlightEnabled: (enabled: boolean) => void;
+  spotlightIntensity: number;
+  setSpotlightIntensity: (intensity: number) => void;
   isZenTimerEnabled: boolean;
   setIsZenTimerEnabled: (enabled: boolean) => void;
   isWakeLockEnabled: boolean;
@@ -142,6 +144,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setIsNightDimmingEnabled,
   isSpotlightEnabled,
   setIsSpotlightEnabled,
+  spotlightIntensity,
+  setSpotlightIntensity,
   isZenTimerEnabled,
   setIsZenTimerEnabled,
   isWakeLockEnabled,
@@ -745,20 +749,42 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </div>
 
                     {/* 絵画スポットライト */}
-                    <div className="p-4 flex items-center justify-between">
-                      <div>
-                        <div className="text-xs font-semibold text-stone-900">
-                          {t('settings.general.spotlightTitle')}
+                    <div className="p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-xs font-semibold text-stone-900">
+                            {t('settings.general.spotlightTitle')}
+                          </div>
+                          <div className="text-[11px] text-stone-500">
+                            {t('settings.general.spotlightDesc')}
+                          </div>
                         </div>
-                        <div className="text-[11px] text-stone-500">
-                          {t('settings.general.spotlightDesc')}
-                        </div>
+                        <ToggleSwitch
+                          checked={isSpotlightEnabled}
+                          onChange={setIsSpotlightEnabled}
+                          ariaLabel="Toggle gallery spotlight"
+                        />
                       </div>
-                      <ToggleSwitch
-                        checked={isSpotlightEnabled}
-                        onChange={setIsSpotlightEnabled}
-                        ariaLabel="Toggle gallery spotlight"
-                      />
+
+                      {isSpotlightEnabled && (
+                        <div className="flex items-center space-x-3 pt-1 border-t border-stone-100">
+                          <span className="text-[11px] font-medium text-stone-500 shrink-0">
+                            {t('settings.general.spotlightIntensity')}
+                          </span>
+                          <input
+                            type="range"
+                            min="20"
+                            max="100"
+                            step="5"
+                            value={spotlightIntensity}
+                            onChange={(e) => setSpotlightIntensity(Number(e.target.value))}
+                            className="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-stone-900"
+                          />
+                          <span className="text-xs font-mono font-medium text-stone-700 w-9 text-right shrink-0">
+                            {spotlightIntensity}%
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

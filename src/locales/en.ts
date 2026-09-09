@@ -75,6 +75,7 @@ export const en: TranslationDictionary = {
       nightDimmingDesc: 'Softly dims display after sunset for night comfort.',
       spotlightTitle: 'Gallery Spotlight',
       spotlightDesc: 'Cast a soft exhibition spotlight onto the artwork from above.',
+      spotlightIntensity: 'Lighting Intensity',
     },
     topics: {
       title: 'Photo Mood & Topics',

@@ -19,6 +19,7 @@ const STORAGE_KEY_MATTE_COLOR = 'photoclock_gallery_matte_color';
 const STORAGE_KEY_SUN_MOOD = 'photoclock_sun_mood_enabled';
 const STORAGE_KEY_NIGHT_DIMMING = 'photoclock_night_dimming_enabled';
 const STORAGE_KEY_SPOTLIGHT = 'photoclock_spotlight_enabled';
+const STORAGE_KEY_SPOTLIGHT_INTENSITY = 'photoclock_spotlight_intensity';
 const STORAGE_KEY_LANGUAGE = 'photoclock_language';
 const STORAGE_KEY_CLOCK_LANGUAGE = 'photoclock_clock_language';
 
@@ -202,6 +203,21 @@ export function usePhotoSettings() {
     return false; // デフォルト: 無効
   });
 
+  const [spotlightIntensity, setSpotlightIntensityState] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_SPOTLIGHT_INTENSITY);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 10 && parsed <= 100) {
+          return parsed;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return 70; // デフォルト: 70%
+  });
+
   const [language, setLanguageState] = useState<LanguageMode>(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -340,6 +356,15 @@ export function usePhotoSettings() {
     }
   };
 
+  const setSpotlightIntensity = (intensity: number) => {
+    setSpotlightIntensityState(intensity);
+    try {
+      localStorage.setItem(STORAGE_KEY_SPOTLIGHT_INTENSITY, String(intensity));
+    } catch {
+      // ignore
+    }
+  };
+
   const setLanguage = (lang: LanguageMode) => {
     setLanguageState(lang);
     try {
@@ -384,6 +409,8 @@ export function usePhotoSettings() {
     setIsNightDimmingEnabled,
     isSpotlightEnabled,
     setIsSpotlightEnabled,
+    spotlightIntensity,
+    setSpotlightIntensity,
     language,
     setLanguage,
     resolvedLanguage,
