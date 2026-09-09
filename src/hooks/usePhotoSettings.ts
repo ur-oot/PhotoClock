@@ -10,6 +10,7 @@ const STORAGE_KEY_CINEMATIC = 'photoclock_cinematic_motion';
 const STORAGE_KEY_TIME_FORMAT = 'photoclock_time_format';
 const STORAGE_KEY_TOPIC = 'photoclock_selected_topic';
 const STORAGE_KEY_TYPOGRAPHY = 'photoclock_typography_style';
+const STORAGE_KEY_GALLERY_MATTE = 'photoclock_gallery_matte_enabled';
 
 export interface TypographyOption {
   id: TypographyStyle;
@@ -131,6 +132,18 @@ export function usePhotoSettings() {
     return 'sans';
   });
 
+  const [isGalleryMatteEnabled, setIsGalleryMatteEnabledState] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_GALLERY_MATTE);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch {
+      // ignore
+    }
+    return false;
+  });
+
   const setUpdateIntervalTime = (seconds: number) => {
     setUpdateIntervalTimeState(seconds);
     try {
@@ -193,6 +206,15 @@ export function usePhotoSettings() {
     }
   };
 
+  const setIsGalleryMatteEnabled = (enabled: boolean) => {
+    setIsGalleryMatteEnabledState(enabled);
+    try {
+      localStorage.setItem(STORAGE_KEY_GALLERY_MATTE, String(enabled));
+    } catch {
+      // ignore
+    }
+  };
+
   return {
     updateIntervalTime,
     setUpdateIntervalTime,
@@ -206,5 +228,7 @@ export function usePhotoSettings() {
     setSelectedTopic,
     typographyStyle,
     setTypographyStyle,
+    isGalleryMatteEnabled,
+    setIsGalleryMatteEnabled,
   };
 }

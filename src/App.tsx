@@ -26,6 +26,8 @@ export default function App() {
     setSelectedTopic,
     typographyStyle,
     setTypographyStyle,
+    isGalleryMatteEnabled,
+    setIsGalleryMatteEnabled,
   } = usePhotoSettings();
 
   const {
@@ -100,59 +102,72 @@ export default function App() {
   return (
     <div
       onMouseMove={handleMouseMove}
-      className="relative w-screen h-screen overflow-hidden flex items-center justify-center bg-stone-950 select-none"
+      className={`relative w-screen h-screen overflow-hidden flex items-center justify-center select-none transition-all duration-700 ${
+        isGalleryMatteEnabled
+          ? 'bg-[#181716] p-4 sm:p-8 md:p-12 lg:p-16'
+          : 'bg-stone-950 p-0'
+      }`}
     >
-      {/* シネマティック背景レイヤー (Ken Burns & ダブルバッファクロスフェード) */}
-      <CinematicBackground
-        photoUrl={photoUrl}
-        isCinematicMotionEnabled={isCinematicMotionEnabled}
-      />
-
-      {/* 左上: 操作コントロール群（設定メニュー & フルスクリーン） */}
+      {/* 額装フレーム（Gallery Matte 有効時は角丸・立体シャドウ・インナーシャドウ） */}
       <div
-        className={`fixed top-4 left-4 z-30 flex items-center space-x-2 transition-all duration-300 ${
-          isControlsVisible || isModalOpen
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 -translate-y-2 pointer-events-none'
+        className={`relative w-full h-full flex items-center justify-center overflow-hidden transition-all duration-700 ${
+          isGalleryMatteEnabled
+            ? 'rounded-lg sm:rounded-xl shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08),inset_0_0_0_1px_rgba(0,0,0,0.6)] ring-1 ring-black/40'
+            : ''
         }`}
       >
-        <button
-          onClick={() => setIsModalOpen(true)}
-          aria-label="Open settings"
-          title="Settings"
-          className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+        {/* シネマティック背景レイヤー (Ken Burns & ダブルバッファクロスフェード) */}
+        <CinematicBackground
+          photoUrl={photoUrl}
+          isCinematicMotionEnabled={isCinematicMotionEnabled}
+        />
 
-        {isFullscreenSupported && (
+        {/* 左上: 操作コントロール群（設定メニュー & フルスクリーン） */}
+        <div
+          className={`absolute top-4 left-4 z-30 flex items-center space-x-2 transition-all duration-300 ${
+            isControlsVisible || isModalOpen
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 -translate-y-2 pointer-events-none'
+          }`}
+        >
           <button
-            onClick={toggleFullscreen}
-            aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-            title={isFullscreen ? 'Exit fullscreen (F)' : 'Enter fullscreen (F)'}
+            onClick={() => setIsModalOpen(true)}
+            aria-label="Open settings"
+            title="Settings"
             className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
           >
-            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+            <Menu className="w-5 h-5" />
           </button>
-        )}
-      </div>
 
-      {/* 右上: 撮影者クレジット & お気に入りボタン */}
-      <PhotoCredit
-        photo={photo}
-        isVisible={isControlsVisible && !isModalOpen}
-        isFavorite={photo ? isFavorite(photo.id) : false}
-        onToggleFavorite={photo ? () => toggleFavorite(photo) : undefined}
-      />
+          {isFullscreenSupported && (
+            <button
+              onClick={toggleFullscreen}
+              aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+              title={isFullscreen ? 'Exit fullscreen (F)' : 'Enter fullscreen (F)'}
+              className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
+            >
+              {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+            </button>
+          )}
+        </div>
 
-      {/* 中央: 時計表示 & 禅タイマー */}
-      <main className="relative z-20 flex flex-col items-center">
-        <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
-        <ZenTimerBar
-          zenTimer={zenTimer}
-          isControlsVisible={isControlsVisible && !isModalOpen}
+        {/* 右上: 撮影者クレジット & お気に入りボタン */}
+        <PhotoCredit
+          photo={photo}
+          isVisible={isControlsVisible && !isModalOpen}
+          isFavorite={photo ? isFavorite(photo.id) : false}
+          onToggleFavorite={photo ? () => toggleFavorite(photo) : undefined}
         />
-      </main>
+
+        {/* 中央: 時計表示 & 禅タイマー */}
+        <main className="relative z-20 flex flex-col items-center">
+          <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
+          <ZenTimerBar
+            zenTimer={zenTimer}
+            isControlsVisible={isControlsVisible && !isModalOpen}
+          />
+        </main>
+      </div>
 
       {/* 設定モーダル */}
       <SettingsModal
@@ -171,6 +186,8 @@ export default function App() {
         setSelectedTopic={setSelectedTopic}
         typographyStyle={typographyStyle}
         setTypographyStyle={setTypographyStyle}
+        isGalleryMatteEnabled={isGalleryMatteEnabled}
+        setIsGalleryMatteEnabled={setIsGalleryMatteEnabled}
         isZenTimerEnabled={zenTimer.isEnabled}
         setIsZenTimerEnabled={zenTimer.setIsEnabled}
         favorites={favorites}

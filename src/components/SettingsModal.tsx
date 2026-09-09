@@ -25,6 +25,8 @@ interface SettingsModalProps {
   setSelectedTopic: (topic: string) => void;
   typographyStyle: TypographyStyle;
   setTypographyStyle: (style: TypographyStyle) => void;
+  isGalleryMatteEnabled: boolean;
+  setIsGalleryMatteEnabled: (enabled: boolean) => void;
   isZenTimerEnabled: boolean;
   setIsZenTimerEnabled: (enabled: boolean) => void;
   favorites: StoredPhoto[];
@@ -50,6 +52,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setSelectedTopic,
   typographyStyle,
   setTypographyStyle,
+  isGalleryMatteEnabled,
+  setIsGalleryMatteEnabled,
   isZenTimerEnabled,
   setIsZenTimerEnabled,
   favorites,
@@ -325,6 +329,36 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
               Smooth zoom and pan Ken Burns effect.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Gallery Matte
+            </h3>
+            <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
+              <span className="text-sm text-stone-800 font-medium">
+                {isGalleryMatteEnabled ? 'Enabled' : 'Disabled'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsGalleryMatteEnabled(!isGalleryMatteEnabled)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isGalleryMatteEnabled ? 'bg-stone-900' : 'bg-stone-300'
+                }`}
+                role="switch"
+                aria-checked={isGalleryMatteEnabled}
+                aria-label="Toggle gallery matte mode"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isGalleryMatteEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              Framed passe-partout border display.
             </p>
           </div>
         </section>
