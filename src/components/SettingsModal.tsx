@@ -217,45 +217,37 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     },
   ];
 
-  const SECTION_INFO: Record<SettingsSection, { title: string; subtitle: string }> = {
-    clock: {
-      title: t('settings.sections.clock'),
-      subtitle: t('settings.sections.clockDesc'),
-    },
-    photos: {
-      title: t('settings.sections.photos'),
-      subtitle: t('settings.sections.photosDesc'),
-    },
-    device: {
-      title: t('settings.sections.device'),
-      subtitle: t('settings.sections.deviceDesc'),
-    },
-    library: {
-      title: t('settings.sections.library'),
-      subtitle: t('settings.sections.libraryDesc'),
-    },
-  };
+
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 md:p-8 transition-all"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          onClose();
-        }
-      }}
-    >
+    <div className="fixed inset-0 z-50 pointer-events-none">
+      {/* 背景透過クリック領域（写真・時計をクリックすると設定を閉じる。背景は100%クリアに透過） */}
       <div
-        className="w-full max-w-4xl h-[680px] max-h-[92vh] bg-stone-100/95 backdrop-blur-2xl rounded-3xl shadow-[0_24px_80px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.4)] flex flex-col md:flex-row overflow-hidden border border-white/60"
+        className="absolute inset-0 pointer-events-auto bg-black/0"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* ライブサイドインスペクターパネル本体 */}
+      <div
+        className="fixed z-50 pointer-events-auto bg-stone-100/95 backdrop-blur-2xl flex flex-col overflow-hidden border border-white/60 shadow-[0_20px_60px_rgba(0,0,0,0.35),0_0_0_1px_rgba(255,255,255,0.4)] transition-all duration-300 ease-out bottom-0 left-0 right-0 max-h-[68vh] rounded-t-3xl border-b-0 md:bottom-3 md:top-3 md:left-3 md:right-auto md:w-[440px] md:max-w-[calc(100vw-24px)] md:max-h-none md:rounded-3xl md:border-b"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* モバイル用ヘッダー */}
-        <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white/70 border-b border-stone-200/80 shrink-0">
+        {/* モバイル用ドラッグハンドル */}
+        <div className="md:hidden flex items-center justify-center pt-2.5 pb-1 shrink-0">
+          <div className="w-10 h-1 rounded-full bg-stone-300" />
+        </div>
+
+        {/* パネル上部ヘッダー */}
+        <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-stone-200/80 shrink-0 bg-white/40">
           <div className="flex items-center space-x-2">
             <div className="w-2.5 h-2.5 rounded-full bg-stone-400" />
-            <span className="text-sm font-bold text-stone-900">PhotoClock</span>
+            <h2 className="text-sm font-bold tracking-tight text-stone-900">PhotoClock</h2>
+            <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-stone-200/70 text-stone-600">
+              v0.2.0
+            </span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <button
               type="button"
               onClick={onRefreshPhoto}
@@ -268,15 +260,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               type="button"
               onClick={onClose}
               className="p-1.5 text-stone-500 hover:text-stone-900 rounded-lg hover:bg-stone-200/60 transition-colors"
-              aria-label="Close modal"
+              aria-label="Close settings"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* モバイル用セクションピルバー */}
-        <div className="md:hidden flex items-center space-x-1.5 overflow-x-auto px-4 py-2.5 bg-stone-200/50 border-b border-stone-200/80 shrink-0">
+        {/* セクションタブバー (4タブのセグメントコントロール) */}
+        <div className="flex items-center p-2 bg-stone-200/50 border-b border-stone-200/80 shrink-0 gap-1">
           {SECTIONS.map((sec) => {
             const Icon = sec.icon;
             const isActive = activeSection === sec.id;
@@ -285,14 +277,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 key={sec.id}
                 type="button"
                 onClick={() => setActiveSection(sec.id)}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs whitespace-nowrap font-semibold transition-all shrink-0 ${
+                className={`flex-1 flex items-center justify-center space-x-1.5 py-2 px-1.5 rounded-xl text-xs font-semibold transition-all relative ${
                   isActive
                     ? 'bg-white text-stone-900 shadow-xs'
                     : 'text-stone-600 hover:text-stone-900 hover:bg-stone-300/40'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-stone-900' : 'text-stone-500'}`} />
-                <span>{sec.label}</span>
+                <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-stone-900' : 'text-stone-500'}`} />
+                <span className="truncate">{sec.label}</span>
                 {sec.badge !== undefined && (
                   <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-600 ml-0.5">
                     {sec.badge}
@@ -303,89 +295,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           })}
         </div>
 
-        {/* 左サイドバー (デスクトップ) */}
-        <aside className="hidden md:flex w-60 bg-stone-200/50 backdrop-blur-md border-r border-stone-300/60 p-4 flex-col justify-between shrink-0">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between px-2 pt-1">
-              <div className="flex items-center space-x-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-stone-400" />
-                <h2 className="text-sm font-bold tracking-tight text-stone-900">PhotoClock</h2>
-              </div>
-              <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-stone-300/70 text-stone-600">
-                v0.2.0
-              </span>
-            </div>
-
-            <nav className="space-y-1">
-              {SECTIONS.map((sec) => {
-                const Icon = sec.icon;
-                const isActive = activeSection === sec.id;
-                return (
-                  <button
-                    key={sec.id}
-                    type="button"
-                    onClick={() => setActiveSection(sec.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                      isActive
-                        ? 'bg-white text-stone-900 shadow-xs'
-                        : 'text-stone-600 hover:text-stone-900 hover:bg-stone-300/40'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <Icon className={`w-4 h-4 ${isActive ? 'text-stone-900' : 'text-stone-500'}`} />
-                      <span>{sec.label}</span>
-                    </div>
-                    {sec.badge !== undefined && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-600">
-                        {sec.badge}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-
-          <div className="pt-4 border-t border-stone-300/60 space-y-2">
-            <button
-              type="button"
-              onClick={onRefreshPhoto}
-              className="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-xl text-xs font-medium bg-stone-300/50 hover:bg-stone-300 text-stone-800 transition-all active:scale-[0.98]"
-              title={t('settings.changePhotoNow')}
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>{t('settings.changePhotoNow')}</span>
-            </button>
-            <div className="text-[10px] text-stone-400 text-center">
-              PhotoClock | Unsplash API
-            </div>
-          </div>
-        </aside>
-
-        {/* 右メインペイン */}
-        <main className="flex-1 flex flex-col min-w-0 bg-stone-50/70 overflow-hidden">
-          {/* 上部ヘッダー (デスクトップ) */}
-          <header className="hidden md:flex h-14 px-6 border-b border-stone-200/80 items-center justify-between shrink-0 bg-white/40">
-            <div>
-              <h1 className="text-sm font-bold text-stone-900 tracking-tight">
-                {SECTION_INFO[activeSection].title}
-              </h1>
-              <p className="text-[11px] text-stone-500">
-                {SECTION_INFO[activeSection].subtitle}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-200/60 transition-colors"
-              aria-label="Close modal"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </header>
-
-          {/* スクロール可能な設定コンテナ */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+        {/* スクロール可能な設定コンテナ */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 min-w-0">
             {/* Section 1: 時計・表示 */}
             {activeSection === 'clock' && (
               <div className="space-y-5">
@@ -507,7 +418,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           {t('settings.general.typographyDesc')}
                         </div>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      <div className="grid grid-cols-3 gap-2">
                         {TYPOGRAPHY_OPTIONS.map((opt) => {
                           const isSelected = typographyStyle === opt.id;
                           const info =
@@ -824,7 +735,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     {t('settings.collections.desc')}
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     {collections.map((item) => {
                       const isSelected = selectedCollection?.id === item.id;
                       const previews = item.preview_photos || [];
@@ -1070,7 +981,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {favorites.map((item) => (
                         <div
                           key={item.id}
@@ -1136,7 +1047,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {history.map((item) => (
                         <div
                           key={`${item.id}-${item.savedAt}`}
@@ -1185,8 +1096,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 )}
               </div>
             )}
-          </div>
-        </main>
+        </div>
       </div>
     </div>
   );
