@@ -22,6 +22,8 @@ export default function App() {
     setTimeFormat,
     selectedTopic,
     setSelectedTopic,
+    typographyStyle,
+    setTypographyStyle,
   } = usePhotoSettings();
 
   const {
@@ -114,7 +116,7 @@ export default function App() {
         <button
           onClick={() => setIsModalOpen(true)}
           aria-label="Open settings"
-          title="設定メニュー"
+          title="Settings"
           className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
         >
           <Menu className="w-5 h-5" />
@@ -124,7 +126,7 @@ export default function App() {
           <button
             onClick={toggleFullscreen}
             aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-            title={isFullscreen ? '全画面表示を終了 (F)' : '全画面表示 (F)'}
+            title={isFullscreen ? 'Exit fullscreen (F)' : 'Enter fullscreen (F)'}
             className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
           >
             {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
@@ -142,7 +144,7 @@ export default function App() {
 
       {/* 中央: 時計表示 */}
       <main className="relative z-20">
-        <ClockDisplay clock={clock} />
+        <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
       </main>
 
       {/* 設定モーダル */}
@@ -160,6 +162,8 @@ export default function App() {
         setTimeFormat={setTimeFormat}
         selectedTopic={selectedTopic}
         setSelectedTopic={setSelectedTopic}
+        typographyStyle={typographyStyle}
+        setTypographyStyle={setTypographyStyle}
         favorites={favorites}
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}

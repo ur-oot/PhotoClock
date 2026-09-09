@@ -2,12 +2,46 @@ import { useState } from 'react';
 import type { UnsplashCollection } from '../types/unsplash';
 
 export type TimeFormat = '12h' | '24h';
+export type TypographyStyle = 'sans' | 'serif' | 'mono';
 
 const STORAGE_KEY_INTERVAL = 'photoclock_update_interval';
 const STORAGE_KEY_COLLECTION = 'photoclock_selected_collection';
 const STORAGE_KEY_CINEMATIC = 'photoclock_cinematic_motion';
 const STORAGE_KEY_TIME_FORMAT = 'photoclock_time_format';
 const STORAGE_KEY_TOPIC = 'photoclock_selected_topic';
+const STORAGE_KEY_TYPOGRAPHY = 'photoclock_typography_style';
+
+export interface TypographyOption {
+  id: TypographyStyle;
+  label: string;
+  description: string;
+  fontClass: string;
+  sample: string;
+}
+
+export const TYPOGRAPHY_OPTIONS: TypographyOption[] = [
+  {
+    id: 'sans',
+    label: 'Modern Sans',
+    description: 'Clean and contemporary',
+    fontClass: 'font-sans',
+    sample: '12:45',
+  },
+  {
+    id: 'serif',
+    label: 'Classic Serif',
+    description: 'Elegant and editorial',
+    fontClass: 'font-serif',
+    sample: '12:45',
+  },
+  {
+    id: 'mono',
+    label: 'Monospace',
+    description: 'Minimal and structured',
+    fontClass: 'font-mono',
+    sample: '12:45',
+  },
+];
 
 export interface IntervalOption {
   label: string;
@@ -85,6 +119,18 @@ export function usePhotoSettings() {
     return 'wallpapers';
   });
 
+  const [typographyStyle, setTypographyStyleState] = useState<TypographyStyle>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_TYPOGRAPHY);
+      if (saved === 'sans' || saved === 'serif' || saved === 'mono') {
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+    return 'sans';
+  });
+
   const setUpdateIntervalTime = (seconds: number) => {
     setUpdateIntervalTimeState(seconds);
     try {
@@ -138,6 +184,15 @@ export function usePhotoSettings() {
     }
   };
 
+  const setTypographyStyle = (style: TypographyStyle) => {
+    setTypographyStyleState(style);
+    try {
+      localStorage.setItem(STORAGE_KEY_TYPOGRAPHY, style);
+    } catch {
+      // ignore
+    }
+  };
+
   return {
     updateIntervalTime,
     setUpdateIntervalTime,
@@ -149,5 +204,7 @@ export function usePhotoSettings() {
     setTimeFormat,
     selectedTopic,
     setSelectedTopic,
+    typographyStyle,
+    setTypographyStyle,
   };
 }
