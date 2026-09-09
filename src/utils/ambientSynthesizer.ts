@@ -1,6 +1,6 @@
 /**
  * Web Audio API プログラマティック環境音シンセサイザー
- * 外部音声ファイル0MB・通信ゼロで、リアルタイムノイズ合成による環境音を生成
+ * リアルタイムノイズ・オシレーター合成による環境音生成モジュール
  */
 
 export type AmbientSoundType = 'rain' | 'waves' | 'campfire' | 'white_noise';
@@ -39,11 +39,20 @@ export const SOUND_PRESETS: SoundPreset[] = [
   },
 ];
 
+interface SoundNode {
+  stop: () => void;
+}
+
+interface AudioSession {
+  type: AmbientSoundType;
+  masterGain: GainNode;
+  nodes: SoundNode[];
+}
+
 class AmbientSynthesizer {
   private ctx: AudioContext | null = null;
-  private masterGain: GainNode | null = null;
-  private currentNodes: { stop: () => void }[] = [];
-  private currentType: AmbientSoundType | null = null;
+  private activeSession: AudioSession | null = null;
+  private fadeOutTimer: number | null = null;
   private currentVolume: number = 0.5;
 
   private initContext(): AudioContext {
@@ -58,67 +67,98 @@ class AmbientSynthesizer {
   }
 
   public getCurrentType(): AmbientSoundType | null {
-    return this.currentType;
+    return this.activeSession?.type ?? null;
   }
 
   public setVolume(volume: number): void {
     this.currentVolume = Math.max(0, Math.min(1, volume));
-    if (this.masterGain && this.ctx) {
-      this.masterGain.gain.setTargetAtTime(this.currentVolume, this.ctx.currentTime, 0.05);
+    if (this.activeSession && this.ctx) {
+      this.activeSession.masterGain.gain.setTargetAtTime(this.currentVolume, this.ctx.currentTime, 0.05);
     }
   }
 
   public stop(): void {
-    if (this.masterGain && this.ctx) {
-      // ポップノイズ防止のためのフェードアウト
-      this.masterGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.1);
-      setTimeout(() => {
-        this.cleanupNodes();
-        this.currentType = null;
-      }, 150);
-    } else {
-      this.cleanupNodes();
-      this.currentType = null;
+    if (this.fadeOutTimer !== null) {
+      window.clearTimeout(this.fadeOutTimer);
+      this.fadeOutTimer = null;
     }
+
+    if (!this.activeSession || !this.ctx) {
+      return;
+    }
+
+    const sessionToStop = this.activeSession;
+    this.activeSession = null;
+
+    // ポップノイズ防止のためのフェードアウト
+    sessionToStop.masterGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.08);
+
+    this.fadeOutTimer = window.setTimeout(() => {
+      this.cleanupSession(sessionToStop);
+      this.fadeOutTimer = null;
+    }, 120);
   }
 
-  private cleanupNodes(): void {
-    for (const node of this.currentNodes) {
+  private cleanupSession(session: AudioSession): void {
+    for (const node of session.nodes) {
       try {
         node.stop();
       } catch {
         // ignore
       }
     }
-    this.currentNodes = [];
+    try {
+      session.masterGain.disconnect();
+    } catch {
+      // ignore
+    }
   }
 
   public play(type: AmbientSoundType, volume = this.currentVolume): void {
     const ctx = this.initContext();
-    this.stop();
 
-    this.currentType = type;
+    if (this.fadeOutTimer !== null) {
+      window.clearTimeout(this.fadeOutTimer);
+      this.fadeOutTimer = null;
+    }
+
+    // 既存セッションを安全にフェードアウト・破棄
+    if (this.activeSession) {
+      const prevSession = this.activeSession;
+      this.activeSession = null;
+      prevSession.masterGain.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
+      setTimeout(() => {
+        this.cleanupSession(prevSession);
+      }, 80);
+    }
+
     this.currentVolume = volume;
 
     // マスターゲインの構築
     const master = ctx.createGain();
     master.gain.setValueAtTime(0, ctx.currentTime);
-    master.gain.setTargetAtTime(volume, ctx.currentTime, 0.2); // スムーズなフェードイン
+    master.gain.setTargetAtTime(volume, ctx.currentTime, 0.15); // スムーズなフェードイン
     master.connect(ctx.destination);
-    this.masterGain = master;
+
+    const newSession: AudioSession = {
+      type,
+      masterGain: master,
+      nodes: [],
+    };
+    this.activeSession = newSession;
 
     switch (type) {
       case 'rain':
-        this.startRain(ctx, master);
+        this.startRain(ctx, master, newSession);
         break;
       case 'waves':
-        this.startWaves(ctx, master);
+        this.startWaves(ctx, master, newSession);
         break;
       case 'campfire':
-        this.startCampfire(ctx, master);
+        this.startCampfire(ctx, master, newSession);
         break;
       case 'white_noise':
-        this.startFocusNoise(ctx, master);
+        this.startFocusNoise(ctx, master, newSession);
         break;
     }
   }
@@ -126,7 +166,7 @@ class AmbientSynthesizer {
   /**
    * 柔らかな集中用ピンクノイズ
    */
-  private startFocusNoise(ctx: AudioContext, destination: AudioNode): void {
+  private startFocusNoise(ctx: AudioContext, destination: AudioNode, session: AudioSession): void {
     const bufferSize = ctx.sampleRate * 2; // 2秒ループバッファ
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -158,7 +198,7 @@ class AmbientSynthesizer {
     filter.connect(destination);
     source.start();
 
-    this.currentNodes.push({
+    session.nodes.push({
       stop: () => {
         source.stop();
         source.disconnect();
@@ -170,7 +210,7 @@ class AmbientSynthesizer {
   /**
    * 穏やかな雨音 (Rain)
    */
-  private startRain(ctx: AudioContext, destination: AudioNode): void {
+  private startRain(ctx: AudioContext, destination: AudioNode, session: AudioSession): void {
     const bufferSize = ctx.sampleRate * 3;
     const buffer = ctx.createBuffer(2, bufferSize, ctx.sampleRate);
     const left = buffer.getChannelData(0);
@@ -201,7 +241,7 @@ class AmbientSynthesizer {
     filter.connect(destination);
     source.start();
 
-    this.currentNodes.push({
+    session.nodes.push({
       stop: () => {
         source.stop();
         source.disconnect();
@@ -213,7 +253,7 @@ class AmbientSynthesizer {
   /**
    * 寄せては返す波の音 (Ocean Waves)
    */
-  private startWaves(ctx: AudioContext, destination: AudioNode): void {
+  private startWaves(ctx: AudioContext, destination: AudioNode, session: AudioSession): void {
     const bufferSize = ctx.sampleRate * 4;
     const buffer = ctx.createBuffer(2, bufferSize, ctx.sampleRate);
     const left = buffer.getChannelData(0);
@@ -259,7 +299,7 @@ class AmbientSynthesizer {
     source.start();
     lfo.start();
 
-    this.currentNodes.push({
+    session.nodes.push({
       stop: () => {
         source.stop();
         lfo.stop();
@@ -274,7 +314,7 @@ class AmbientSynthesizer {
   /**
    * 暖炉・焚き火 (Campfire)
    */
-  private startCampfire(ctx: AudioContext, destination: AudioNode): void {
+  private startCampfire(ctx: AudioContext, destination: AudioNode, session: AudioSession): void {
     const bufferSize = ctx.sampleRate * 2;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -302,7 +342,7 @@ class AmbientSynthesizer {
     filter.connect(destination);
     source.start();
 
-    this.currentNodes.push({
+    session.nodes.push({
       stop: () => {
         source.stop();
         source.disconnect();
