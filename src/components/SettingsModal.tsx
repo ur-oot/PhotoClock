@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { X, ExternalLink, Check, Shuffle, RefreshCw, Heart, History, Trash2, ArrowUpRight } from 'lucide-react';
 import type { UnsplashCollection, StoredPhoto } from '../types/unsplash';
 import { PHOTO_TOPICS } from '../types/unsplash';
-import { INTERVAL_OPTIONS, type TimeFormat } from '../hooks/usePhotoSettings';
+import {
+  INTERVAL_OPTIONS,
+  TYPOGRAPHY_OPTIONS,
+  type TimeFormat,
+  type TypographyStyle,
+} from '../hooks/usePhotoSettings';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -18,6 +23,8 @@ interface SettingsModalProps {
   setTimeFormat: (format: TimeFormat) => void;
   selectedTopic: string;
   setSelectedTopic: (topic: string) => void;
+  typographyStyle: TypographyStyle;
+  setTypographyStyle: (style: TypographyStyle) => void;
   favorites: StoredPhoto[];
   history: StoredPhoto[];
   onSelectStoredPhoto: (photo: StoredPhoto) => void;
@@ -39,6 +46,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setTimeFormat,
   selectedTopic,
   setSelectedTopic,
+  typographyStyle,
+  setTypographyStyle,
   favorites,
   history,
   onSelectStoredPhoto,
@@ -168,7 +177,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         {activeTab === 'general' && (
           <>
             {/* ディスプレイ & アニメーション設定 */}
-        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
               Update Interval
@@ -221,6 +230,37 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
               Choose 12-hour or 24-hour clock.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Typography Style
+            </h3>
+            <div className="flex flex-col space-y-1.5 max-w-xs">
+              {TYPOGRAPHY_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setTypographyStyle(opt.id)}
+                  className={`flex items-center justify-between px-3 py-1.5 rounded-lg border text-left transition-all ${
+                    typographyStyle === opt.id
+                      ? 'bg-white border-blue-500 text-stone-900 shadow-sm ring-1 ring-blue-500/20'
+                      : 'bg-white/60 border-stone-200 text-stone-600 hover:bg-white hover:text-stone-900'
+                  }`}
+                >
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold">{opt.label}</span>
+                    <span className="text-[10px] text-stone-400">{opt.description}</span>
+                  </div>
+                  <span className={`text-sm font-medium ${opt.fontClass}`}>
+                    {opt.sample}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              Choose clock font appearance.
             </p>
           </div>
 

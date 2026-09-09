@@ -22,6 +22,8 @@ export default function App() {
     setTimeFormat,
     selectedTopic,
     setSelectedTopic,
+    typographyStyle,
+    setTypographyStyle,
   } = usePhotoSettings();
 
   const {
@@ -142,7 +144,7 @@ export default function App() {
 
       {/* 中央: 時計表示 */}
       <main className="relative z-20">
-        <ClockDisplay clock={clock} />
+        <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
       </main>
 
       {/* 設定モーダル */}
@@ -160,6 +162,8 @@ export default function App() {
         setTimeFormat={setTimeFormat}
         selectedTopic={selectedTopic}
         setSelectedTopic={setSelectedTopic}
+        typographyStyle={typographyStyle}
+        setTypographyStyle={setTypographyStyle}
         favorites={favorites}
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}
