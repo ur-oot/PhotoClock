@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Menu, Maximize, Minimize, Keyboard } from 'lucide-react';
-import { useClock } from './hooks/useClock';
 import { usePhotoSettings } from './hooks/usePhotoSettings';
 import { usePhotoManager } from './hooks/usePhotoManager';
 import { usePhotoFavorites } from './hooks/usePhotoFavorites';
@@ -65,7 +64,6 @@ export default function App() {
     clearHistory,
   } = usePhotoFavorites();
 
-  const clock = useClock(timeFormat, resolvedClockLanguage);
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
   const pomodoroTimer = usePomodoroTimer();
   const wakeLock = useWakeLock();
@@ -380,7 +378,7 @@ export default function App() {
             }}
           >
             <ClockDisplay
-              clock={clock}
+              timeFormat={timeFormat}
               typographyStyle={typographyStyle}
               language={resolvedClockLanguage}
               weather={weather.weather}
