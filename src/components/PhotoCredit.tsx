@@ -25,7 +25,7 @@ export const PhotoCredit: React.FC<PhotoCreditProps> = ({
   return (
     <aside
       aria-label="Photo attribution"
-      className={`fixed top-4 right-4 z-20 backdrop-blur-md bg-white/70 hover:bg-white/90 transition-all duration-300 rounded-full pl-3.5 pr-2 py-1.5 shadow-[0_4px_16px_rgba(0,0,0,0.15)] flex items-center space-x-2.5 text-xs text-stone-700 ${
+      className={`absolute top-4 right-4 z-20 backdrop-blur-md bg-white/70 hover:bg-white/90 transition-all duration-300 rounded-full pl-3.5 pr-2 py-1.5 shadow-[0_4px_16px_rgba(0,0,0,0.15)] flex items-center space-x-2.5 text-xs text-stone-700 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
       }`}
     >
