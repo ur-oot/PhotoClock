@@ -1,20 +1,27 @@
 import React from 'react';
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react';
 import type { useZenTimer } from '../hooks/useZenTimer';
+import { useTranslation } from '../hooks/useTranslation';
+import type { LanguageMode } from '../locales';
 
 interface ZenTimerBarProps {
   zenTimer: ReturnType<typeof useZenTimer>;
   isControlsVisible: boolean;
+  language?: LanguageMode;
 }
 
 export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
   zenTimer,
   isControlsVisible,
+  language = 'auto',
 }) => {
+  const { t } = useTranslation(language);
+
   if (!zenTimer.isEnabled) return null;
 
   const isWork = zenTimer.phase === 'work';
   const progressPercent = Math.round(zenTimer.progress * 100);
+  const phaseLabel = isWork ? t('zenTimer.focus') : t('zenTimer.break');
 
   return (
     <div className="mt-4 flex flex-col items-center select-none transition-all duration-300">
@@ -23,7 +30,10 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
         className={`w-48 sm:w-64 h-1 rounded-full bg-white/20 backdrop-blur-md overflow-hidden relative shadow-[0_1px_4px_rgba(0,0,0,0.2)] transition-all ${
           zenTimer.isCompletedPulse ? 'ring-2 ring-white animate-pulse' : ''
         }`}
-        title={`Zen Timer: ${isWork ? 'Focus' : 'Break'} (${progressPercent}%)`}
+        title={t('zenTimer.tooltip', {
+          phase: phaseLabel,
+          percent: progressPercent,
+        })}
       >
         <div
           className={`h-full rounded-full transition-all duration-1000 ease-linear ${
@@ -49,7 +59,7 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
             isWork ? 'text-amber-800' : 'text-emerald-800'
           }`}
         >
-          {isWork ? 'Focus' : 'Break'}
+          {phaseLabel}
         </span>
 
         <span className="font-mono font-medium text-[11px] text-stone-700">
@@ -61,8 +71,8 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
         {/* 再生 / 一時停止ボタン */}
         <button
           onClick={zenTimer.togglePlay}
-          aria-label={zenTimer.isRunning ? 'Pause timer' : 'Start timer'}
-          title={zenTimer.isRunning ? 'Pause' : 'Start'}
+          aria-label={zenTimer.isRunning ? t('zenTimer.pause') : t('zenTimer.start')}
+          title={zenTimer.isRunning ? t('zenTimer.pause') : t('zenTimer.start')}
           className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-800"
         >
           {zenTimer.isRunning ? (
@@ -75,8 +85,8 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
         {/* フェーズスキップボタン */}
         <button
           onClick={() => zenTimer.switchPhase(isWork ? 'break' : 'work')}
-          aria-label="Skip to next phase"
-          title={isWork ? 'Skip to break' : 'Skip to focus'}
+          aria-label={t('zenTimer.skip')}
+          title={t('zenTimer.skip')}
           className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-600 hover:text-stone-900"
         >
           <SkipForward className="w-3.5 h-3.5" />
@@ -85,8 +95,8 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
         {/* リセットボタン */}
         <button
           onClick={zenTimer.reset}
-          aria-label="Reset timer"
-          title="Reset timer"
+          aria-label={t('zenTimer.reset')}
+          title={t('zenTimer.reset')}
           className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-600 hover:text-stone-900"
         >
           <RotateCcw className="w-3.5 h-3.5" />
