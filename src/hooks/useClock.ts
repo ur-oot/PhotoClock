@@ -55,15 +55,37 @@ export function useClock(timeFormat: TimeFormat = '12h'): ClockState {
   const [clock, setClock] = useState<ClockState>(() => getNowClockState(timeFormat));
 
   useEffect(() => {
-    // 最初の状態をセット
-    setClock(getNowClockState(timeFormat));
+    let timerId: number | undefined;
 
-    const timer = setInterval(() => {
+    const tick = () => {
       setClock(getNowClockState(timeFormat));
-    }, 1000);
+
+      // 次の正秒（ミリ秒が0になるタイミング）までの残り時間を計算
+      // 早期発火による同一秒の重複更新を防止するため、数msの安全マージン(+4ms)を加算
+      const now = Date.now();
+      const delay = 1000 - (now % 1000) + 4;
+      timerId = window.setTimeout(tick, delay);
+    };
+
+    tick();
+
+    // バックグラウンド復帰時の即時同期
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        if (timerId !== undefined) {
+          clearTimeout(timerId);
+        }
+        tick();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      clearInterval(timer);
+      if (timerId !== undefined) {
+        clearTimeout(timerId);
+      }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [timeFormat]);
 
