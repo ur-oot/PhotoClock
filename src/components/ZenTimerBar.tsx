@@ -62,7 +62,7 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
         <button
           onClick={zenTimer.togglePlay}
           aria-label={zenTimer.isRunning ? 'Pause timer' : 'Start timer'}
-          title={zenTimer.isRunning ? '一時停止' : 'スタート'}
+          title={zenTimer.isRunning ? 'Pause' : 'Start'}
           className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-800"
         >
           {zenTimer.isRunning ? (
@@ -76,7 +76,7 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
         <button
           onClick={() => zenTimer.switchPhase(isWork ? 'break' : 'work')}
           aria-label="Skip to next phase"
-          title={isWork ? '休憩へスキップ' : '作業へスキップ'}
+          title={isWork ? 'Skip to break' : 'Skip to focus'}
           className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-600 hover:text-stone-900"
         >
           <SkipForward className="w-3.5 h-3.5" />
@@ -86,7 +86,7 @@ export const ZenTimerBar: React.FC<ZenTimerBarProps> = ({
         <button
           onClick={zenTimer.reset}
           aria-label="Reset timer"
-          title="タイマーをリセット"
+          title="Reset timer"
           className="p-1 rounded-full hover:bg-white/60 transition-colors text-stone-600 hover:text-stone-900"
         >
           <RotateCcw className="w-3.5 h-3.5" />
