@@ -16,25 +16,25 @@ export const SOUND_PRESETS: SoundPreset[] = [
   {
     id: 'rain',
     label: 'Gentle Rain',
-    description: '穏やかな雨音と遠くの雨足',
+    description: 'Calming rain and distant showers',
     iconName: 'CloudRain',
   },
   {
     id: 'waves',
     label: 'Ocean Waves',
-    description: '寄せては返す静かな波の満ち引き',
+    description: 'Rhythmic ebb and flow of ocean tides',
     iconName: 'Waves',
   },
   {
     id: 'campfire',
     label: 'Campfire',
-    description: '心地よく爆ぜる暖炉・焚き火の音',
+    description: 'Warm firewood and crackling embers',
     iconName: 'Flame',
   },
   {
     id: 'white_noise',
     label: 'Focus Noise',
-    description: '集中力を高める柔らかなピンクノイズ',
+    description: 'Gentle pink noise for deep concentration',
     iconName: 'Wind',
   },
 ];

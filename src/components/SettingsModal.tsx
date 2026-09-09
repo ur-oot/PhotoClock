@@ -295,7 +295,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </h3>
               </div>
               <p className="text-xs text-stone-500 mt-0.5">
-                リアルタイム音響合成による環境音（外部音声通信0MB）
+                Calming background audio for focus and relaxation.
               </p>
             </div>
 
