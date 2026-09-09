@@ -79,7 +79,7 @@ export const ShortcutHelpModal: React.FC<ShortcutHelpModalProps> = ({
             {resolvedLanguage === 'ja' ? (
               <>
                 <kbd className="font-mono text-stone-600 font-medium">?</kbd> または{' '}
-                <kbd className="font-mono text-stone-600 font-medium">Esc</kbd> でいつでも案内を切り替えられます。
+                <kbd className="font-mono text-stone-600 font-medium">Esc</kbd> でいつでもこの一覧を開閉できます。
               </>
             ) : (
               <>

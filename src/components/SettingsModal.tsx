@@ -343,7 +343,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   const mins = Math.round(opt.code / 60);
                   const label =
                     language === 'ja'
-                      ? `${mins}分ごと`
+                      ? opt.code === 300
+                        ? `${mins}分ごと（標準）`
+                        : `${mins}分ごと`
                       : opt.code === 300
                       ? 'Every 5 minutes (default)'
                       : `Every ${mins} minutes`;
