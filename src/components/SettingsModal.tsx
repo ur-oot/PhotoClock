@@ -289,7 +289,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 type="button"
                 onClick={() => setIsZenTimerEnabled(!isZenTimerEnabled)}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isZenTimerEnabled ? 'bg-amber-500' : 'bg-stone-300'
+                  isZenTimerEnabled ? 'bg-stone-900' : 'bg-stone-300'
                 }`}
                 role="switch"
                 aria-checked={isZenTimerEnabled}
@@ -319,7 +319,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 type="button"
                 onClick={() => setIsCinematicMotionEnabled(!isCinematicMotionEnabled)}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isCinematicMotionEnabled ? 'bg-blue-600' : 'bg-stone-300'
+                  isCinematicMotionEnabled ? 'bg-stone-900' : 'bg-stone-300'
                 }`}
                 role="switch"
                 aria-checked={isCinematicMotionEnabled}
