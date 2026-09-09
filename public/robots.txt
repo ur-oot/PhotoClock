@@ -1,2 +1,4 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://photoclock.netlify.app/sitemap.xml

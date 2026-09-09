@@ -4,13 +4,62 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#ffffff" />
-    <meta name="description" content="A minimalist digital clock with dynamic Unsplash wallpapers" />
+    <title>PhotoClock - Minimalist Fullscreen Digital Clock & Ambient Frame</title>
+    <meta
+      name="description"
+      content="A minimalist digital clock featuring high-resolution Unsplash photography, Zen pomodoro timer, typography styles, and cinematic motion. Perfect as a desk ambient display or smart photo frame."
+    />
+    <meta
+      name="keywords"
+      content="digital clock, online clock, fullscreen clock, ambient display, photo clock, unsplash, minimal clock, pomodoro timer, zen clock, desk clock, pwa"
+    />
+    <link rel="canonical" href="https://photoclock.netlify.app/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://photoclock.netlify.app/" />
+    <meta property="og:title" content="PhotoClock - Minimalist Fullscreen Digital Clock & Ambient Frame" />
+    <meta
+      property="og:description"
+      content="A minimalist digital clock featuring high-resolution Unsplash photography, Zen pomodoro timer, and cinematic motion. Perfect as a desk ambient display."
+    />
+    <meta property="og:image" content="/img/og-image.png" />
+    <meta property="og:image:width" content="1440" />
+    <meta property="og:image:height" content="760" />
+    <meta property="og:site_name" content="PhotoClock" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://photoclock.netlify.app/" />
+    <meta name="twitter:title" content="PhotoClock - Minimalist Fullscreen Digital Clock & Ambient Frame" />
+    <meta
+      name="twitter:description"
+      content="A minimalist digital clock featuring high-resolution Unsplash photography, Zen pomodoro timer, and cinematic motion."
+    />
+    <meta name="twitter:image" content="/img/og-image.png" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "PhotoClock",
+        "url": "https://photoclock.netlify.app/",
+        "description": "A minimalist digital clock featuring high-resolution Unsplash photography, Zen pomodoro timer, and cinematic motion.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0"
+        }
+      }
+    </script>
+
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/img/icons/apple-touch-icon-180x180.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
-    <title>PhotoClock</title>
   </head>
   <body class="m-0 p-0 overflow-hidden bg-black text-[#1d1d1f] select-none">
     <div id="root"></div>
