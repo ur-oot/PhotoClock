@@ -95,6 +95,8 @@ interface SettingsModalProps {
   setIsSunMoodEnabled: (enabled: boolean) => void;
   isNightDimmingEnabled: boolean;
   setIsNightDimmingEnabled: (enabled: boolean) => void;
+  isSpotlightEnabled: boolean;
+  setIsSpotlightEnabled: (enabled: boolean) => void;
   isZenTimerEnabled: boolean;
   setIsZenTimerEnabled: (enabled: boolean) => void;
   isWakeLockEnabled: boolean;
@@ -138,6 +140,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setIsSunMoodEnabled,
   isNightDimmingEnabled,
   setIsNightDimmingEnabled,
+  isSpotlightEnabled,
+  setIsSpotlightEnabled,
   isZenTimerEnabled,
   setIsZenTimerEnabled,
   isWakeLockEnabled,
@@ -737,6 +741,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         checked={isCinematicMotionEnabled}
                         onChange={setIsCinematicMotionEnabled}
                         ariaLabel="Toggle cinematic motion"
+                      />
+                    </div>
+
+                    {/* 絵画スポットライト */}
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <div className="text-xs font-semibold text-stone-900">
+                          {t('settings.general.spotlightTitle')}
+                        </div>
+                        <div className="text-[11px] text-stone-500">
+                          {t('settings.general.spotlightDesc')}
+                        </div>
+                      </div>
+                      <ToggleSwitch
+                        checked={isSpotlightEnabled}
+                        onChange={setIsSpotlightEnabled}
+                        ariaLabel="Toggle gallery spotlight"
                       />
                     </div>
                   </div>

@@ -75,6 +75,8 @@ export interface TranslationDictionary {
       sunMoodDesc: string;
       nightDimmingTitle: string;
       nightDimmingDesc: string;
+      spotlightTitle: string;
+      spotlightDesc: string;
     };
     topics: {
       title: string;

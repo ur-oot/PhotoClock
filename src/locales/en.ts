@@ -73,6 +73,8 @@ export const en: TranslationDictionary = {
       sunMoodDesc: 'Align photo atmosphere with sunrise, sunset, and night.',
       nightDimmingTitle: 'Night Dimming',
       nightDimmingDesc: 'Softly dims display after sunset for night comfort.',
+      spotlightTitle: 'Gallery Spotlight',
+      spotlightDesc: 'Cast a soft exhibition spotlight onto the artwork from above.',
     },
     topics: {
       title: 'Photo Mood & Topics',

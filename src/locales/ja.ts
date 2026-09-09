@@ -73,6 +73,8 @@ export const ja: TranslationDictionary = {
       sunMoodDesc: '朝・昼・夕方・夜の時間帯に合わせて、写真の雰囲気を自動切り替え。',
       nightDimmingTitle: '夜間の画面減光',
       nightDimmingDesc: '日没後の暗い部屋に合わせて、画面のまぶしさを自動で抑える。',
+      spotlightTitle: '絵画スポットライト',
+      spotlightDesc: '美術館の展示照明のように写真上部から柔らかな光を投影。',
     },
     topics: {
       title: '写真のテーマ',

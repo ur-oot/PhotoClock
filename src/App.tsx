@@ -44,6 +44,8 @@ export default function App() {
     setIsSunMoodEnabled,
     isNightDimmingEnabled,
     setIsNightDimmingEnabled,
+    isSpotlightEnabled,
+    setIsSpotlightEnabled,
     language,
     setLanguage,
     resolvedLanguage,
@@ -305,6 +307,7 @@ export default function App() {
           <CinematicBackground
             photoUrl={photoUrl}
             isCinematicMotionEnabled={isCinematicMotionEnabled}
+            isSpotlightEnabled={isSpotlightEnabled}
           />
         </div>
 
@@ -424,6 +427,8 @@ export default function App() {
         setIsSunMoodEnabled={setIsSunMoodEnabled}
         isNightDimmingEnabled={isNightDimmingEnabled}
         setIsNightDimmingEnabled={setIsNightDimmingEnabled}
+        isSpotlightEnabled={isSpotlightEnabled}
+        setIsSpotlightEnabled={setIsSpotlightEnabled}
         isZenTimerEnabled={zenTimer.isEnabled}
         setIsZenTimerEnabled={zenTimer.setIsEnabled}
         isWakeLockEnabled={wakeLock.isEnabled}

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 interface CinematicBackgroundProps {
   photoUrl: string;
   isCinematicMotionEnabled: boolean;
+  isSpotlightEnabled?: boolean;
 }
 
 const ANIMATION_VARIANTS = [
@@ -20,6 +21,7 @@ function getRandomAnimation(previousAnimation?: string): string {
 export const CinematicBackground: React.FC<CinematicBackgroundProps> = ({
   photoUrl,
   isCinematicMotionEnabled,
+  isSpotlightEnabled = false,
 }) => {
   // レイヤーAとBでダブルバッファリング
   const [layerA, setLayerA] = useState<{ url: string; animation: string }>({
@@ -105,6 +107,30 @@ export const CinematicBackground: React.FC<CinematicBackgroundProps> = ({
           }}
         />
       )}
+
+      {/* ギャラリースポットライト照明演出レイヤー */}
+      <div
+        className={`absolute inset-0 pointer-events-none transition-opacity duration-700 ease-in-out ${
+          isSpotlightEnabled ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        {/* 上部中央からの温白色展示光 */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 85% 65% at 50% 0%, rgba(255, 253, 247, 0.24) 0%, rgba(255, 250, 240, 0.12) 38%, rgba(255, 250, 240, 0.02) 68%, transparent 85%)',
+          }}
+        />
+        {/* 周辺および下部コーナーへのフォールオフ陰影 */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 95% 80% at 50% 20%, transparent 42%, rgba(0, 0, 0, 0.18) 72%, rgba(0, 0, 0, 0.45) 100%)',
+          }}
+        />
+      </div>
 
       {/* シネマティック・ビネット & コントラスト保護オーバーレイ */}
       <div
