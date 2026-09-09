@@ -24,6 +24,7 @@ import {
   type LanguageMode,
   type ClockLanguageMode,
 } from '../hooks/usePhotoSettings';
+import type { TemperatureUnit } from '../hooks/useWeather';
 import { getSolarMoodInfo } from '../utils/sunCalc';
 import { useTranslation } from '../hooks/useTranslation';
 import type { ResolvedLanguage } from '../locales';
@@ -95,6 +96,10 @@ interface SettingsModalProps {
   setIsSunMoodEnabled: (enabled: boolean) => void;
   isNightDimmingEnabled: boolean;
   setIsNightDimmingEnabled: (enabled: boolean) => void;
+  isWeatherEnabled: boolean;
+  setIsWeatherEnabled: (enabled: boolean) => void;
+  temperatureUnit: TemperatureUnit;
+  setTemperatureUnit: (unit: TemperatureUnit) => void;
   isPomodoroTimerEnabled: boolean;
   setIsPomodoroTimerEnabled: (enabled: boolean) => void;
   isWakeLockEnabled: boolean;
@@ -138,6 +143,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setIsSunMoodEnabled,
   isNightDimmingEnabled,
   setIsNightDimmingEnabled,
+  isWeatherEnabled,
+  setIsWeatherEnabled,
+  temperatureUnit,
+  setTemperatureUnit,
   isPomodoroTimerEnabled,
   setIsPomodoroTimerEnabled,
   isWakeLockEnabled,
@@ -487,6 +496,51 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         >
                           {t('settings.general.timeFormat24')}
                         </button>
+                      </div>
+                    </div>
+
+                    {/* 現在の天気と気温 */}
+                    <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <div className="text-xs font-semibold text-stone-900">
+                          {t('settings.general.weatherTitle')}
+                        </div>
+                        <div className="text-[11px] text-stone-500">
+                          {t('settings.general.weatherDesc')}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3 self-end sm:self-auto shrink-0">
+                        {isWeatherEnabled && (
+                          <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70">
+                            <button
+                              type="button"
+                              onClick={() => setTemperatureUnit('celsius')}
+                              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                                temperatureUnit === 'celsius'
+                                  ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                                  : 'text-stone-600 hover:text-stone-900'
+                              }`}
+                            >
+                              {t('settings.general.temperatureUnitCelsius')}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setTemperatureUnit('fahrenheit')}
+                              className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                                temperatureUnit === 'fahrenheit'
+                                  ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                                  : 'text-stone-600 hover:text-stone-900'
+                              }`}
+                            >
+                              {t('settings.general.temperatureUnitFahrenheit')}
+                            </button>
+                          </div>
+                        )}
+                        <ToggleSwitch
+                          checked={isWeatherEnabled}
+                          onChange={setIsWeatherEnabled}
+                          ariaLabel="Toggle weather"
+                        />
                       </div>
                     </div>
 
@@ -1096,6 +1150,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 )}
               </div>
             )}
+          {/* クレジット表記 */}
+          <div className="pt-2 pb-2 text-center text-[10px] text-stone-400">
+            PhotoClock | Unsplash API &amp; Open-Meteo
+          </div>
         </div>
       </div>
     </div>

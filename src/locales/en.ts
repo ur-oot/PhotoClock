@@ -73,6 +73,11 @@ export const en: TranslationDictionary = {
       sunMoodDesc: 'Align photo atmosphere with sunrise, sunset, and night.',
       nightDimmingTitle: 'Night Dimming',
       nightDimmingDesc: 'Softly dims display after sunset for night comfort.',
+      weatherTitle: 'Current Weather',
+      weatherDesc: 'Subtly display outdoor temperature and weather icon in the date bar.',
+      temperatureUnit: 'Temperature Unit',
+      temperatureUnitCelsius: '°C',
+      temperatureUnitFahrenheit: '°F',
     },
     topics: {
       title: 'Photo Mood & Topics',

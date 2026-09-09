@@ -8,6 +8,7 @@ import { useFullscreen } from './hooks/useFullscreen';
 import { usePomodoroTimer } from './hooks/usePomodoroTimer';
 import { useWakeLock } from './hooks/useWakeLock';
 import { usePixelShift } from './hooks/usePixelShift';
+import { useWeather } from './hooks/useWeather';
 import { ClockDisplay } from './components/ClockDisplay';
 import { PomodoroTimerBar } from './components/PomodoroTimerBar';
 import { PhotoCredit } from './components/PhotoCredit';
@@ -69,6 +70,7 @@ export default function App() {
   const pomodoroTimer = usePomodoroTimer();
   const wakeLock = useWakeLock();
   const pixelShift = usePixelShift();
+  const weather = useWeather();
 
   const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
@@ -377,7 +379,14 @@ export default function App() {
               transform: `translate3d(${pixelShift.offset.x}px, ${pixelShift.offset.y}px, 0)`,
             }}
           >
-            <ClockDisplay clock={clock} typographyStyle={typographyStyle} language={resolvedClockLanguage} />
+            <ClockDisplay
+              clock={clock}
+              typographyStyle={typographyStyle}
+              language={resolvedClockLanguage}
+              weather={weather.weather}
+              isWeatherEnabled={weather.isEnabled}
+              temperatureUnit={weather.unit}
+            />
             <PomodoroTimerBar
               pomodoroTimer={pomodoroTimer}
               isControlsVisible={isControlsVisible && !isModalOpen && !isHelpOpen}
@@ -430,6 +439,10 @@ export default function App() {
         setIsSunMoodEnabled={setIsSunMoodEnabled}
         isNightDimmingEnabled={isNightDimmingEnabled}
         setIsNightDimmingEnabled={setIsNightDimmingEnabled}
+        isWeatherEnabled={weather.isEnabled}
+        setIsWeatherEnabled={weather.setIsEnabled}
+        temperatureUnit={weather.unit}
+        setTemperatureUnit={weather.setUnit}
         isPomodoroTimerEnabled={pomodoroTimer.isEnabled}
         setIsPomodoroTimerEnabled={pomodoroTimer.setIsEnabled}
         isWakeLockEnabled={wakeLock.isEnabled}

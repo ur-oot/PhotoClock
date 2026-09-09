@@ -75,6 +75,11 @@ export interface TranslationDictionary {
       sunMoodDesc: string;
       nightDimmingTitle: string;
       nightDimmingDesc: string;
+      weatherTitle: string;
+      weatherDesc: string;
+      temperatureUnit: string;
+      temperatureUnitCelsius: string;
+      temperatureUnitFahrenheit: string;
     };
     topics: {
       title: string;

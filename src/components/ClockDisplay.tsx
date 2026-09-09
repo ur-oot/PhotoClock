@@ -2,17 +2,25 @@ import React from 'react';
 import type { ClockState } from '../hooks/useClock';
 import type { TypographyStyle } from '../hooks/usePhotoSettings';
 import type { ResolvedLanguage } from '../locales';
+import type { WeatherData, TemperatureUnit } from '../hooks/useWeather';
+import { WeatherIcon } from './WeatherIcon';
 
 interface ClockDisplayProps {
   clock: ClockState;
   typographyStyle?: TypographyStyle;
   language?: ResolvedLanguage;
+  weather?: WeatherData | null;
+  isWeatherEnabled?: boolean;
+  temperatureUnit?: TemperatureUnit;
 }
 
 export const ClockDisplay: React.FC<ClockDisplayProps> = ({
   clock,
   typographyStyle = 'sans',
   language = 'en',
+  weather,
+  isWeatherEnabled = true,
+  temperatureUnit = 'celsius',
 }) => {
   // フォントスタイル別のクラス設定
   const fontConfig = {
@@ -35,10 +43,10 @@ export const ClockDisplay: React.FC<ClockDisplayProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-center select-none pointer-events-none transition-all duration-300">
-      {/* 日付パネル */}
+      {/* 日付・気象パネル */}
       <div className="backdrop-blur-md bg-white/50 px-6 py-2 rounded-[18px] shadow-[2px_4px_12px_rgba(0,0,0,0.08)] mb-2.5">
         <div
-          className={`flex items-center justify-end uppercase text-[1.5vw] min-text-sm md:text-xl lg:text-2xl font-medium text-stone-800 space-x-3 ${fontConfig.date}`}
+          className={`flex items-center justify-center uppercase text-[1.5vw] min-text-sm md:text-xl lg:text-2xl font-medium text-stone-800 space-x-3 ${fontConfig.date}`}
         >
           {language === 'ja' ? (
             <>
@@ -53,6 +61,19 @@ export const ClockDisplay: React.FC<ClockDisplayProps> = ({
               <span>{clock.dayOfWeek}</span>
               <span>{clock.day}</span>
               <span>{clock.month}</span>
+            </>
+          )}
+
+          {/* ミニマル気象インジケーター */}
+          {isWeatherEnabled && weather && (
+            <>
+              <div className="w-px h-3.5 md:h-5 bg-stone-400/40 my-auto" />
+              <div className="flex items-center space-x-1.5 normal-case font-medium text-stone-700 tabular-nums">
+                <WeatherIcon code={weather.weatherCode} className="w-4 h-4 md:w-5 md:h-5" />
+                <span>
+                  {weather.temperature}°{temperatureUnit === 'fahrenheit' ? 'F' : 'C'}
+                </span>
+              </div>
             </>
           )}
         </div>
