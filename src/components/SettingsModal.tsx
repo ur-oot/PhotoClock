@@ -32,6 +32,10 @@ interface SettingsModalProps {
   setMatteColor: (color: MatteColor) => void;
   isZenTimerEnabled: boolean;
   setIsZenTimerEnabled: (enabled: boolean) => void;
+  isWakeLockEnabled: boolean;
+  setIsWakeLockEnabled: (enabled: boolean) => void;
+  isPixelShiftEnabled: boolean;
+  setIsPixelShiftEnabled: (enabled: boolean) => void;
   favorites: StoredPhoto[];
   history: StoredPhoto[];
   onSelectStoredPhoto: (photo: StoredPhoto) => void;
@@ -61,6 +65,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setMatteColor,
   isZenTimerEnabled,
   setIsZenTimerEnabled,
+  isWakeLockEnabled,
+  setIsWakeLockEnabled,
+  isPixelShiftEnabled,
+  setIsPixelShiftEnabled,
   favorites,
   history,
   onSelectStoredPhoto,
@@ -334,6 +342,66 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
               Smooth zoom and pan Ken Burns effect.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Screen Awake
+            </h3>
+            <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
+              <span className="text-sm text-stone-800 font-medium">
+                {isWakeLockEnabled ? 'Active' : 'Disabled'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsWakeLockEnabled(!isWakeLockEnabled)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isWakeLockEnabled ? 'bg-stone-900' : 'bg-stone-300'
+                }`}
+                role="switch"
+                aria-checked={isWakeLockEnabled}
+                aria-label="Toggle keep screen awake"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isWakeLockEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              Keep display turned on while active.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Burn-in Protection
+            </h3>
+            <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
+              <span className="text-sm text-stone-800 font-medium">
+                {isPixelShiftEnabled ? 'Active' : 'Disabled'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsPixelShiftEnabled(!isPixelShiftEnabled)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isPixelShiftEnabled ? 'bg-stone-900' : 'bg-stone-300'
+                }`}
+                role="switch"
+                aria-checked={isPixelShiftEnabled}
+                aria-label="Toggle burn-in protection"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isPixelShiftEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              Subtle pixel shift to protect display.
             </p>
           </div>
 
