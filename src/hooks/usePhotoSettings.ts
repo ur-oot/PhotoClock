@@ -13,6 +13,8 @@ const STORAGE_KEY_TOPIC = 'photoclock_selected_topic';
 const STORAGE_KEY_TYPOGRAPHY = 'photoclock_typography_style';
 const STORAGE_KEY_GALLERY_MATTE = 'photoclock_gallery_matte_enabled';
 const STORAGE_KEY_MATTE_COLOR = 'photoclock_gallery_matte_color';
+const STORAGE_KEY_SUN_MOOD = 'photoclock_sun_mood_enabled';
+const STORAGE_KEY_NIGHT_DIMMING = 'photoclock_night_dimming_enabled';
 
 export interface TypographyOption {
   id: TypographyStyle;
@@ -158,6 +160,30 @@ export function usePhotoSettings() {
     return 'auto';
   });
 
+  const [isSunMoodEnabled, setIsSunMoodEnabledState] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_SUN_MOOD);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch {
+      // ignore
+    }
+    return true; // デフォルト: 有効
+  });
+
+  const [isNightDimmingEnabled, setIsNightDimmingEnabledState] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_NIGHT_DIMMING);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch {
+      // ignore
+    }
+    return true; // デフォルト: 有効
+  });
+
   const setUpdateIntervalTime = (seconds: number) => {
     setUpdateIntervalTimeState(seconds);
     try {
@@ -238,6 +264,24 @@ export function usePhotoSettings() {
     }
   };
 
+  const setIsSunMoodEnabled = (enabled: boolean) => {
+    setIsSunMoodEnabledState(enabled);
+    try {
+      localStorage.setItem(STORAGE_KEY_SUN_MOOD, String(enabled));
+    } catch {
+      // ignore
+    }
+  };
+
+  const setIsNightDimmingEnabled = (enabled: boolean) => {
+    setIsNightDimmingEnabledState(enabled);
+    try {
+      localStorage.setItem(STORAGE_KEY_NIGHT_DIMMING, String(enabled));
+    } catch {
+      // ignore
+    }
+  };
+
   return {
     updateIntervalTime,
     setUpdateIntervalTime,
@@ -255,5 +299,9 @@ export function usePhotoSettings() {
     setIsGalleryMatteEnabled,
     matteColor,
     setMatteColor,
+    isSunMoodEnabled,
+    setIsSunMoodEnabled,
+    isNightDimmingEnabled,
+    setIsNightDimmingEnabled,
   };
 }

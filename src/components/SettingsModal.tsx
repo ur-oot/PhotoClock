@@ -9,6 +9,7 @@ import {
   type TypographyStyle,
   type MatteColor,
 } from '../hooks/usePhotoSettings';
+import { getSolarMoodInfo } from '../utils/sunCalc';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -30,6 +31,10 @@ interface SettingsModalProps {
   setIsGalleryMatteEnabled: (enabled: boolean) => void;
   matteColor: MatteColor;
   setMatteColor: (color: MatteColor) => void;
+  isSunMoodEnabled: boolean;
+  setIsSunMoodEnabled: (enabled: boolean) => void;
+  isNightDimmingEnabled: boolean;
+  setIsNightDimmingEnabled: (enabled: boolean) => void;
   isZenTimerEnabled: boolean;
   setIsZenTimerEnabled: (enabled: boolean) => void;
   isWakeLockEnabled: boolean;
@@ -63,6 +68,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setIsGalleryMatteEnabled,
   matteColor,
   setMatteColor,
+  isSunMoodEnabled,
+  setIsSunMoodEnabled,
+  isNightDimmingEnabled,
+  setIsNightDimmingEnabled,
   isZenTimerEnabled,
   setIsZenTimerEnabled,
   isWakeLockEnabled,
@@ -80,6 +89,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [page, setPage] = useState<number>(1);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [hasLoadedInitial, setHasLoadedInitial] = useState<boolean>(false);
+
+  const solarMood = getSolarMoodInfo();
 
   // 初回表示時にコレクション一覧を取得
   useEffect(() => {
@@ -475,6 +486,73 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               Framed passe-partout display.
             </p>
           </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Sun-Aware Mood
+            </h3>
+            <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-stone-800 font-medium">
+                  {isSunMoodEnabled ? 'Enabled' : 'Disabled'}
+                </span>
+                {isSunMoodEnabled && (
+                  <span className="text-[10px] font-semibold px-2 py-0.5 bg-amber-100 text-amber-900 rounded-full">
+                    {solarMood.label}
+                  </span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSunMoodEnabled(!isSunMoodEnabled)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isSunMoodEnabled ? 'bg-stone-900' : 'bg-stone-300'
+                }`}
+                role="switch"
+                aria-checked={isSunMoodEnabled}
+                aria-label="Toggle sun-aware photo mood"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isSunMoodEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              Align photo atmosphere with sunrise, sunset, and night.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Night Dimming
+            </h3>
+            <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
+              <span className="text-sm text-stone-800 font-medium">
+                {isNightDimmingEnabled ? 'Enabled' : 'Disabled'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsNightDimmingEnabled(!isNightDimmingEnabled)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isNightDimmingEnabled ? 'bg-stone-900' : 'bg-stone-300'
+                }`}
+                role="switch"
+                aria-checked={isNightDimmingEnabled}
+                aria-label="Toggle automatic night dimming"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isNightDimmingEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              Softly dims display after sunset for night comfort.
+            </p>
+          </div>
         </section>
 
         {/* 写真のムード & トピック選択 */}
@@ -488,11 +566,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 Select a topic to curate your background atmosphere.
               </p>
             </div>
-            {selectedCollection && (
+            {selectedCollection ? (
               <span className="text-xs font-medium px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-md inline-block self-start sm:self-auto">
                 Custom collection active
               </span>
-            )}
+            ) : isSunMoodEnabled ? (
+              <span className="text-xs font-medium px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-md inline-flex items-center space-x-1.5 self-start sm:self-auto">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                <span>Sun-aware: {solarMood.label}</span>
+              </span>
+            ) : null}
           </div>
 
           <div className="flex flex-wrap gap-2.5">

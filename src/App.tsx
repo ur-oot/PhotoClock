@@ -19,6 +19,7 @@ import {
   getAutoMatteColor,
   getLuminanceFromHex,
 } from './utils/photoColor';
+import { getSolarMoodInfo } from './utils/sunCalc';
 
 export default function App() {
   const {
@@ -38,6 +39,10 @@ export default function App() {
     setIsGalleryMatteEnabled,
     matteColor,
     setMatteColor,
+    isSunMoodEnabled,
+    setIsSunMoodEnabled,
+    isNightDimmingEnabled,
+    setIsNightDimmingEnabled,
   } = usePhotoSettings();
 
   const {
@@ -60,8 +65,12 @@ export default function App() {
     updateIntervalTime,
     selectedCollection,
     selectedTopic,
-    addToHistory
+    addToHistory,
+    isSunMoodEnabled
   );
+
+  const solarMood = getSolarMoodInfo();
+  const isNightDimmed = isNightDimmingEnabled && solarMood.isDimmed;
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isHelpOpen, setIsHelpOpen] = useState<boolean>(false);
@@ -277,10 +286,17 @@ export default function App() {
         }
       >
         {/* シネマティック背景レイヤー (Ken Burns & ダブルバッファクロスフェード) */}
-        <CinematicBackground
-          photoUrl={photoUrl}
-          isCinematicMotionEnabled={isCinematicMotionEnabled}
-        />
+        <div
+          className="absolute inset-0 w-full h-full transition-[filter] duration-1000"
+          style={{
+            filter: isNightDimmed ? 'brightness(0.70) contrast(0.95)' : 'none',
+          }}
+        >
+          <CinematicBackground
+            photoUrl={photoUrl}
+            isCinematicMotionEnabled={isCinematicMotionEnabled}
+          />
+        </div>
 
         {/* 左上: 操作コントロール群（設定メニュー & フルスクリーン & ショートカットガイド） */}
         <div
@@ -386,6 +402,10 @@ export default function App() {
         setIsGalleryMatteEnabled={setIsGalleryMatteEnabled}
         matteColor={matteColor}
         setMatteColor={setMatteColor}
+        isSunMoodEnabled={isSunMoodEnabled}
+        setIsSunMoodEnabled={setIsSunMoodEnabled}
+        isNightDimmingEnabled={isNightDimmingEnabled}
+        setIsNightDimmingEnabled={setIsNightDimmingEnabled}
         isZenTimerEnabled={zenTimer.isEnabled}
         setIsZenTimerEnabled={zenTimer.setIsEnabled}
         isWakeLockEnabled={wakeLock.isEnabled}
