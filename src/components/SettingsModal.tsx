@@ -7,6 +7,7 @@ import {
   TYPOGRAPHY_OPTIONS,
   type TimeFormat,
   type TypographyStyle,
+  type MatteColor,
 } from '../hooks/usePhotoSettings';
 
 interface SettingsModalProps {
@@ -25,6 +26,10 @@ interface SettingsModalProps {
   setSelectedTopic: (topic: string) => void;
   typographyStyle: TypographyStyle;
   setTypographyStyle: (style: TypographyStyle) => void;
+  isGalleryMatteEnabled: boolean;
+  setIsGalleryMatteEnabled: (enabled: boolean) => void;
+  matteColor: MatteColor;
+  setMatteColor: (color: MatteColor) => void;
   isZenTimerEnabled: boolean;
   setIsZenTimerEnabled: (enabled: boolean) => void;
   isWakeLockEnabled: boolean;
@@ -54,6 +59,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setSelectedTopic,
   typographyStyle,
   setTypographyStyle,
+  isGalleryMatteEnabled,
+  setIsGalleryMatteEnabled,
+  matteColor,
+  setMatteColor,
   isZenTimerEnabled,
   setIsZenTimerEnabled,
   isWakeLockEnabled,
@@ -288,7 +297,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 type="button"
                 onClick={() => setIsZenTimerEnabled(!isZenTimerEnabled)}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isZenTimerEnabled ? 'bg-amber-500' : 'bg-stone-300'
+                  isZenTimerEnabled ? 'bg-stone-900' : 'bg-stone-300'
                 }`}
                 role="switch"
                 aria-checked={isZenTimerEnabled}
@@ -318,7 +327,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 type="button"
                 onClick={() => setIsCinematicMotionEnabled(!isCinematicMotionEnabled)}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isCinematicMotionEnabled ? 'bg-blue-600' : 'bg-stone-300'
+                  isCinematicMotionEnabled ? 'bg-stone-900' : 'bg-stone-300'
                 }`}
                 role="switch"
                 aria-checked={isCinematicMotionEnabled}
@@ -348,7 +357,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 type="button"
                 onClick={() => setIsWakeLockEnabled(!isWakeLockEnabled)}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isWakeLockEnabled ? 'bg-blue-600' : 'bg-stone-300'
+                  isWakeLockEnabled ? 'bg-stone-900' : 'bg-stone-300'
                 }`}
                 role="switch"
                 aria-checked={isWakeLockEnabled}
@@ -378,7 +387,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 type="button"
                 onClick={() => setIsPixelShiftEnabled(!isPixelShiftEnabled)}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isPixelShiftEnabled ? 'bg-blue-600' : 'bg-stone-300'
+                  isPixelShiftEnabled ? 'bg-stone-900' : 'bg-stone-300'
                 }`}
                 role="switch"
                 aria-checked={isPixelShiftEnabled}
@@ -393,6 +402,77 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
               Subtle pixel shift to protect display.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Gallery Matte
+            </h3>
+            <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
+              <span className="text-sm text-stone-800 font-medium">
+                {isGalleryMatteEnabled ? 'Enabled' : 'Disabled'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsGalleryMatteEnabled(!isGalleryMatteEnabled)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isGalleryMatteEnabled ? 'bg-stone-900' : 'bg-stone-300'
+                }`}
+                role="switch"
+                aria-checked={isGalleryMatteEnabled}
+                aria-label="Toggle gallery matte mode"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isGalleryMatteEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            {isGalleryMatteEnabled && (
+              <div className="mt-2.5 flex items-center max-w-xs bg-stone-200/70 p-1 rounded-lg border border-stone-300">
+                <button
+                  type="button"
+                  onClick={() => setMatteColor('auto')}
+                  className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1 ${
+                    matteColor === 'auto'
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                  title="Automatically choose matte color based on photo brightness"
+                >
+                  <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#ede9e2] to-[#1c1a19] border border-stone-400/60 inline-block" />
+                  <span>Auto</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMatteColor('white')}
+                  className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1 ${
+                    matteColor === 'white'
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#ede9e2] border border-stone-400/60 inline-block" />
+                  <span>White</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMatteColor('black')}
+                  className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all flex items-center justify-center space-x-1 ${
+                    matteColor === 'black'
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#1c1a19] border border-stone-600 inline-block" />
+                  <span>Black</span>
+                </button>
+              </div>
+            )}
+            <p className="text-xs text-stone-500 mt-1.5">
+              Framed passe-partout display.
             </p>
           </div>
         </section>

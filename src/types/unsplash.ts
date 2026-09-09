@@ -16,6 +16,7 @@ export interface UnsplashPhoto {
   id: string;
   width: number;
   height: number;
+  color?: string;
   description?: string | null;
   alt_description?: string | null;
   urls: {
