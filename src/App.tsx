@@ -317,10 +317,12 @@ export default function App() {
           }`}
         >
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsModalOpen((prev) => !prev)}
             aria-label={t('photoCredit.openSettings')}
             title={t('photoCredit.openSettings')}
-            className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
+            className={`w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200 ${
+              isModalOpen ? 'bg-white text-stone-950 ring-2 ring-stone-400/50' : 'bg-white/60 hover:bg-white/85'
+            }`}
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -363,22 +365,26 @@ export default function App() {
           language={language}
         />
 
-        {/* 中央: 時計表示 & 禅タイマー（Zen Hide時はフェードアウト、Pixel Shiftによる微小シフト適用） */}
-        <main
-          className={`relative z-20 flex flex-col items-center transition-all duration-700 ${
-            isZenHide ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          }`}
-          style={{
-            transform: `translate3d(${pixelShift.offset.x}px, ${pixelShift.offset.y}px, 0)`,
-          }}
+        {/* 中央: 時計表示 & 禅タイマー（設定オープン時は右側中央へスムーズにリバランス） */}
+        <div
+          className={`relative z-20 flex flex-col items-center transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isModalOpen ? 'md:translate-x-[220px] -translate-y-[14vh] md:translate-y-0' : 'translate-x-0 translate-y-0'
+          } ${isZenHide ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         >
-          <ClockDisplay clock={clock} typographyStyle={typographyStyle} language={resolvedClockLanguage} />
-          <ZenTimerBar
-            zenTimer={zenTimer}
-            isControlsVisible={isControlsVisible && !isModalOpen && !isHelpOpen}
-            language={language}
-          />
-        </main>
+          <main
+            className="flex flex-col items-center"
+            style={{
+              transform: `translate3d(${pixelShift.offset.x}px, ${pixelShift.offset.y}px, 0)`,
+            }}
+          >
+            <ClockDisplay clock={clock} typographyStyle={typographyStyle} language={resolvedClockLanguage} />
+            <ZenTimerBar
+              zenTimer={zenTimer}
+              isControlsVisible={isControlsVisible && !isModalOpen && !isHelpOpen}
+              language={language}
+            />
+          </main>
+        </div>
       </div>
 
       {/* トースト通知フィードバック */}
