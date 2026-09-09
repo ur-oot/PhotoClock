@@ -25,6 +25,8 @@ interface SettingsModalProps {
   setSelectedTopic: (topic: string) => void;
   typographyStyle: TypographyStyle;
   setTypographyStyle: (style: TypographyStyle) => void;
+  isZenTimerEnabled: boolean;
+  setIsZenTimerEnabled: (enabled: boolean) => void;
   favorites: StoredPhoto[];
   history: StoredPhoto[];
   onSelectStoredPhoto: (photo: StoredPhoto) => void;
@@ -48,6 +50,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setSelectedTopic,
   typographyStyle,
   setTypographyStyle,
+  isZenTimerEnabled,
+  setIsZenTimerEnabled,
   favorites,
   history,
   onSelectStoredPhoto,
@@ -177,7 +181,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         {activeTab === 'general' && (
           <>
             {/* ディスプレイ & アニメーション設定 */}
-        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
               Update Interval
@@ -261,6 +265,36 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
               Choose clock font appearance.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              Zen Timer
+            </h3>
+            <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
+              <span className="text-sm text-stone-800 font-medium">
+                {isZenTimerEnabled ? 'Enabled' : 'Disabled'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsZenTimerEnabled(!isZenTimerEnabled)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isZenTimerEnabled ? 'bg-amber-500' : 'bg-stone-300'
+                }`}
+                role="switch"
+                aria-checked={isZenTimerEnabled}
+                aria-label="Toggle Zen pomodoro timer"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isZenTimerEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              25m focus / 5m break ambient bar.
             </p>
           </div>
 

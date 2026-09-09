@@ -5,7 +5,9 @@ import { usePhotoSettings } from './hooks/usePhotoSettings';
 import { usePhotoManager } from './hooks/usePhotoManager';
 import { usePhotoFavorites } from './hooks/usePhotoFavorites';
 import { useFullscreen } from './hooks/useFullscreen';
+import { useZenTimer } from './hooks/useZenTimer';
 import { ClockDisplay } from './components/ClockDisplay';
+import { ZenTimerBar } from './components/ZenTimerBar';
 import { PhotoCredit } from './components/PhotoCredit';
 import { SettingsModal } from './components/SettingsModal';
 import { CinematicBackground } from './components/CinematicBackground';
@@ -38,6 +40,7 @@ export default function App() {
 
   const clock = useClock(timeFormat);
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
+  const zenTimer = useZenTimer();
 
   const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
@@ -142,9 +145,13 @@ export default function App() {
         onToggleFavorite={photo ? () => toggleFavorite(photo) : undefined}
       />
 
-      {/* 中央: 時計表示 */}
-      <main className="relative z-20">
+      {/* 中央: 時計表示 & 禅タイマー */}
+      <main className="relative z-20 flex flex-col items-center">
         <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
+        <ZenTimerBar
+          zenTimer={zenTimer}
+          isControlsVisible={isControlsVisible && !isModalOpen}
+        />
       </main>
 
       {/* 設定モーダル */}
@@ -164,6 +171,8 @@ export default function App() {
         setSelectedTopic={setSelectedTopic}
         typographyStyle={typographyStyle}
         setTypographyStyle={setTypographyStyle}
+        isZenTimerEnabled={zenTimer.isEnabled}
+        setIsZenTimerEnabled={zenTimer.setIsEnabled}
         favorites={favorites}
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}
