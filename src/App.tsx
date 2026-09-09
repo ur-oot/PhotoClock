@@ -14,6 +14,7 @@ import { PhotoCredit } from './components/PhotoCredit';
 import { SettingsModal } from './components/SettingsModal';
 import { CinematicBackground } from './components/CinematicBackground';
 import { ShortcutHelpModal } from './components/ShortcutHelpModal';
+import { useTranslation } from './hooks/useTranslation';
 import {
   detectImageLuminance,
   getAutoMatteColor,
@@ -43,7 +44,12 @@ export default function App() {
     setIsSunMoodEnabled,
     isNightDimmingEnabled,
     setIsNightDimmingEnabled,
+    language,
+    setLanguage,
+    resolvedLanguage,
   } = usePhotoSettings();
+
+  const { t } = useTranslation(language);
 
   const {
     favorites,
@@ -55,7 +61,7 @@ export default function App() {
     clearHistory,
   } = usePhotoFavorites();
 
-  const clock = useClock(timeFormat);
+  const clock = useClock(timeFormat, resolvedLanguage);
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
   const zenTimer = useZenTimer();
   const wakeLock = useWakeLock();
@@ -177,7 +183,7 @@ export default function App() {
       if (e.code === 'Space') {
         e.preventDefault();
         refreshPhoto();
-        showToast('Changing photo');
+        showToast(t('toast.changingPhoto'));
         return;
       }
 
@@ -187,7 +193,7 @@ export default function App() {
         if (photo) {
           const willBeFavorite = !isFavorite(photo.id);
           toggleFavorite(photo);
-          showToast(willBeFavorite ? 'Added to favorites' : 'Removed from favorites');
+          showToast(willBeFavorite ? t('toast.addedToFavorites') : t('toast.removedFromFavorites'));
         }
         return;
       }
@@ -198,11 +204,11 @@ export default function App() {
         if (!zenTimer.isEnabled) {
           zenTimer.setIsEnabled(true);
           zenTimer.start();
-          showToast('Zen timer started');
+          showToast(t('toast.zenTimerStarted'));
         } else {
           const nextRunning = !zenTimer.isRunning;
           zenTimer.togglePlay();
-          showToast(nextRunning ? 'Zen timer resumed' : 'Zen timer paused');
+          showToast(nextRunning ? t('toast.zenTimerResumed') : t('toast.zenTimerPaused'));
         }
         return;
       }
@@ -222,6 +228,7 @@ export default function App() {
     isFavorite,
     toggleFavorite,
     zenTimer,
+    t,
   ]);
 
   // マウス動作時にコントローラーを表示し、3.5秒無操作でフェードアウト
@@ -308,8 +315,8 @@ export default function App() {
         >
           <button
             onClick={() => setIsModalOpen(true)}
-            aria-label="Open settings"
-            title="Settings"
+            aria-label={t('photoCredit.openSettings')}
+            title={t('photoCredit.openSettings')}
             className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
           >
             <Menu className="w-5 h-5" />
@@ -318,8 +325,8 @@ export default function App() {
           {isFullscreenSupported && (
             <button
               onClick={toggleFullscreen}
-              aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-              title={isFullscreen ? 'Exit fullscreen (F)' : 'Enter fullscreen (F)'}
+              aria-label={isFullscreen ? t('photoCredit.fullscreenExit') : t('photoCredit.fullscreenEnter')}
+              title={isFullscreen ? t('photoCredit.fullscreenExit') : t('photoCredit.fullscreenEnter')}
               className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
             >
               {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
@@ -328,8 +335,8 @@ export default function App() {
 
           <button
             onClick={() => setIsHelpOpen(true)}
-            aria-label="Keyboard shortcuts"
-            title="Shortcuts (?)"
+            aria-label={t('photoCredit.shortcutsHelp')}
+            title={t('photoCredit.shortcutsHelp')}
             className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
           >
             <Keyboard className="w-5 h-5" />
@@ -346,10 +353,11 @@ export default function App() {
               ? () => {
                   const willBeFavorite = !isFavorite(photo.id);
                   toggleFavorite(photo);
-                  showToast(willBeFavorite ? 'Added to favorites' : 'Removed from favorites');
+                  showToast(willBeFavorite ? t('toast.addedToFavorites') : t('toast.removedFromFavorites'));
                 }
               : undefined
           }
+          language={language}
         />
 
         {/* 中央: 時計表示 & 禅タイマー（Zen Hide時はフェードアウト、Pixel Shiftによる微小シフト適用） */}
@@ -361,10 +369,11 @@ export default function App() {
             transform: `translate3d(${pixelShift.offset.x}px, ${pixelShift.offset.y}px, 0)`,
           }}
         >
-          <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
+          <ClockDisplay clock={clock} typographyStyle={typographyStyle} language={resolvedLanguage} />
           <ZenTimerBar
             zenTimer={zenTimer}
             isControlsVisible={isControlsVisible && !isModalOpen && !isHelpOpen}
+            language={language}
           />
         </main>
       </div>
@@ -379,12 +388,15 @@ export default function App() {
       )}
 
       {/* キーボードショートカットヘルプモーダル */}
-      <ShortcutHelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+      <ShortcutHelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} language={language} />
 
       {/* 設定モーダル */}
       <SettingsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        language={language}
+        setLanguage={setLanguage}
+        resolvedLanguage={resolvedLanguage}
         updateIntervalTime={updateIntervalTime}
         setUpdateIntervalTime={setUpdateIntervalTime}
         selectedCollection={selectedCollection}
@@ -416,7 +428,10 @@ export default function App() {
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}
         onRemoveFavorite={removeFavorite}
-        onClearHistory={clearHistory}
+        onClearHistory={() => {
+          clearHistory();
+          showToast(t('toast.historyCleared'));
+        }}
       />
     </div>
   );

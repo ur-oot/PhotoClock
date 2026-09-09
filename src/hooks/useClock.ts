@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { TimeFormat } from './usePhotoSettings';
+import type { ResolvedLanguage } from '../locales';
 
 export interface ClockState {
   year: string;
@@ -12,9 +13,6 @@ export interface ClockState {
   meridian: string;
 }
 
-const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'long' });
-const weekdayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'long' });
-
 function getOrdinalDay(day: number): string {
   const j = day % 10;
   const k = day % 100;
@@ -24,10 +22,17 @@ function getOrdinalDay(day: number): string {
   return `${day}th`;
 }
 
-function getNowClockState(timeFormat: TimeFormat = '12h'): ClockState {
+function getNowClockState(
+  timeFormat: TimeFormat = '12h',
+  language: ResolvedLanguage = 'en'
+): ClockState {
   const now = new Date();
   const day = now.getDate();
   const rawHours = now.getHours();
+  const localeCode = language === 'ja' ? 'ja-JP' : 'en-US';
+
+  const monthFormatter = new Intl.DateTimeFormat(localeCode, { month: 'long' });
+  const weekdayFormatter = new Intl.DateTimeFormat(localeCode, { weekday: 'long' });
 
   let displayHours: number;
   let meridian = '';
@@ -39,10 +44,12 @@ function getNowClockState(timeFormat: TimeFormat = '12h'): ClockState {
     displayHours = rawHours;
   }
 
+  const formattedDay = language === 'ja' ? `${day}日` : getOrdinalDay(day);
+
   return {
     year: String(now.getFullYear()),
     month: monthFormatter.format(now),
-    day: getOrdinalDay(day),
+    day: formattedDay,
     dayOfWeek: weekdayFormatter.format(now),
     hours: String(displayHours).padStart(2, '0'),
     minutes: String(now.getMinutes()).padStart(2, '0'),
@@ -51,14 +58,17 @@ function getNowClockState(timeFormat: TimeFormat = '12h'): ClockState {
   };
 }
 
-export function useClock(timeFormat: TimeFormat = '12h'): ClockState {
-  const [clock, setClock] = useState<ClockState>(() => getNowClockState(timeFormat));
+export function useClock(
+  timeFormat: TimeFormat = '12h',
+  language: ResolvedLanguage = 'en'
+): ClockState {
+  const [clock, setClock] = useState<ClockState>(() => getNowClockState(timeFormat, language));
 
   useEffect(() => {
     let timerId: number | undefined;
 
     const tick = () => {
-      setClock(getNowClockState(timeFormat));
+      setClock(getNowClockState(timeFormat, language));
 
       // 次の正秒（ミリ秒が0になるタイミング）までの残り時間を計算
       // 早期発火による同一秒の重複更新を防止するため、数msの安全マージン(+4ms)を加算
@@ -87,7 +97,7 @@ export function useClock(timeFormat: TimeFormat = '12h'): ClockState {
       }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [timeFormat]);
+  }, [timeFormat, language]);
 
   return clock;
 }

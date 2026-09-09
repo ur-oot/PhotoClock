@@ -8,12 +8,32 @@ import {
   type TimeFormat,
   type TypographyStyle,
   type MatteColor,
+  type LanguageMode,
 } from '../hooks/usePhotoSettings';
 import { getSolarMoodInfo } from '../utils/sunCalc';
+import { useTranslation } from '../hooks/useTranslation';
+import type { ResolvedLanguage } from '../locales';
+
+const TOPIC_TRANSLATION_KEYS: Record<string, string> = {
+  all: 'settings.topics.all',
+  wallpapers: 'settings.topics.wallpapers',
+  nature: 'settings.topics.nature',
+  travel: 'settings.topics.travel',
+  'architecture-interior': 'settings.topics.architecture',
+  'street-photography': 'settings.topics.street',
+  'textures-patterns': 'settings.topics.textures',
+  film: 'settings.topics.film',
+  animals: 'settings.topics.animals',
+  spirituality: 'settings.topics.spirituality',
+  monochrome: 'settings.topics.monochrome',
+};
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  language: LanguageMode;
+  setLanguage: (lang: LanguageMode) => void;
+  resolvedLanguage: ResolvedLanguage;
   updateIntervalTime: number;
   setUpdateIntervalTime: (seconds: number) => void;
   selectedCollection: UnsplashCollection | null;
@@ -51,6 +71,9 @@ interface SettingsModalProps {
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onClose,
+  language,
+  setLanguage,
+  resolvedLanguage: _resolvedLanguage,
   updateIntervalTime,
   setUpdateIntervalTime,
   selectedCollection,
@@ -84,6 +107,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onRemoveFavorite,
   onClearHistory,
 }) => {
+  const { t } = useTranslation(language);
   const [activeTab, setActiveTab] = useState<'general' | 'favorites' | 'history'>('general');
   const [collections, setCollections] = useState<UnsplashCollection[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -142,7 +166,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   : 'text-stone-600 hover:text-stone-900'
               }`}
             >
-              Settings & Collections
+              {t('settings.tabs.general')}
             </button>
             <button
               type="button"
@@ -154,7 +178,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               }`}
             >
               <Heart className={`w-3.5 h-3.5 ${favorites.length > 0 ? 'fill-rose-500 text-rose-500' : ''}`} />
-              <span>Favorites</span>
+              <span>{t('settings.tabs.favorites')}</span>
               {favorites.length > 0 && (
                 <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-rose-100 text-rose-700 rounded-full font-bold">
                   {favorites.length}
@@ -171,7 +195,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               }`}
             >
               <History className="w-3.5 h-3.5" />
-              <span>History</span>
+              <span>{t('settings.tabs.history')}</span>
               {history.length > 0 && (
                 <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-stone-200 text-stone-700 rounded-full font-bold">
                   {history.length}
@@ -188,10 +212,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               onClose();
             }}
             className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-md transition-colors"
-            title="Update background image now"
+            title={t('settings.changePhotoNow')}
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            <span>Change photo now</span>
+            <span>{t('settings.changePhotoNow')}</span>
           </button>
 
           <button
@@ -212,7 +236,51 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Update Interval
+              {t('settings.general.languageTitle')}
+            </h3>
+            <div className="flex items-center max-w-xs bg-stone-200/70 p-1 rounded-lg border border-stone-300">
+              <button
+                type="button"
+                onClick={() => setLanguage('auto')}
+                className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all ${
+                  language === 'auto'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                {t('settings.general.languageAuto')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all ${
+                  language === 'en'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                {t('settings.general.languageEn')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('ja')}
+                className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all ${
+                  language === 'ja'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                {t('settings.general.languageJa')}
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 mt-1.5">
+              {t('settings.general.languageDesc')}
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
+              {t('settings.general.updateIntervalTitle')}
             </h3>
             <div className="max-w-xs">
               <select
@@ -220,21 +288,30 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 onChange={(e) => setUpdateIntervalTime(Number(e.target.value))}
                 className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-lg text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-sm cursor-pointer"
               >
-                {INTERVAL_OPTIONS.map((opt) => (
-                  <option key={opt.code} value={opt.code}>
-                    {opt.label}
-                  </option>
-                ))}
+                {INTERVAL_OPTIONS.map((opt) => {
+                  const mins = Math.round(opt.code / 60);
+                  const label =
+                    language === 'ja'
+                      ? `${mins}分ごと`
+                      : opt.code === 300
+                      ? 'Every 5 minutes (default)'
+                      : `Every ${mins} minutes`;
+                  return (
+                    <option key={opt.code} value={opt.code}>
+                      {label}
+                    </option>
+                  );
+                })}
               </select>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Time between background updates.
+              {t('settings.general.updateIntervalDesc')}
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Time Format
+              {t('settings.general.timeFormatTitle')}
             </h3>
             <div className="flex items-center max-w-xs bg-stone-200/70 p-1 rounded-lg border border-stone-300">
               <button
@@ -246,7 +323,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     : 'text-stone-600 hover:text-stone-900'
                 }`}
               >
-                12-hour (AM/PM)
+                {t('settings.general.timeFormat12')}
               </button>
               <button
                 type="button"
@@ -257,52 +334,60 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     : 'text-stone-600 hover:text-stone-900'
                 }`}
               >
-                24-hour
+                {t('settings.general.timeFormat24')}
               </button>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Choose 12-hour or 24-hour clock.
+              {t('settings.general.timeFormatDesc')}
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Typography Style
+              {t('settings.general.typographyTitle')}
             </h3>
             <div className="flex flex-col space-y-1.5 max-w-xs">
-              {TYPOGRAPHY_OPTIONS.map((opt) => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => setTypographyStyle(opt.id)}
-                  className={`flex items-center justify-between px-3 py-1.5 rounded-lg border text-left transition-all ${
-                    typographyStyle === opt.id
-                      ? 'bg-white border-blue-500 text-stone-900 shadow-sm ring-1 ring-blue-500/20'
-                      : 'bg-white/60 border-stone-200 text-stone-600 hover:bg-white hover:text-stone-900'
-                  }`}
-                >
-                  <div className="flex flex-col">
-                    <span className="text-xs font-semibold">{opt.label}</span>
-                    <span className="text-[10px] text-stone-400">{opt.description}</span>
-                  </div>
-                  <span className={`text-sm font-medium ${opt.fontClass}`}>
-                    {opt.sample}
-                  </span>
-                </button>
-              ))}
+              {TYPOGRAPHY_OPTIONS.map((opt) => {
+                const info =
+                  opt.id === 'sans'
+                    ? { label: t('settings.general.typographySans'), desc: t('settings.general.typographySansDesc') }
+                    : opt.id === 'serif'
+                    ? { label: t('settings.general.typographySerif'), desc: t('settings.general.typographySerifDesc') }
+                    : { label: t('settings.general.typographyMono'), desc: t('settings.general.typographyMonoDesc') };
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setTypographyStyle(opt.id)}
+                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg border text-left transition-all ${
+                      typographyStyle === opt.id
+                        ? 'bg-white border-blue-500 text-stone-900 shadow-sm ring-1 ring-blue-500/20'
+                        : 'bg-white/60 border-stone-200 text-stone-600 hover:bg-white hover:text-stone-900'
+                    }`}
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold">{info.label}</span>
+                      <span className="text-[10px] text-stone-400">{info.desc}</span>
+                    </div>
+                    <span className={`text-sm font-medium ${opt.fontClass}`}>
+                      {opt.sample}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Choose clock font appearance.
+              {t('settings.general.typographyDesc')}
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Zen Timer
+              {t('settings.general.zenTimerTitle')}
             </h3>
             <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
               <span className="text-sm text-stone-800 font-medium">
-                {isZenTimerEnabled ? 'Enabled' : 'Disabled'}
+                {isZenTimerEnabled ? t('common.enabled') : t('common.disabled')}
               </span>
               <button
                 type="button"
@@ -322,17 +407,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              25m focus / 5m break ambient bar.
+              {t('settings.general.zenTimerDesc')}
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Cinematic Motion
+              {t('settings.general.cinematicMotionTitle')}
             </h3>
             <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
               <span className="text-sm text-stone-800 font-medium">
-                {isCinematicMotionEnabled ? 'Enabled' : 'Disabled'}
+                {isCinematicMotionEnabled ? t('common.enabled') : t('common.disabled')}
               </span>
               <button
                 type="button"
@@ -352,17 +437,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Smooth zoom and pan Ken Burns effect.
+              {t('settings.general.cinematicMotionDesc')}
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Screen Awake
+              {t('settings.general.screenAwakeTitle')}
             </h3>
             <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
               <span className="text-sm text-stone-800 font-medium">
-                {isWakeLockEnabled ? 'Active' : 'Disabled'}
+                {isWakeLockEnabled ? t('common.active') : t('common.disabled')}
               </span>
               <button
                 type="button"
@@ -382,17 +467,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Keep display turned on while active.
+              {t('settings.general.screenAwakeDesc')}
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Burn-in Protection
+              {t('settings.general.burnInTitle')}
             </h3>
             <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
               <span className="text-sm text-stone-800 font-medium">
-                {isPixelShiftEnabled ? 'Active' : 'Disabled'}
+                {isPixelShiftEnabled ? t('common.active') : t('common.disabled')}
               </span>
               <button
                 type="button"
@@ -412,17 +497,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Subtle pixel shift to protect display.
+              {t('settings.general.burnInDesc')}
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Gallery Matte
+              {t('settings.general.galleryMatteTitle')}
             </h3>
             <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
               <span className="text-sm text-stone-800 font-medium">
-                {isGalleryMatteEnabled ? 'Enabled' : 'Disabled'}
+                {isGalleryMatteEnabled ? t('common.enabled') : t('common.disabled')}
               </span>
               <button
                 type="button"
@@ -454,7 +539,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   title="Automatically choose matte color based on photo brightness"
                 >
                   <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#ede9e2] to-[#1c1a19] border border-stone-400/60 inline-block" />
-                  <span>Auto</span>
+                  <span>{t('settings.general.matteAuto')}</span>
                 </button>
                 <button
                   type="button"
@@ -466,7 +551,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-[#ede9e2] border border-stone-400/60 inline-block" />
-                  <span>White</span>
+                  <span>{t('settings.general.matteWhite')}</span>
                 </button>
                 <button
                   type="button"
@@ -478,27 +563,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-[#1c1a19] border border-stone-600 inline-block" />
-                  <span>Black</span>
+                  <span>{t('settings.general.matteBlack')}</span>
                 </button>
               </div>
             )}
             <p className="text-xs text-stone-500 mt-1.5">
-              Framed passe-partout display.
+              {t('settings.general.galleryMatteDesc')}
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Sun-Aware Mood
+              {t('settings.general.sunMoodTitle')}
             </h3>
             <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-stone-800 font-medium">
-                  {isSunMoodEnabled ? 'Enabled' : 'Disabled'}
+                  {isSunMoodEnabled ? t('common.enabled') : t('common.disabled')}
                 </span>
                 {isSunMoodEnabled && (
                   <span className="text-[10px] font-semibold px-2 py-0.5 bg-amber-100 text-amber-900 rounded-full">
-                    {solarMood.label}
+                    {t(`solarPhases.${solarMood.phase}`)}
                   </span>
                 )}
               </div>
@@ -520,17 +605,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Align photo atmosphere with sunrise, sunset, and night.
+              {t('settings.general.sunMoodDesc')}
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500 mb-3">
-              Night Dimming
+              {t('settings.general.nightDimmingTitle')}
             </h3>
             <div className="flex items-center justify-between max-w-xs bg-white px-4 py-2 border border-stone-300 rounded-lg shadow-sm">
               <span className="text-sm text-stone-800 font-medium">
-                {isNightDimmingEnabled ? 'Enabled' : 'Disabled'}
+                {isNightDimmingEnabled ? t('common.enabled') : t('common.disabled')}
               </span>
               <button
                 type="button"
@@ -550,7 +635,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
             </div>
             <p className="text-xs text-stone-500 mt-1.5">
-              Softly dims display after sunset for night comfort.
+              {t('settings.general.nightDimmingDesc')}
             </p>
           </div>
         </section>
@@ -560,20 +645,24 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500">
-                Photo Mood & Topics
+                {t('settings.topics.title')}
               </h3>
               <p className="text-xs text-stone-500 mt-1">
-                Select a topic to curate your background atmosphere.
+                {t('settings.topics.desc')}
               </p>
             </div>
             {selectedCollection ? (
               <span className="text-xs font-medium px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-md inline-block self-start sm:self-auto">
-                Custom collection active
+                {t('settings.topics.customActive')}
               </span>
             ) : isSunMoodEnabled ? (
               <span className="text-xs font-medium px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-md inline-flex items-center space-x-1.5 self-start sm:self-auto">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                <span>Sun-aware: {solarMood.label}</span>
+                <span>
+                  {t('settings.topics.sunAwareActive', {
+                    phase: t(`solarPhases.${solarMood.phase}`),
+                  })}
+                </span>
               </span>
             ) : null}
           </div>
@@ -581,6 +670,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="flex flex-wrap gap-2.5">
             {PHOTO_TOPICS.map((topic) => {
               const isSelected = !selectedCollection && selectedTopic === topic.id;
+              const topicKey = TOPIC_TRANSLATION_KEYS[topic.id];
+              const topicName = topicKey ? t(topicKey) : topic.name;
               return (
                 <button
                   key={topic.id}
@@ -596,7 +687,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   }`}
                 >
                   <span className="text-sm">{topic.emoji}</span>
-                  <span>{topic.name}</span>
+                  <span>{topicName}</span>
                   {isSelected && <Check className="w-3.5 h-3.5 ml-1 text-emerald-400" />}
                 </button>
               );
@@ -609,10 +700,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-500">
-                Choose Collection
+                {t('settings.collections.title')}
               </h3>
               <p className="text-xs text-stone-500 mt-1">
-                Select a collection to only show photos from it, or select random wallpapers.
+                {t('settings.collections.desc')}
               </p>
             </div>
 
@@ -625,7 +716,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors border border-stone-300 shadow-sm"
               >
                 <Shuffle className="w-3.5 h-3.5" />
-                <span>Clear Collection (Use Selected Topic)</span>
+                <span>
+                  {language === 'ja'
+                    ? 'コレクション解除（選択トピックを使用）'
+                    : 'Clear Collection (Use Selected Topic)'}
+                </span>
               </button>
             )}
           </div>
@@ -683,7 +778,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </div>
 
                     <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center space-x-1">
-                      <span>View on Unsplash</span>
+                      <span>{t('settings.favorites.viewOnUnsplash')}</span>
                       <ExternalLink className="w-2.5 h-2.5" />
                     </div>
                   </a>
@@ -695,7 +790,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         {item.title}
                       </h4>
                       <p className="text-xs text-stone-500 mt-0.5">
-                        {item.total_photos} photos
+                        {t('settings.collections.photosCount', { count: item.total_photos })}
                       </p>
                     </div>
 
@@ -706,7 +801,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           className="w-full py-1.5 px-3 bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center justify-center space-x-1.5 cursor-default"
                         >
                           <Check className="w-3.5 h-3.5" />
-                          <span>Selected</span>
+                          <span>{t('common.selected')}</span>
                         </button>
                       ) : (
                         <button
@@ -716,7 +811,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           }}
                           className="w-full py-1.5 px-3 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-semibold transition-colors"
                         >
-                          Select this collection
+                          {language === 'ja' ? 'このコレクションを適用' : 'Select this collection'}
                         </button>
                       )}
                     </div>
@@ -733,7 +828,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               disabled={isLoadingMore}
               className="px-6 py-2.5 bg-white border border-stone-300 text-stone-800 font-medium text-sm rounded-lg hover:bg-stone-50 shadow-sm transition-all disabled:opacity-50"
             >
-              {isLoadingMore ? 'Loading collections...' : 'Load more collections'}
+              {isLoadingMore
+                ? language === 'ja'
+                  ? '読み込み中...'
+                  : 'Loading collections...'
+                : t('settings.collections.loadMore')}
             </button>
           </div>
         </section>
@@ -747,10 +846,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div>
                 <h3 className="text-base font-bold text-stone-900 flex items-center space-x-2">
                   <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
-                  <span>Favorite Photos</span>
+                  <span>{t('settings.favorites.title')}</span>
                 </h3>
                 <p className="text-xs text-stone-500 mt-1">
-                  Photos you have saved. Click &ldquo;Apply as Background&rdquo; to instantly display any photo.
+                  {t('settings.favorites.desc')}
                 </p>
               </div>
             </div>
@@ -758,9 +857,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {favorites.length === 0 ? (
               <div className="text-center py-16 px-4 bg-white/60 backdrop-blur-md rounded-2xl border border-stone-200/80">
                 <Heart className="w-12 h-12 text-stone-300 mx-auto mb-3" />
-                <h4 className="text-sm font-semibold text-stone-700">No favorite photos yet</h4>
+                <h4 className="text-sm font-semibold text-stone-700">
+                  {t('settings.favorites.emptyTitle')}
+                </h4>
                 <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
-                  Click the heart icon on the photo attribution bar in the top-right corner to save photos you love.
+                  {t('settings.favorites.emptyDesc')}
                 </p>
               </div>
             ) : (
@@ -782,14 +883,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-stone-700 font-medium truncate max-w-[180px]">
-                          By {item.user.name}
+                          {language === 'ja' ? `撮影: ${item.user.name}` : `By ${item.user.name}`}
                         </span>
                         <a
                           href={item.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-stone-400 hover:text-stone-700 flex items-center space-x-0.5"
-                          title="View high-res photo"
+                          title={t('settings.favorites.viewOnUnsplash')}
                         >
                           <ArrowUpRight className="w-3.5 h-3.5" />
                         </a>
@@ -804,12 +905,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           }}
                           className="flex-1 py-1.5 px-3 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-semibold transition-colors"
                         >
-                          Apply as Background
+                          {t('settings.favorites.apply')}
                         </button>
                         <button
                           type="button"
                           onClick={() => onRemoveFavorite(item.id)}
-                          title="Remove from favorites"
+                          title={t('common.remove')}
                           className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -830,10 +931,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div>
                 <h3 className="text-base font-bold text-stone-900 flex items-center space-x-2">
                   <History className="w-4 h-4 text-stone-700" />
-                  <span>Recent History</span>
+                  <span>{t('settings.history.title')}</span>
                 </h3>
                 <p className="text-xs text-stone-500 mt-1">
-                  Recently displayed background photos. Click &ldquo;Apply as Background&rdquo; to re-show past photos.
+                  {t('settings.history.desc')}
                 </p>
               </div>
 
@@ -844,7 +945,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-stone-600 hover:text-rose-600 bg-white hover:bg-rose-50 rounded-lg border border-stone-200 transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>Clear History</span>
+                  <span>{t('settings.history.clearAll')}</span>
                 </button>
               )}
             </div>
@@ -852,9 +953,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {history.length === 0 ? (
               <div className="text-center py-16 px-4 bg-white/60 backdrop-blur-md rounded-2xl border border-stone-200/80">
                 <History className="w-12 h-12 text-stone-300 mx-auto mb-3" />
-                <h4 className="text-sm font-semibold text-stone-700">No history recorded yet</h4>
+                <h4 className="text-sm font-semibold text-stone-700">
+                  {t('settings.history.emptyTitle')}
+                </h4>
                 <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
-                  Photos displayed on PhotoClock are automatically saved here for quick re-display.
+                  {t('settings.history.emptyDesc')}
                 </p>
               </div>
             ) : (
@@ -876,14 +979,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-stone-700 font-medium truncate max-w-[180px]">
-                          By {item.user.name}
+                          {language === 'ja' ? `撮影: ${item.user.name}` : `By ${item.user.name}`}
                         </span>
                         <a
                           href={item.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-stone-400 hover:text-stone-700 flex items-center space-x-0.5"
-                          title="View high-res photo"
+                          title={t('settings.history.viewOnUnsplash')}
                         >
                           <ArrowUpRight className="w-3.5 h-3.5" />
                         </a>
@@ -898,7 +1001,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           }}
                           className="w-full py-1.5 px-3 bg-stone-100 hover:bg-stone-200 text-stone-900 rounded-lg text-xs font-semibold transition-colors"
                         >
-                          Apply as Background
+                          {t('settings.history.apply')}
                         </button>
                       </div>
                     </div>
