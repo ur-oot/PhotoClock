@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { X, ExternalLink, Check, Shuffle, RefreshCw, Heart, History, Trash2, ArrowUpRight } from 'lucide-react';
+import {
+  X,
+  ExternalLink,
+  Check,
+  Shuffle,
+  RefreshCw,
+  Heart,
+  History,
+  Trash2,
+  ArrowUpRight,
+  Volume2,
+  Square,
+  Play,
+} from 'lucide-react';
 import type { UnsplashCollection, StoredPhoto } from '../types/unsplash';
 import { PHOTO_TOPICS } from '../types/unsplash';
 import { INTERVAL_OPTIONS, type TimeFormat } from '../hooks/usePhotoSettings';
+import {
+  SOUND_PRESETS,
+  type AmbientSoundType,
+} from '../utils/ambientSynthesizer';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -18,6 +35,12 @@ interface SettingsModalProps {
   setTimeFormat: (format: TimeFormat) => void;
   selectedTopic: string;
   setSelectedTopic: (topic: string) => void;
+  isAmbientPlaying: boolean;
+  onToggleAmbient: () => void;
+  ambientSoundType: AmbientSoundType;
+  onSelectAmbientSoundType: (type: AmbientSoundType) => void;
+  ambientVolume: number;
+  onAmbientVolumeChange: (volume: number) => void;
   favorites: StoredPhoto[];
   history: StoredPhoto[];
   onSelectStoredPhoto: (photo: StoredPhoto) => void;
@@ -39,6 +62,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   setTimeFormat,
   selectedTopic,
   setSelectedTopic,
+  isAmbientPlaying,
+  onToggleAmbient,
+  ambientSoundType,
+  onSelectAmbientSoundType,
+  ambientVolume,
+  onAmbientVolumeChange,
   favorites,
   history,
   onSelectStoredPhoto,
@@ -252,6 +281,94 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <p className="text-xs text-stone-500 mt-1.5">
               Smooth zoom and pan Ken Burns effect.
             </p>
+          </div>
+        </section>
+
+        {/* 環境音（アンビエントサウンド）設定 */}
+        <section className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/40">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+            <div>
+              <div className="flex items-center space-x-2">
+                <Volume2 className="w-4 h-4 text-stone-700" />
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-700">
+                  Ambient Sounds
+                </h3>
+              </div>
+              <p className="text-xs text-stone-500 mt-0.5">
+                リアルタイム音響合成による環境音（外部音声通信0MB）
+              </p>
+            </div>
+
+            {/* 再生/停止トグル & 音量スライダー */}
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-lg border border-stone-200 shadow-sm">
+                <Volume2 className="w-3.5 h-3.5 text-stone-500" />
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={ambientVolume}
+                  onChange={(e) => onAmbientVolumeChange(parseFloat(e.target.value))}
+                  aria-label="Ambient volume"
+                  className="w-20 sm:w-28 h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                />
+                <span className="text-[11px] font-mono text-stone-600 w-7 text-right">
+                  {Math.round(ambientVolume * 100)}%
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={onToggleAmbient}
+                className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm ${
+                  isAmbientPlaying
+                    ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                    : 'bg-stone-900 hover:bg-black text-white'
+                }`}
+              >
+                {isAmbientPlaying ? (
+                  <>
+                    <Square className="w-3 h-3 fill-current" />
+                    <span>Stop</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-3 h-3 fill-current" />
+                    <span>Play</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* サウンドプリセット選択カード */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {SOUND_PRESETS.map((preset) => {
+              const isSelected = ambientSoundType === preset.id;
+              return (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => onSelectAmbientSoundType(preset.id)}
+                  className={`flex flex-col p-3.5 rounded-xl border text-left transition-all ${
+                    isSelected
+                      ? 'bg-white border-blue-500 text-stone-900 shadow-sm ring-1 ring-blue-500/20'
+                      : 'bg-white/60 border-stone-200 text-stone-600 hover:bg-white hover:text-stone-900'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-semibold">{preset.label}</span>
+                    {isSelected && isAmbientPlaying && (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                    )}
+                  </div>
+                  <span className="text-[11px] text-stone-400 line-clamp-1">
+                    {preset.description}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </section>
 

@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, Maximize, Minimize } from 'lucide-react';
+import { Menu, Maximize, Minimize, Volume2, VolumeX } from 'lucide-react';
 import { useClock } from './hooks/useClock';
 import { usePhotoSettings } from './hooks/usePhotoSettings';
 import { usePhotoManager } from './hooks/usePhotoManager';
 import { usePhotoFavorites } from './hooks/usePhotoFavorites';
 import { useFullscreen } from './hooks/useFullscreen';
+import { useAmbientSound } from './hooks/useAmbientSound';
 import { ClockDisplay } from './components/ClockDisplay';
 import { PhotoCredit } from './components/PhotoCredit';
 import { SettingsModal } from './components/SettingsModal';
@@ -36,6 +37,7 @@ export default function App() {
 
   const clock = useClock(timeFormat);
   const { isFullscreen, isSupported: isFullscreenSupported, toggleFullscreen } = useFullscreen();
+  const ambientSound = useAmbientSound();
 
   const { photo, photoUrl, refreshPhoto, applyStoredPhoto } = usePhotoManager(
     updateIntervalTime,
@@ -130,6 +132,28 @@ export default function App() {
             {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
           </button>
         )}
+
+        {/* 環境音クイックトグルボタン */}
+        <button
+          onClick={ambientSound.togglePlay}
+          aria-label={ambientSound.isPlaying ? 'Mute ambient sound' : 'Play ambient sound'}
+          title={
+            ambientSound.isPlaying
+              ? `環境音を停止 (${ambientSound.soundType})`
+              : '環境音を再生'
+          }
+          className={`w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200 ${
+            ambientSound.isPlaying
+              ? 'bg-blue-600 text-white shadow-blue-500/25 ring-2 ring-blue-400/50'
+              : 'bg-white/60 hover:bg-white/85 text-stone-800'
+          }`}
+        >
+          {ambientSound.isPlaying ? (
+            <Volume2 className="w-5 h-5 animate-pulse" />
+          ) : (
+            <VolumeX className="w-5 h-5 opacity-70" />
+          )}
+        </button>
       </div>
 
       {/* 右上: 撮影者クレジット & お気に入りボタン */}
@@ -160,6 +184,12 @@ export default function App() {
         setTimeFormat={setTimeFormat}
         selectedTopic={selectedTopic}
         setSelectedTopic={setSelectedTopic}
+        isAmbientPlaying={ambientSound.isPlaying}
+        onToggleAmbient={ambientSound.togglePlay}
+        ambientSoundType={ambientSound.soundType}
+        onSelectAmbientSoundType={ambientSound.setSoundType}
+        ambientVolume={ambientSound.volume}
+        onAmbientVolumeChange={ambientSound.setVolume}
         favorites={favorites}
         history={history}
         onSelectStoredPhoto={applyStoredPhoto}
