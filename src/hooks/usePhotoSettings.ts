@@ -3,6 +3,7 @@ import type { UnsplashCollection } from '../types/unsplash';
 
 export type TimeFormat = '12h' | '24h';
 export type TypographyStyle = 'sans' | 'serif' | 'mono';
+export type MatteColor = 'auto' | 'white' | 'black';
 
 const STORAGE_KEY_INTERVAL = 'photoclock_update_interval';
 const STORAGE_KEY_COLLECTION = 'photoclock_selected_collection';
@@ -10,6 +11,8 @@ const STORAGE_KEY_CINEMATIC = 'photoclock_cinematic_motion';
 const STORAGE_KEY_TIME_FORMAT = 'photoclock_time_format';
 const STORAGE_KEY_TOPIC = 'photoclock_selected_topic';
 const STORAGE_KEY_TYPOGRAPHY = 'photoclock_typography_style';
+const STORAGE_KEY_GALLERY_MATTE = 'photoclock_gallery_matte_enabled';
+const STORAGE_KEY_MATTE_COLOR = 'photoclock_gallery_matte_color';
 
 export interface TypographyOption {
   id: TypographyStyle;
@@ -131,6 +134,30 @@ export function usePhotoSettings() {
     return 'sans';
   });
 
+  const [isGalleryMatteEnabled, setIsGalleryMatteEnabledState] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_GALLERY_MATTE);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch {
+      // ignore
+    }
+    return false;
+  });
+
+  const [matteColor, setMatteColorState] = useState<MatteColor>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_MATTE_COLOR);
+      if (saved === 'auto' || saved === 'white' || saved === 'black') {
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+    return 'auto';
+  });
+
   const setUpdateIntervalTime = (seconds: number) => {
     setUpdateIntervalTimeState(seconds);
     try {
@@ -193,6 +220,24 @@ export function usePhotoSettings() {
     }
   };
 
+  const setIsGalleryMatteEnabled = (enabled: boolean) => {
+    setIsGalleryMatteEnabledState(enabled);
+    try {
+      localStorage.setItem(STORAGE_KEY_GALLERY_MATTE, String(enabled));
+    } catch {
+      // ignore
+    }
+  };
+
+  const setMatteColor = (color: MatteColor) => {
+    setMatteColorState(color);
+    try {
+      localStorage.setItem(STORAGE_KEY_MATTE_COLOR, color);
+    } catch {
+      // ignore
+    }
+  };
+
   return {
     updateIntervalTime,
     setUpdateIntervalTime,
@@ -206,5 +251,9 @@ export function usePhotoSettings() {
     setSelectedTopic,
     typographyStyle,
     setTypographyStyle,
+    isGalleryMatteEnabled,
+    setIsGalleryMatteEnabled,
+    matteColor,
+    setMatteColor,
   };
 }

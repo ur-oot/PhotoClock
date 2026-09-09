@@ -12,6 +12,11 @@ import { PhotoCredit } from './components/PhotoCredit';
 import { SettingsModal } from './components/SettingsModal';
 import { CinematicBackground } from './components/CinematicBackground';
 import { ShortcutHelpModal } from './components/ShortcutHelpModal';
+import {
+  detectImageLuminance,
+  getAutoMatteColor,
+  getLuminanceFromHex,
+} from './utils/photoColor';
 
 export default function App() {
   const {
@@ -27,6 +32,10 @@ export default function App() {
     setSelectedTopic,
     typographyStyle,
     setTypographyStyle,
+    isGalleryMatteEnabled,
+    setIsGalleryMatteEnabled,
+    matteColor,
+    setMatteColor,
   } = usePhotoSettings();
 
   const {
@@ -67,6 +76,30 @@ export default function App() {
       setToastMessage(null);
     }, 2200);
   };
+
+  // 写真の明暗に応じた台紙色の自動判定
+  const [detectedMatteColor, setDetectedMatteColor] = useState<'white' | 'black'>('white');
+
+  useEffect(() => {
+    if (!photoUrl) return;
+
+    if (photo?.color) {
+      setDetectedMatteColor(getAutoMatteColor(getLuminanceFromHex(photo.color)));
+    }
+
+    let isMounted = true;
+    detectImageLuminance(photoUrl, photo?.color).then((luminance) => {
+      if (isMounted) {
+        setDetectedMatteColor(getAutoMatteColor(luminance));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [photoUrl, photo?.color]);
+
+  const activeMatteColor = matteColor === 'auto' ? detectedMatteColor : matteColor;
 
   // キーボードショートカット体系
   useEffect(() => {
@@ -210,82 +243,108 @@ export default function App() {
           setIsZenHide(false);
         }
       }}
-      className={`relative w-screen h-screen overflow-hidden flex items-center justify-center bg-stone-950 select-none ${
+      className={`relative w-screen h-screen overflow-hidden flex items-center justify-center select-none transition-all duration-700 ${
         isZenHide ? 'cursor-none' : ''
+      } ${
+        isGalleryMatteEnabled
+          ? 'p-5 sm:p-8 md:p-12 lg:p-16'
+          : 'p-0'
       }`}
+      style={{
+        backgroundColor: isGalleryMatteEnabled
+          ? (activeMatteColor === 'white' ? '#ede9e2' : '#1a1918')
+          : '#0c0a09',
+      }}
     >
-      {/* シネマティック背景レイヤー (Ken Burns & ダブルバッファクロスフェード) */}
-      <CinematicBackground
-        photoUrl={photoUrl}
-        isCinematicMotionEnabled={isCinematicMotionEnabled}
-      />
-
-      {/* 左上: 操作コントロール群（設定メニュー & フルスクリーン & ショートカットガイド） */}
+      {/* 写真・画像エリア（台紙の中央開口部。白い境界線なし、台紙の厚みによる陰影のみ） */}
       <div
-        className={`fixed top-4 left-4 z-30 flex items-center space-x-2 transition-all duration-300 ${
-          !isZenHide && (isControlsVisible || isModalOpen || isHelpOpen)
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 -translate-y-2 pointer-events-none'
+        className={`relative w-full h-full flex items-center justify-center overflow-hidden transition-all duration-700 ${
+          isGalleryMatteEnabled ? 'rounded-[2px]' : ''
         }`}
-      >
-        <button
-          onClick={() => setIsModalOpen(true)}
-          aria-label="Open settings"
-          title="Settings"
-          className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-
-        {isFullscreenSupported && (
-          <button
-            onClick={toggleFullscreen}
-            aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-            title={isFullscreen ? 'Exit fullscreen (F)' : 'Enter fullscreen (F)'}
-            className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
-          >
-            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
-          </button>
-        )}
-
-        <button
-          onClick={() => setIsHelpOpen(true)}
-          aria-label="Keyboard shortcuts"
-          title="Shortcuts (?)"
-          className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
-        >
-          <Keyboard className="w-5 h-5" />
-        </button>
-      </div>
-
-      {/* 右上: 撮影者クレジット & お気に入りボタン */}
-      <PhotoCredit
-        photo={photo}
-        isVisible={!isZenHide && isControlsVisible && !isModalOpen && !isHelpOpen}
-        isFavorite={photo ? isFavorite(photo.id) : false}
-        onToggleFavorite={
-          photo
-            ? () => {
-                const willBeFavorite = !isFavorite(photo.id);
-                toggleFavorite(photo);
-                showToast(willBeFavorite ? 'Added to favorites' : 'Removed from favorites');
+        style={
+          isGalleryMatteEnabled
+            ? {
+                boxShadow:
+                  activeMatteColor === 'white'
+                    ? 'inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.15)'
+                    : 'inset 0 2px 6px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35)',
               }
             : undefined
         }
-      />
-
-      {/* 中央: 時計表示 & 禅タイマー（Zen Hide時はフェードアウト） */}
-      <main
-        className={`relative z-20 flex flex-col items-center transition-opacity duration-700 ${
-          isZenHide ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
       >
-        <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
-        <ZenTimerBar
-          zenTimer={zenTimer}
-          isControlsVisible={isControlsVisible && !isModalOpen && !isHelpOpen}
+        {/* シネマティック背景レイヤー (Ken Burns & ダブルバッファクロスフェード) */}
+        <CinematicBackground
+          photoUrl={photoUrl}
+          isCinematicMotionEnabled={isCinematicMotionEnabled}
         />
-      </main>
+
+        {/* 左上: 操作コントロール群（設定メニュー & フルスクリーン & ショートカットガイド） */}
+        <div
+          className={`absolute top-4 left-4 z-30 flex items-center space-x-2 transition-all duration-300 ${
+            !isZenHide && (isControlsVisible || isModalOpen || isHelpOpen)
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 -translate-y-2 pointer-events-none'
+          }`}
+        >
+          <button
+            onClick={() => setIsModalOpen(true)}
+            aria-label="Open settings"
+            title="Settings"
+            className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          {isFullscreenSupported && (
+            <button
+              onClick={toggleFullscreen}
+              aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+              title={isFullscreen ? 'Exit fullscreen (F)' : 'Enter fullscreen (F)'}
+              className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
+            >
+              {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+            </button>
+          )}
+
+          <button
+            onClick={() => setIsHelpOpen(true)}
+            aria-label="Keyboard shortcuts"
+            title="Shortcuts (?)"
+            className="w-11 h-11 flex items-center justify-center rounded-full backdrop-blur-md bg-white/60 hover:bg-white/85 text-stone-800 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all duration-200"
+          >
+            <Keyboard className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* 右上: 撮影者クレジット & お気に入りボタン */}
+        <PhotoCredit
+          photo={photo}
+          isVisible={!isZenHide && isControlsVisible && !isModalOpen && !isHelpOpen}
+          isFavorite={photo ? isFavorite(photo.id) : false}
+          onToggleFavorite={
+            photo
+              ? () => {
+                  const willBeFavorite = !isFavorite(photo.id);
+                  toggleFavorite(photo);
+                  showToast(willBeFavorite ? 'Added to favorites' : 'Removed from favorites');
+                }
+              : undefined
+          }
+        />
+
+        {/* 中央: 時計表示 & 禅タイマー（Zen Hide時はフェードアウト） */}
+        <main
+          className={`relative z-20 flex flex-col items-center transition-opacity duration-700 ${
+            isZenHide ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        >
+          <ClockDisplay clock={clock} typographyStyle={typographyStyle} />
+          <ZenTimerBar
+            zenTimer={zenTimer}
+            isControlsVisible={isControlsVisible && !isModalOpen && !isHelpOpen}
+          />
+        </main>
+      </div>
 
       {/* トースト通知フィードバック */}
       {toastMessage && (
@@ -316,6 +375,10 @@ export default function App() {
         setSelectedTopic={setSelectedTopic}
         typographyStyle={typographyStyle}
         setTypographyStyle={setTypographyStyle}
+        isGalleryMatteEnabled={isGalleryMatteEnabled}
+        setIsGalleryMatteEnabled={setIsGalleryMatteEnabled}
+        matteColor={matteColor}
+        setMatteColor={setMatteColor}
         isZenTimerEnabled={zenTimer.isEnabled}
         setIsZenTimerEnabled={zenTimer.setIsEnabled}
         favorites={favorites}
