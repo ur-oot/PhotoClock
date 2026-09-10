@@ -125,16 +125,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 key={sec.id}
                 type="button"
                 onClick={() => setActiveSection(sec.id)}
-                className={`flex-1 flex items-center justify-center space-x-1.5 py-2 px-1.5 rounded-xl text-xs font-semibold transition-all relative ${
+                title={sec.label}
+                className={`flex-1 min-w-0 flex items-center justify-center space-x-1.5 py-2 px-1.5 sm:px-2 rounded-xl text-xs font-semibold transition-all relative ${
                   isActive
                     ? 'bg-white text-stone-900 shadow-xs'
                     : 'text-stone-600 hover:text-stone-900 hover:bg-stone-300/40'
                 }`}
               >
                 <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-stone-900' : 'text-stone-500'}`} />
-                <span className="truncate">{sec.label}</span>
+                <span className="truncate whitespace-nowrap">{sec.label}</span>
                 {sec.badge !== undefined && (
-                  <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-600 ml-0.5">
+                  <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-600 ml-0.5 shrink-0">
                     {sec.badge}
                   </span>
                 )}
