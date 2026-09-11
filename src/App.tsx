@@ -130,7 +130,7 @@ export default function App() {
       clearTimeout(hideControlsTimerRef.current);
     }
     hideControlsTimerRef.current = setTimeout(() => {
-      if (!isModalOpen) {
+      if (!isModalOpen && !isHelpOpen) {
         setIsControlsVisible(false);
       }
     }, 3500);
@@ -147,6 +147,9 @@ export default function App() {
     };
   }, []);
 
+  // 無操作時または純粋アート鑑賞モード（Zen Hide）時にマウスポインターを非表示化（モーダル表示中は維持）
+  const shouldHideCursor = isZenHide || (!isControlsVisible && !isModalOpen && !isHelpOpen);
+
   return (
     <div
       onMouseMove={handleMouseMove}
@@ -156,7 +159,7 @@ export default function App() {
         }
       }}
       className={`relative w-screen h-screen overflow-hidden flex items-center justify-center select-none transition-all duration-700 ${
-        isZenHide ? 'cursor-none' : ''
+        shouldHideCursor ? 'cursor-none [&_*]:!cursor-none' : ''
       } ${
         isGalleryMatteEnabled
           ? 'p-5 sm:p-8 md:p-12 lg:p-16'
