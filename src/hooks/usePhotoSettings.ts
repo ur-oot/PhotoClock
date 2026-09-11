@@ -6,6 +6,7 @@ import { resolveLanguage } from '../locales';
 export type TimeFormat = '12h' | '24h';
 export type TypographyStyle = 'sans' | 'serif' | 'mono';
 export type MatteColor = 'auto' | 'white' | 'black';
+export type PhotoFitMode = 'cover' | 'contain';
 export type { LanguageMode, ClockLanguageMode };
 
 const STORAGE_KEY_INTERVAL = 'photoclock_update_interval';
@@ -16,6 +17,7 @@ const STORAGE_KEY_TOPIC = 'photoclock_selected_topic';
 const STORAGE_KEY_TYPOGRAPHY = 'photoclock_typography_style';
 const STORAGE_KEY_GALLERY_MATTE = 'photoclock_gallery_matte_enabled';
 const STORAGE_KEY_MATTE_COLOR = 'photoclock_gallery_matte_color';
+const STORAGE_KEY_PHOTO_FIT = 'photoclock_photo_fit_mode';
 const STORAGE_KEY_SUN_MOOD = 'photoclock_sun_mood_enabled';
 const STORAGE_KEY_NIGHT_DIMMING = 'photoclock_night_dimming_enabled';
 const STORAGE_KEY_LANGUAGE = 'photoclock_language';
@@ -165,6 +167,18 @@ export function usePhotoSettings() {
     return 'auto';
   });
 
+  const [photoFitMode, setPhotoFitModeState] = useState<PhotoFitMode>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_PHOTO_FIT);
+      if (saved === 'cover' || saved === 'contain') {
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+    return 'cover';
+  });
+
   const [isSunMoodEnabled, setIsSunMoodEnabledState] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_SUN_MOOD);
@@ -300,6 +314,15 @@ export function usePhotoSettings() {
     }
   };
 
+  const setPhotoFitMode = (mode: PhotoFitMode) => {
+    setPhotoFitModeState(mode);
+    try {
+      localStorage.setItem(STORAGE_KEY_PHOTO_FIT, mode);
+    } catch {
+      // ignore
+    }
+  };
+
   const setIsSunMoodEnabled = (enabled: boolean) => {
     setIsSunMoodEnabledState(enabled);
     try {
@@ -356,6 +379,8 @@ export function usePhotoSettings() {
     setIsGalleryMatteEnabled,
     matteColor,
     setMatteColor,
+    photoFitMode,
+    setPhotoFitMode,
     isSunMoodEnabled,
     setIsSunMoodEnabled,
     isNightDimmingEnabled,

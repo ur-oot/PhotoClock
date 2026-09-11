@@ -71,6 +71,10 @@ export interface TranslationDictionary {
       matteAuto: string;
       matteWhite: string;
       matteBlack: string;
+      photoFitTitle: string;
+      photoFitDesc: string;
+      photoFitCover: string;
+      photoFitContain: string;
       sunMoodTitle: string;
       sunMoodDesc: string;
       nightDimmingTitle: string;

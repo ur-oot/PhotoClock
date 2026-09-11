@@ -45,6 +45,8 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
     setSelectedTopic,
     selectedCollection,
     setSelectedCollection,
+    photoFitMode,
+    setPhotoFitMode,
   } = useSettings();
 
   const { t } = useTranslation(language);
@@ -182,6 +184,42 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
               onChange={setIsCinematicMotionEnabled}
               ariaLabel="Toggle cinematic motion"
             />
+          </div>
+
+          {/* 写真の表示形式 */}
+          <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="text-xs font-semibold text-stone-900">
+                {t('settings.general.photoFitTitle')}
+              </div>
+              <div className="text-[11px] text-stone-500">
+                {t('settings.general.photoFitDesc')}
+              </div>
+            </div>
+            <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70 self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setPhotoFitMode('cover')}
+                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                  photoFitMode === 'cover'
+                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                {t('settings.general.photoFitCover')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPhotoFitMode('contain')}
+                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                  photoFitMode === 'contain'
+                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                {t('settings.general.photoFitContain')}
+              </button>
+            </div>
           </div>
         </div>
       </div>
