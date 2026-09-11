@@ -33,20 +33,20 @@ export const ClockSettingsTab: React.FC = () => {
         </span>
         <div className="bg-white rounded-2xl border border-stone-200/80 shadow-xs divide-y divide-stone-100 overflow-hidden">
           {/* 表示言語 */}
-          <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 space-y-3">
             <div>
               <div className="text-xs font-semibold text-stone-900">
                 {t('settings.general.languageTitle')}
               </div>
-              <div className="text-[11px] text-stone-500">
+              <div className="text-[11px] text-stone-500 mt-0.5">
                 {t('settings.general.languageDesc')}
               </div>
             </div>
-            <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70 self-start sm:self-auto shrink-0">
+            <div className="w-full grid grid-cols-3 bg-stone-100 p-1 rounded-xl border border-stone-200/70 gap-1">
               <button
                 type="button"
                 onClick={() => setLanguage('auto')}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
                   language === 'auto'
                     ? 'bg-white text-stone-900 font-semibold shadow-xs'
                     : 'text-stone-600 hover:text-stone-900'
@@ -57,7 +57,7 @@ export const ClockSettingsTab: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setLanguage('en')}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
                   language === 'en'
                     ? 'bg-white text-stone-900 font-semibold shadow-xs'
                     : 'text-stone-600 hover:text-stone-900'
@@ -68,7 +68,7 @@ export const ClockSettingsTab: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setLanguage('ja')}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
                   language === 'ja'
                     ? 'bg-white text-stone-900 font-semibold shadow-xs'
                     : 'text-stone-600 hover:text-stone-900'
@@ -80,20 +80,20 @@ export const ClockSettingsTab: React.FC = () => {
           </div>
 
           {/* 時計の日時表記 */}
-          <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 space-y-3">
             <div>
               <div className="text-xs font-semibold text-stone-900">
                 {t('settings.general.clockLanguageTitle')}
               </div>
-              <div className="text-[11px] text-stone-500">
+              <div className="text-[11px] text-stone-500 mt-0.5">
                 {t('settings.general.clockLanguageDesc')}
               </div>
             </div>
-            <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70 self-start sm:self-auto shrink-0">
+            <div className="w-full grid grid-cols-3 bg-stone-100 p-1 rounded-xl border border-stone-200/70 gap-1">
               <button
                 type="button"
                 onClick={() => setClockLanguage('sync')}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
                   clockLanguage === 'sync'
                     ? 'bg-white text-stone-900 font-semibold shadow-xs'
                     : 'text-stone-600 hover:text-stone-900'
@@ -104,7 +104,7 @@ export const ClockSettingsTab: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setClockLanguage('en')}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
                   clockLanguage === 'en'
                     ? 'bg-white text-stone-900 font-semibold shadow-xs'
                     : 'text-stone-600 hover:text-stone-900'
@@ -115,7 +115,7 @@ export const ClockSettingsTab: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setClockLanguage('ja')}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
                   clockLanguage === 'ja'
                     ? 'bg-white text-stone-900 font-semibold shadow-xs'
                     : 'text-stone-600 hover:text-stone-900'
@@ -181,20 +181,20 @@ export const ClockSettingsTab: React.FC = () => {
           </div>
 
           {/* 時刻形式 */}
-          <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 space-y-3">
             <div>
               <div className="text-xs font-semibold text-stone-900">
                 {t('settings.general.timeFormatTitle')}
               </div>
-              <div className="text-[11px] text-stone-500">
+              <div className="text-[11px] text-stone-500 mt-0.5">
                 {t('settings.general.timeFormatDesc')}
               </div>
             </div>
-            <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70 self-start sm:self-auto shrink-0">
+            <div className="w-full grid grid-cols-2 bg-stone-100 p-1 rounded-xl border border-stone-200/70 gap-1">
               <button
                 type="button"
                 onClick={() => setTimeFormat('12h')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
                   timeFormat === '12h'
                     ? 'bg-white text-stone-900 font-semibold shadow-xs'
                     : 'text-stone-600 hover:text-stone-900'
@@ -205,7 +205,7 @@ export const ClockSettingsTab: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setTimeFormat('24h')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
                   timeFormat === '24h'
                     ? 'bg-white text-stone-900 font-semibold shadow-xs'
                     : 'text-stone-600 hover:text-stone-900'
@@ -217,22 +217,33 @@ export const ClockSettingsTab: React.FC = () => {
           </div>
 
           {/* 現在の天気と気温 */}
-          <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <div className="text-xs font-semibold text-stone-900">
-                {t('settings.general.weatherTitle')}
+          <div className="p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs font-semibold text-stone-900">
+                  {t('settings.general.weatherTitle')}
+                </div>
+                <div className="text-[11px] text-stone-500 mt-0.5">
+                  {t('settings.general.weatherDesc')}
+                </div>
               </div>
-              <div className="text-[11px] text-stone-500">
-                {t('settings.general.weatherDesc')}
-              </div>
+              <ToggleSwitch
+                checked={isWeatherEnabled}
+                onChange={setIsWeatherEnabled}
+                ariaLabel="Toggle weather"
+              />
             </div>
-            <div className="flex items-center space-x-3 self-end sm:self-auto shrink-0">
-              {isWeatherEnabled && (
-                <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70">
+
+            {isWeatherEnabled && (
+              <div className="pt-2.5 border-t border-stone-100 flex items-center justify-between transition-all duration-300">
+                <div className="text-[11px] font-medium text-stone-600">
+                  {t('settings.general.temperatureUnit')}
+                </div>
+                <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70 shrink-0">
                   <button
                     type="button"
                     onClick={() => setTemperatureUnit('celsius')}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
                       temperatureUnit === 'celsius'
                         ? 'bg-white text-stone-900 font-semibold shadow-xs'
                         : 'text-stone-600 hover:text-stone-900'
@@ -243,7 +254,7 @@ export const ClockSettingsTab: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setTemperatureUnit('fahrenheit')}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${
+                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
                       temperatureUnit === 'fahrenheit'
                         ? 'bg-white text-stone-900 font-semibold shadow-xs'
                         : 'text-stone-600 hover:text-stone-900'
@@ -252,13 +263,8 @@ export const ClockSettingsTab: React.FC = () => {
                     {t('settings.general.temperatureUnitFahrenheit')}
                   </button>
                 </div>
-              )}
-              <ToggleSwitch
-                checked={isWeatherEnabled}
-                onChange={setIsWeatherEnabled}
-                ariaLabel="Toggle weather"
-              />
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

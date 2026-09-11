@@ -70,7 +70,7 @@ export const en: TranslationDictionary = {
       matteWhite: 'White',
       matteBlack: 'Black',
       displayStyleTitle: 'Photo Display Style',
-      displayStyleDesc: 'Choose between full-screen fill, cinema letterbox, or art matte frame.',
+      displayStyleDesc: 'Full-screen fill, cinema letterbox, or art matte frame.',
       displayStyleCover: 'Full Screen',
       displayStyleCinema: 'Cinema Bars',
       displayStyleFrame: 'Art Frame',
