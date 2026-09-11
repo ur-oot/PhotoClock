@@ -3,6 +3,7 @@ import { TYPOGRAPHY_OPTIONS } from '../../hooks/usePhotoSettings';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useSettings } from '../../contexts/SettingsContext';
 import { ToggleSwitch } from './ToggleSwitch';
+import { SegmentedControl } from './SegmentedControl';
 
 export const ClockSettingsTab: React.FC = () => {
   const {
@@ -42,41 +43,16 @@ export const ClockSettingsTab: React.FC = () => {
                 {t('settings.general.languageDesc')}
               </div>
             </div>
-            <div className="w-full grid grid-cols-3 bg-stone-100 p-1 rounded-xl border border-stone-200/70 gap-1">
-              <button
-                type="button"
-                onClick={() => setLanguage('auto')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  language === 'auto'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.languageAuto')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage('en')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  language === 'en'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.languageEn')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage('ja')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  language === 'ja'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.languageJa')}
-              </button>
-            </div>
+            <SegmentedControl
+              value={language}
+              onChange={setLanguage}
+              ariaLabel={t('settings.general.languageTitle')}
+              options={[
+                { value: 'auto', label: t('settings.general.languageAuto') },
+                { value: 'en', label: t('settings.general.languageEn') },
+                { value: 'ja', label: t('settings.general.languageJa') },
+              ]}
+            />
           </div>
 
           {/* 時計の日時表記 */}
@@ -89,41 +65,16 @@ export const ClockSettingsTab: React.FC = () => {
                 {t('settings.general.clockLanguageDesc')}
               </div>
             </div>
-            <div className="w-full grid grid-cols-3 bg-stone-100 p-1 rounded-xl border border-stone-200/70 gap-1">
-              <button
-                type="button"
-                onClick={() => setClockLanguage('sync')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  clockLanguage === 'sync'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.clockLanguageSync')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setClockLanguage('en')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  clockLanguage === 'en'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.clockLanguageEn')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setClockLanguage('ja')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  clockLanguage === 'ja'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.clockLanguageJa')}
-              </button>
-            </div>
+            <SegmentedControl
+              value={clockLanguage}
+              onChange={setClockLanguage}
+              ariaLabel={t('settings.general.clockLanguageTitle')}
+              options={[
+                { value: 'sync', label: t('settings.general.clockLanguageSync') },
+                { value: 'en', label: t('settings.general.clockLanguageEn') },
+                { value: 'ja', label: t('settings.general.clockLanguageJa') },
+              ]}
+            />
           </div>
         </div>
       </div>
@@ -190,30 +141,16 @@ export const ClockSettingsTab: React.FC = () => {
                 {t('settings.general.timeFormatDesc')}
               </div>
             </div>
-            <div className="w-full grid grid-cols-2 bg-stone-100 p-1 rounded-xl border border-stone-200/70 gap-1">
-              <button
-                type="button"
-                onClick={() => setTimeFormat('12h')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  timeFormat === '12h'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.timeFormat12')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setTimeFormat('24h')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  timeFormat === '24h'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.timeFormat24')}
-              </button>
-            </div>
+            <SegmentedControl
+              value={timeFormat}
+              onChange={setTimeFormat}
+              ariaLabel={t('settings.general.timeFormatTitle')}
+              columns={2}
+              options={[
+                { value: '12h', label: t('settings.general.timeFormat12') },
+                { value: '24h', label: t('settings.general.timeFormat24') },
+              ]}
+            />
           </div>
 
           {/* 現在の天気と気温 */}
@@ -239,29 +176,18 @@ export const ClockSettingsTab: React.FC = () => {
                 <div className="text-[11px] font-medium text-stone-600">
                   {t('settings.general.temperatureUnit')}
                 </div>
-                <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setTemperatureUnit('celsius')}
-                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
-                      temperatureUnit === 'celsius'
-                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    {t('settings.general.temperatureUnitCelsius')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setTemperatureUnit('fahrenheit')}
-                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
-                      temperatureUnit === 'fahrenheit'
-                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    {t('settings.general.temperatureUnitFahrenheit')}
-                  </button>
+                <div className="w-32 shrink-0">
+                  <SegmentedControl
+                    value={temperatureUnit}
+                    onChange={setTemperatureUnit}
+                    ariaLabel={t('settings.general.temperatureUnit')}
+                    columns={2}
+                    size="sm"
+                    options={[
+                      { value: 'celsius', label: t('settings.general.temperatureUnitCelsius') },
+                      { value: 'fahrenheit', label: t('settings.general.temperatureUnitFahrenheit') },
+                    ]}
+                  />
                 </div>
               </div>
             )}
