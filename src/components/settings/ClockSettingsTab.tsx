@@ -15,10 +15,6 @@ export const ClockSettingsTab: React.FC = () => {
     timeFormat,
     setTimeFormat,
     weather,
-    isGalleryMatteEnabled,
-    setIsGalleryMatteEnabled,
-    matteColor,
-    setMatteColor,
   } = useSettings();
 
   const isWeatherEnabled = weather.isEnabled;
@@ -261,62 +257,6 @@ export const ClockSettingsTab: React.FC = () => {
                 checked={isWeatherEnabled}
                 onChange={setIsWeatherEnabled}
                 ariaLabel="Toggle weather"
-              />
-            </div>
-          </div>
-
-          {/* 額装マット表示 */}
-          <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <div className="text-xs font-semibold text-stone-900">
-                {t('settings.general.galleryMatteTitle')}
-              </div>
-              <div className="text-[11px] text-stone-500">
-                {t('settings.general.galleryMatteDesc')}
-              </div>
-            </div>
-            <div className="flex items-center space-x-3 self-end sm:self-auto shrink-0">
-              {isGalleryMatteEnabled && (
-                <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70">
-                  <button
-                    type="button"
-                    onClick={() => setMatteColor('auto')}
-                    className={`px-2 py-0.5 text-[11px] font-medium rounded transition-all ${
-                      matteColor === 'auto'
-                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    {t('settings.general.matteAuto')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMatteColor('white')}
-                    className={`px-2 py-0.5 text-[11px] font-medium rounded transition-all ${
-                      matteColor === 'white'
-                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    {t('settings.general.matteWhite')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMatteColor('black')}
-                    className={`px-2 py-0.5 text-[11px] font-medium rounded transition-all ${
-                      matteColor === 'black'
-                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    {t('settings.general.matteBlack')}
-                  </button>
-                </div>
-              )}
-              <ToggleSwitch
-                checked={isGalleryMatteEnabled}
-                onChange={setIsGalleryMatteEnabled}
-                ariaLabel="Toggle gallery matte mode"
               />
             </div>
           </div>

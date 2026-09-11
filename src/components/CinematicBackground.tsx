@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 interface CinematicBackgroundProps {
   photoUrl: string;
   isCinematicMotionEnabled: boolean;
+  onImageDimensionsLoaded?: (dimensions: { width: number; height: number; aspectRatio: number }) => void;
 }
 
 const ANIMATION_VARIANTS = [
@@ -20,6 +21,7 @@ function getRandomAnimation(previousAnimation?: string): string {
 export const CinematicBackground: React.FC<CinematicBackgroundProps> = ({
   photoUrl,
   isCinematicMotionEnabled,
+  onImageDimensionsLoaded,
 }) => {
   // レイヤーAとBでダブルバッファリング
   const [layerA, setLayerA] = useState<{ url: string; animation: string }>({
@@ -46,6 +48,18 @@ export const CinematicBackground: React.FC<CinematicBackgroundProps> = ({
         animation: getRandomAnimation(),
       });
       currentLoadedUrl.current = photoUrl;
+
+      const initialImg = new Image();
+      initialImg.src = photoUrl;
+      initialImg.onload = () => {
+        if (initialImg.naturalWidth && initialImg.naturalHeight && onImageDimensionsLoaded) {
+          onImageDimensionsLoaded({
+            width: initialImg.naturalWidth,
+            height: initialImg.naturalHeight,
+            aspectRatio: initialImg.naturalWidth / initialImg.naturalHeight,
+          });
+        }
+      };
       return;
     }
 
@@ -58,6 +72,14 @@ export const CinematicBackground: React.FC<CinematicBackgroundProps> = ({
 
     img.onload = () => {
       currentLoadedUrl.current = photoUrl;
+
+      if (img.naturalWidth && img.naturalHeight && onImageDimensionsLoaded) {
+        onImageDimensionsLoaded({
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+          aspectRatio: img.naturalWidth / img.naturalHeight,
+        });
+      }
 
       if (activeLayer === 'A') {
         const nextAnimation = getRandomAnimation(layerA.animation);
