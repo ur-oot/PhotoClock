@@ -45,8 +45,10 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
     setSelectedTopic,
     selectedCollection,
     setSelectedCollection,
-    photoFitMode,
-    setPhotoFitMode,
+    photoDisplayStyle,
+    setPhotoDisplayStyle,
+    matteColor,
+    setMatteColor,
   } = useSettings();
 
   const { t } = useTranslation(language);
@@ -186,40 +188,97 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
             />
           </div>
 
-          {/* 写真の表示形式 */}
-          <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <div className="text-xs font-semibold text-stone-900">
-                {t('settings.general.photoFitTitle')}
+          {/* 写真の表示スタイル（全画面 / シネマ黒帯 / アート額装） */}
+          <div className="p-4 flex flex-col gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="text-xs font-semibold text-stone-900">
+                  {t('settings.general.displayStyleTitle')}
+                </div>
+                <div className="text-[11px] text-stone-500">
+                  {t('settings.general.displayStyleDesc')}
+                </div>
               </div>
-              <div className="text-[11px] text-stone-500">
-                {t('settings.general.photoFitDesc')}
+              <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70 self-start sm:self-auto shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setPhotoDisplayStyle('cover')}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                    photoDisplayStyle === 'cover'
+                      ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  {t('settings.general.displayStyleCover')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPhotoDisplayStyle('cinema')}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                    photoDisplayStyle === 'cinema'
+                      ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  {t('settings.general.displayStyleCinema')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPhotoDisplayStyle('frame')}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                    photoDisplayStyle === 'frame'
+                      ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  {t('settings.general.displayStyleFrame')}
+                </button>
               </div>
             </div>
-            <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70 self-start sm:self-auto shrink-0">
-              <button
-                type="button"
-                onClick={() => setPhotoFitMode('cover')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
-                  photoFitMode === 'cover'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.photoFitCover')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setPhotoFitMode('contain')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
-                  photoFitMode === 'contain'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.photoFitContain')}
-              </button>
-            </div>
+
+            {/* アート額装選択時のみ台紙色セレクターを表示 */}
+            {photoDisplayStyle === 'frame' && (
+              <div className="flex items-center justify-between pt-2.5 border-t border-stone-100 transition-all duration-300">
+                <div className="text-[11px] font-medium text-stone-600">
+                  {t('settings.general.matteColorTitle')}
+                </div>
+                <div className="flex items-center bg-stone-100 p-1 rounded-lg border border-stone-200/70 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setMatteColor('auto')}
+                    className={`px-2.5 py-0.5 text-[11px] font-medium rounded transition-all ${
+                      matteColor === 'auto'
+                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900'
+                    }`}
+                  >
+                    {t('settings.general.matteAuto')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMatteColor('white')}
+                    className={`px-2.5 py-0.5 text-[11px] font-medium rounded transition-all ${
+                      matteColor === 'white'
+                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900'
+                    }`}
+                  >
+                    {t('settings.general.matteWhite')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMatteColor('black')}
+                    className={`px-2.5 py-0.5 text-[11px] font-medium rounded transition-all ${
+                      matteColor === 'black'
+                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900'
+                    }`}
+                  >
+                    {t('settings.general.matteBlack')}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

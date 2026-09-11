@@ -7,6 +7,7 @@ export type TimeFormat = '12h' | '24h';
 export type TypographyStyle = 'sans' | 'serif' | 'mono';
 export type MatteColor = 'auto' | 'white' | 'black';
 export type PhotoFitMode = 'cover' | 'contain';
+export type PhotoDisplayStyle = 'cover' | 'cinema' | 'frame';
 export type { LanguageMode, ClockLanguageMode };
 
 const STORAGE_KEY_INTERVAL = 'photoclock_update_interval';
@@ -18,6 +19,7 @@ const STORAGE_KEY_TYPOGRAPHY = 'photoclock_typography_style';
 const STORAGE_KEY_GALLERY_MATTE = 'photoclock_gallery_matte_enabled';
 const STORAGE_KEY_MATTE_COLOR = 'photoclock_gallery_matte_color';
 const STORAGE_KEY_PHOTO_FIT = 'photoclock_photo_fit_mode';
+const STORAGE_KEY_DISPLAY_STYLE = 'photoclock_photo_display_style';
 const STORAGE_KEY_SUN_MOOD = 'photoclock_sun_mood_enabled';
 const STORAGE_KEY_NIGHT_DIMMING = 'photoclock_night_dimming_enabled';
 const STORAGE_KEY_LANGUAGE = 'photoclock_language';
@@ -143,16 +145,21 @@ export function usePhotoSettings() {
     return 'sans';
   });
 
-  const [isGalleryMatteEnabled, setIsGalleryMatteEnabledState] = useState<boolean>(() => {
+  const [photoDisplayStyle, setPhotoDisplayStyleState] = useState<PhotoDisplayStyle>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY_GALLERY_MATTE);
-      if (saved !== null) {
-        return saved === 'true';
+      const saved = localStorage.getItem(STORAGE_KEY_DISPLAY_STYLE);
+      if (saved === 'cover' || saved === 'cinema' || saved === 'frame') {
+        return saved;
       }
+      // 過去の設定キーからの自動移行
+      const legacyMatte = localStorage.getItem(STORAGE_KEY_GALLERY_MATTE);
+      if (legacyMatte === 'true') return 'frame';
+      const legacyFit = localStorage.getItem(STORAGE_KEY_PHOTO_FIT);
+      if (legacyFit === 'contain') return 'cinema';
     } catch {
       // ignore
     }
-    return false;
+    return 'cover';
   });
 
   const [matteColor, setMatteColorState] = useState<MatteColor>(() => {
@@ -165,18 +172,6 @@ export function usePhotoSettings() {
       // ignore
     }
     return 'auto';
-  });
-
-  const [photoFitMode, setPhotoFitModeState] = useState<PhotoFitMode>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_PHOTO_FIT);
-      if (saved === 'cover' || saved === 'contain') {
-        return saved;
-      }
-    } catch {
-      // ignore
-    }
-    return 'cover';
   });
 
   const [isSunMoodEnabled, setIsSunMoodEnabledState] = useState<boolean>(() => {
@@ -296,13 +291,20 @@ export function usePhotoSettings() {
     }
   };
 
-  const setIsGalleryMatteEnabled = (enabled: boolean) => {
-    setIsGalleryMatteEnabledState(enabled);
+  const setPhotoDisplayStyle = (style: PhotoDisplayStyle) => {
+    setPhotoDisplayStyleState(style);
     try {
-      localStorage.setItem(STORAGE_KEY_GALLERY_MATTE, String(enabled));
+      localStorage.setItem(STORAGE_KEY_DISPLAY_STYLE, style);
+      // 後方互換性キーの同期
+      localStorage.setItem(STORAGE_KEY_GALLERY_MATTE, String(style === 'frame'));
+      localStorage.setItem(STORAGE_KEY_PHOTO_FIT, style === 'cover' ? 'cover' : 'contain');
     } catch {
       // ignore
     }
+  };
+
+  const setIsGalleryMatteEnabled = (enabled: boolean) => {
+    setPhotoDisplayStyle(enabled ? 'frame' : 'cover');
   };
 
   const setMatteColor = (color: MatteColor) => {
@@ -315,12 +317,7 @@ export function usePhotoSettings() {
   };
 
   const setPhotoFitMode = (mode: PhotoFitMode) => {
-    setPhotoFitModeState(mode);
-    try {
-      localStorage.setItem(STORAGE_KEY_PHOTO_FIT, mode);
-    } catch {
-      // ignore
-    }
+    setPhotoDisplayStyle(mode === 'cover' ? 'cover' : 'cinema');
   };
 
   const setIsSunMoodEnabled = (enabled: boolean) => {
@@ -375,11 +372,13 @@ export function usePhotoSettings() {
     setSelectedTopic,
     typographyStyle,
     setTypographyStyle,
-    isGalleryMatteEnabled,
+    photoDisplayStyle,
+    setPhotoDisplayStyle,
+    isGalleryMatteEnabled: photoDisplayStyle === 'frame',
     setIsGalleryMatteEnabled,
     matteColor,
     setMatteColor,
-    photoFitMode,
+    photoFitMode: photoDisplayStyle === 'cover' ? 'cover' : 'contain',
     setPhotoFitMode,
     isSunMoodEnabled,
     setIsSunMoodEnabled,

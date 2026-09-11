@@ -27,9 +27,8 @@ export default function App() {
     timeFormat,
     selectedTopic,
     typographyStyle,
-    isGalleryMatteEnabled,
+    photoDisplayStyle,
     matteColor,
-    photoFitMode,
     isSunMoodEnabled,
     isNightDimmingEnabled,
     language,
@@ -153,10 +152,11 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  const isContain = photoFitMode === 'contain';
+  const isFrame = photoDisplayStyle === 'frame';
+  const isFit = photoDisplayStyle === 'cinema' || isFrame;
 
   const frameStyle = useMemo<React.CSSProperties>(() => {
-    if (!isContain || !photoAspectRatio || !containerSize.width || !containerSize.height) {
+    if (!isFit || !photoAspectRatio || !containerSize.width || !containerSize.height) {
       return {
         width: '100%',
         height: '100%',
@@ -184,7 +184,7 @@ export default function App() {
         maxHeight: '100%',
       };
     }
-  }, [isContain, photoAspectRatio, containerSize]);
+  }, [isFit, photoAspectRatio, containerSize]);
 
   // キーボードショートカット体系
   useKeyboardShortcuts({
@@ -242,12 +242,12 @@ export default function App() {
       className={`relative w-screen h-screen overflow-hidden flex items-center justify-center select-none transition-all duration-700 ${
         shouldHideCursor ? 'cursor-none [&_*]:!cursor-none' : ''
       } ${
-        isGalleryMatteEnabled
+        isFrame
           ? 'p-5 sm:p-8 md:p-12 lg:p-16'
           : 'p-0'
       }`}
       style={{
-        backgroundColor: isGalleryMatteEnabled
+        backgroundColor: isFrame
           ? (activeMatteColor === 'white' ? '#ede9e2' : '#1a1918')
           : '#0c0a09',
       }}
@@ -260,11 +260,11 @@ export default function App() {
         {/* 写真・画像エリア（台紙の中央開口部。白い境界線なし、台紙の厚みによる陰影のみ） */}
         <div
           className={`relative flex items-center justify-center overflow-hidden transition-all duration-700 ${
-            isGalleryMatteEnabled ? 'rounded-[2px]' : ''
+            isFrame ? 'rounded-[2px]' : ''
           }`}
           style={{
             ...frameStyle,
-            boxShadow: isGalleryMatteEnabled
+            boxShadow: isFrame
               ? activeMatteColor === 'white'
                 ? 'inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.15)'
                 : 'inset 0 2px 6px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35)'
