@@ -7,6 +7,7 @@ import { getSolarMoodInfo } from '../../utils/sunCalc';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useSettings } from '../../contexts/SettingsContext';
 import { ToggleSwitch } from './ToggleSwitch';
+import { SegmentedControl } from './SegmentedControl';
 
 const TOPIC_TRANSLATION_KEYS: Record<string, string> = {
   all: 'settings.topics.all',
@@ -198,41 +199,16 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
                 {t('settings.general.displayStyleDesc')}
               </div>
             </div>
-            <div className="w-full grid grid-cols-3 bg-stone-100 p-1 rounded-xl border border-stone-200/70 gap-1">
-              <button
-                type="button"
-                onClick={() => setPhotoDisplayStyle('cover')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  photoDisplayStyle === 'cover'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.displayStyleCover')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setPhotoDisplayStyle('cinema')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  photoDisplayStyle === 'cinema'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.displayStyleCinema')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setPhotoDisplayStyle('frame')}
-                className={`py-1.5 text-xs font-medium rounded-lg text-center transition-all ${
-                  photoDisplayStyle === 'frame'
-                    ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                {t('settings.general.displayStyleFrame')}
-              </button>
-            </div>
+            <SegmentedControl
+              value={photoDisplayStyle}
+              onChange={setPhotoDisplayStyle}
+              ariaLabel={t('settings.general.displayStyleTitle')}
+              options={[
+                { value: 'cover', label: t('settings.general.displayStyleCover') },
+                { value: 'cinema', label: t('settings.general.displayStyleCinema') },
+                { value: 'frame', label: t('settings.general.displayStyleFrame') },
+              ]}
+            />
 
             {/* アート額装選択時のみ台紙色セレクターを表示 */}
             {photoDisplayStyle === 'frame' && (
@@ -245,41 +221,17 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
                     {t('settings.general.matteColorDesc')}
                   </div>
                 </div>
-                <div className="w-full grid grid-cols-3 bg-stone-100 p-1 rounded-xl border border-stone-200/70 gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setMatteColor('auto')}
-                    className={`py-1 text-xs font-medium rounded-lg text-center transition-all ${
-                      matteColor === 'auto'
-                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    {t('settings.general.matteAuto')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMatteColor('white')}
-                    className={`py-1 text-xs font-medium rounded-lg text-center transition-all ${
-                      matteColor === 'white'
-                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    {t('settings.general.matteWhite')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMatteColor('black')}
-                    className={`py-1 text-xs font-medium rounded-lg text-center transition-all ${
-                      matteColor === 'black'
-                        ? 'bg-white text-stone-900 font-semibold shadow-xs'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    {t('settings.general.matteBlack')}
-                  </button>
-                </div>
+                <SegmentedControl
+                  value={matteColor}
+                  onChange={setMatteColor}
+                  ariaLabel={t('settings.general.matteColorTitle')}
+                  size="sm"
+                  options={[
+                    { value: 'auto', label: t('settings.general.matteAuto') },
+                    { value: 'white', label: t('settings.general.matteWhite') },
+                    { value: 'black', label: t('settings.general.matteBlack') },
+                  ]}
+                />
               </div>
             )}
           </div>
