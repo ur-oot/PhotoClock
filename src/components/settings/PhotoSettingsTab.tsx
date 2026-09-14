@@ -94,7 +94,7 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
       {/* 再生と演出 */}
       <div className="space-y-1.5">
         <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 px-1">
-          {language === 'ja' ? '再生と演出' : 'Playback & Effects'}
+          {t('settings.groups.playbackEffects')}
         </span>
         <div className="bg-white rounded-2xl border border-stone-200/80 shadow-xs divide-y divide-stone-100 overflow-hidden">
           {/* 更新間隔 */}
@@ -115,13 +115,9 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
               {INTERVAL_OPTIONS.map((opt) => {
                 const mins = Math.round(opt.code / 60);
                 const label =
-                  language === 'ja'
-                    ? opt.code === 300
-                      ? `${mins}分ごと（標準）`
-                      : `${mins}分ごと`
-                    : opt.code === 300
-                    ? 'Every 5 minutes (default)'
-                    : `Every ${mins} minutes`;
+                  opt.code === 300
+                    ? t('settings.general.intervalMinutesDefault', { count: mins })
+                    : t('settings.general.intervalMinutes', { count: mins });
                 return (
                   <option key={opt.code} value={opt.code}>
                     {label}
@@ -309,7 +305,7 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
             >
               <Shuffle className="w-3 h-3" />
               <span>
-                {language === 'ja' ? 'コレクション解除' : 'Clear Collection'}
+                {t('settings.collections.clear')}
               </span>
             </button>
           )}
@@ -405,7 +401,7 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
                         }}
                         className="w-full py-1.5 px-3 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg text-xs font-semibold transition-colors"
                       >
-                        {language === 'ja' ? 'このコレクションを適用' : 'Select this collection'}
+                        {t('settings.collections.apply')}
                       </button>
                     )}
                   </div>
@@ -424,9 +420,7 @@ export const PhotoSettingsTab: React.FC<PhotoSettingsTabProps> = ({
             className="px-5 py-2 bg-white border border-stone-300 text-stone-800 font-medium text-xs rounded-lg hover:bg-stone-50 shadow-xs transition-all disabled:opacity-50"
           >
             {isLoadingMore
-              ? language === 'ja'
-                ? '読み込み中...'
-                : 'Loading collections...'
+              ? t('settings.collections.loadingMore')
               : t('settings.collections.loadMore')}
           </button>
         </div>

@@ -33,6 +33,12 @@ export interface TranslationDictionary {
       library: string;
       libraryDesc: string;
     };
+    groups: {
+      languageRegion: string;
+      clockStyle: string;
+      playbackEffects: string;
+      deviceFocus: string;
+    };
     general: {
       languageTitle: string;
       languageDesc: string;
@@ -46,6 +52,8 @@ export interface TranslationDictionary {
       clockLanguageJa: string;
       updateIntervalTitle: string;
       updateIntervalDesc: string;
+      intervalMinutes: string;
+      intervalMinutesDefault: string;
       timeFormatTitle: string;
       timeFormatDesc: string;
       timeFormat12: string;
@@ -112,14 +120,18 @@ export interface TranslationDictionary {
     collections: {
       title: string;
       desc: string;
+      clear: string;
+      apply: string;
       randomWallpapers: string;
       randomWallpapersDesc: string;
       loadMore: string;
+      loadingMore: string;
       photosCount: string;
     };
     favorites: {
       title: string;
       desc: string;
+      photoBy: string;
       emptyTitle: string;
       emptyDesc: string;
       apply: string;
@@ -128,6 +140,7 @@ export interface TranslationDictionary {
     history: {
       title: string;
       desc: string;
+      photoBy: string;
       clearAll: string;
       emptyTitle: string;
       emptyDesc: string;

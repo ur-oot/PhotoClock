@@ -24,7 +24,7 @@ export const DeviceSettingsTab: React.FC = () => {
     <div className="space-y-5">
       <div className="space-y-1.5">
         <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 px-1">
-          {language === 'ja' ? 'デバイス維持 & 集中' : 'Device & Focus'}
+          {t('settings.groups.deviceFocus')}
         </span>
         <div className="bg-white rounded-2xl border border-stone-200/80 shadow-xs divide-y divide-stone-100 overflow-hidden">
           {/* ポモドーロタイマー */}
