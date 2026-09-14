@@ -30,7 +30,7 @@ export const ClockSettingsTab: React.FC = () => {
       {/* 言語と地域 */}
       <div className="space-y-1.5">
         <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 px-1">
-          {language === 'ja' ? '言語と地域' : 'Language & Region'}
+          {t('settings.groups.languageRegion')}
         </span>
         <div className="bg-white rounded-2xl border border-stone-200/80 shadow-xs divide-y divide-stone-100 overflow-hidden">
           {/* 表示言語 */}
@@ -82,7 +82,7 @@ export const ClockSettingsTab: React.FC = () => {
       {/* 時計スタイル */}
       <div className="space-y-1.5">
         <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 px-1">
-          {language === 'ja' ? '時計スタイル' : 'Clock Style'}
+          {t('settings.groups.clockStyle')}
         </span>
         <div className="bg-white rounded-2xl border border-stone-200/80 shadow-xs divide-y divide-stone-100 overflow-hidden">
           {/* 時計フォント (ビジュアルセレクター) */}

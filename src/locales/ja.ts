@@ -31,6 +31,12 @@ export const ja: TranslationDictionary = {
       library: 'ライブラリ',
       libraryDesc: '保存したお気に入り写真と直近の表示履歴。',
     },
+    groups: {
+      languageRegion: '言語と地域',
+      clockStyle: '時計スタイル',
+      playbackEffects: '再生と演出',
+      deviceFocus: 'デバイス維持 & 集中',
+    },
     general: {
       languageTitle: '表示言語',
       languageDesc: '操作画面やメニューの表示言語。',
@@ -44,6 +50,8 @@ export const ja: TranslationDictionary = {
       clockLanguageJa: '日本語',
       updateIntervalTitle: '写真の切り替え間隔',
       updateIntervalDesc: '背景写真が次の写真へ自動で切り替わる時間。',
+      intervalMinutes: '{count}分ごと',
+      intervalMinutesDefault: '{count}分ごと（標準）',
       timeFormatTitle: '時刻形式',
       timeFormatDesc: '12時間制（午前/午後）または24時間制。',
       timeFormat12: '12時間制',
@@ -110,14 +118,18 @@ export const ja: TranslationDictionary = {
     collections: {
       title: '写真コレクション',
       desc: '特定のテーマでまとめられた写真集から選ぶ。',
+      clear: 'コレクション解除',
+      apply: 'このコレクションを適用',
       randomWallpapers: '厳選おすすめ写真（標準）',
       randomWallpapersDesc: '全ジャンルからバランスよく選ばれた標準セット',
       loadMore: 'さらに読み込む',
+      loadingMore: '読み込み中...',
       photosCount: '{count} 枚の写真',
     },
     favorites: {
       title: 'お気に入り写真',
       desc: '保存した写真の個人ギャラリー。',
+      photoBy: '撮影: {name}',
       emptyTitle: 'お気に入りはまだありません',
       emptyDesc: 'Lキーまたは右上のハートボタンを押すと、気に入った写真を保存できます。',
       apply: '背景に設定',
@@ -126,6 +138,7 @@ export const ja: TranslationDictionary = {
     history: {
       title: '表示履歴',
       desc: '最近背景に表示された写真の一覧。',
+      photoBy: '撮影: {name}',
       clearAll: '履歴を消去',
       emptyTitle: '表示履歴はまだありません',
       emptyDesc: '写真が切り替わると、ここに自動で記録されます。',
