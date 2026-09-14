@@ -109,7 +109,7 @@ export const LibrarySettingsTab: React.FC<LibrarySettingsTabProps> = ({
                 <div className="p-3 flex-1 flex flex-col justify-between space-y-2.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-stone-700 font-medium truncate max-w-[160px]">
-                      {language === 'ja' ? `撮影: ${item.user.name}` : `By ${item.user.name}`}
+                      {t('settings.favorites.photoBy', { name: item.user.name })}
                     </span>
                     <a
                       href={item.url}
@@ -174,7 +174,7 @@ export const LibrarySettingsTab: React.FC<LibrarySettingsTabProps> = ({
               <div className="p-3 flex-1 flex flex-col justify-between space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-stone-700 font-medium truncate max-w-[160px]">
-                    {language === 'ja' ? `撮影: ${item.user.name}` : `By ${item.user.name}`}
+                    {t('settings.history.photoBy', { name: item.user.name })}
                   </span>
                   <a
                     href={item.url}

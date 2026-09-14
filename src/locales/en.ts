@@ -31,6 +31,12 @@ export const en: TranslationDictionary = {
       library: 'Library',
       libraryDesc: 'Saved favorite photos and display history.',
     },
+    groups: {
+      languageRegion: 'Language & Region',
+      clockStyle: 'Clock Style',
+      playbackEffects: 'Playback & Effects',
+      deviceFocus: 'Device & Focus',
+    },
     general: {
       languageTitle: 'Language',
       languageDesc: 'Choose interface language.',
@@ -44,6 +50,8 @@ export const en: TranslationDictionary = {
       clockLanguageJa: '日本語',
       updateIntervalTitle: 'Update Interval',
       updateIntervalDesc: 'Time between background updates.',
+      intervalMinutes: 'Every {count} minutes',
+      intervalMinutesDefault: 'Every {count} minutes (default)',
       timeFormatTitle: 'Time Format',
       timeFormatDesc: 'Choose 12-hour or 24-hour display.',
       timeFormat12: '12-hour (AM/PM)',
@@ -110,14 +118,18 @@ export const en: TranslationDictionary = {
     collections: {
       title: 'Choose Collection',
       desc: 'Select a collection to only show photos from it, or select random wallpapers.',
+      clear: 'Clear Collection',
+      apply: 'Select this collection',
       randomWallpapers: 'Random Curated Wallpapers',
       randomWallpapersDesc: 'Default curated mix across all categories',
       loadMore: 'Load more collections',
+      loadingMore: 'Loading collections...',
       photosCount: '{count} photos',
     },
     favorites: {
       title: 'Favorite Photos',
       desc: 'Saved photos in your personal gallery.',
+      photoBy: 'Photo by {name}',
       emptyTitle: 'No favorite photos yet',
       emptyDesc: 'Press L or click the heart icon to save photos you love.',
       apply: 'Set as background',
@@ -126,6 +138,7 @@ export const en: TranslationDictionary = {
     history: {
       title: 'Photo History',
       desc: 'Recently displayed background photos.',
+      photoBy: 'Photo by {name}',
       clearAll: 'Clear history',
       emptyTitle: 'No photo history yet',
       emptyDesc: 'Photos will appear here as the background changes.',
